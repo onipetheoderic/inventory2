@@ -1,0 +1,87 @@
+        <br><br><br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+{{!-- console.log("this is the table data",tableArr)
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+      if(this.status == 200) {
+        alert("successfully saved to the db")
+        location.replace("/success_component")
+ }
+  };
+xhttp.open("POST", "/edit_datasheet_report_post", true);
+xhttp.setRequestHeader("Content-Type", "application/json");
+xhttp.send(JSON.stringify(tableArr)); --}}
+<script>
+    function checkAddress(checkbox){
+        
+        if (checkbox.checked){
+            let form_content = {
+                status: "checked",
+                id: checkbox.id
+            }
+            console.log("checked", form_content)
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                 if(this.status == 200) {
+                       let parsedJson = JSON.parse(this.response)
+                    document.getElementById("msg_alert").innerHTML = `${parsedJson.data.resource_name} successfully Changed`;
+                }
+            };
+            xhttp.open("POST", `/edit_permission/${checkbox.id}`, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify(form_content))
+        }
+        else{
+             let form_content = {
+                status: "unchecked",
+                id: checkbox.id
+            }
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                console.log(this)
+                if(this.status == 200) {
+                    let parsedJson = JSON.parse(this.response)
+                    document.getElementById("msg_alert").innerHTML = `${parsedJson.data.resource_name} successfully Changed`;
+                }
+            };
+            xhttp.open("POST", `/edit_permission/${checkbox.id}`, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify(form_content))
+        }
+    }
+</script>
+<div class="container" >
+       
+    <div class="row justify-content-center">
+       <div class="col-lg-6">
+            <div class="alert alert-success" role="alert" id="msg_alert">
+     permission successfully changed
+        </div>
+            <div class="card">
+                <div class="card-body" style="margin-bottom: 40px;">
+
+                    <h4 class="card-title">{{data.role_name}}'s Priveledges/Ability</h4>
+                    <p class="card-title-desc">Modify Priveledges</p>
+                    {{#each data.permissions}}
+                    <div>
+                        <span style="float:left; padding-right:10px;">{{{underscore_formatter this.resource_name}}}</span>
+                        <input type="checkbox" id="{{this._id}}" switch="none" {{{checkers this.status}}} onclick="checkAddress(this)"/>
+                        
+                        <label for="{{this._id}}" data-on-label="On"
+                                data-off-label="Off"></label>
+
+                        
+                    </div>
+                    {{/each}}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

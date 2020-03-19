@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font: 13px Helvetica, Arial;
+      }
+      form {
+        background: #000;
+        padding: 3px 5px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+      form input {
+        border: 0;
+        padding: 1.5px;
+        width: 90%;
+        margin-right: 0.5%;
+      }
+      form button {
+        width: 9%;
+        background: rgb(130, 224, 255);
+        border: none;
+        padding: 1px;
+        cursor: pointer;
+      }
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      #messages li {
+        padding: 5px 10px;
+      }
+      #messages li:nth-child(odd) {
+        background: #eee;
+      }
+      #welcomeText {
+        margin-top: 1.5px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      #announcement {
+        list-style: none;
+        font-size: 0.8rem;
+      }
+
+      #announcement li {
+        padding: 2px 4px;
+        color: #001;
+        text-align: center;
+      }
+
+      @media screen and (max-width: 767px) {
+        form {
+          background: #000;
+          padding: 3px 5px;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+        }
+        form input {
+          border: 0;
+          padding: 1.5px;
+          width: 87%;
+          margin-right: 0.5%;
+        }
+        form button {
+          width: 10%;
+          background: rgb(130, 224, 255);
+          border: none;
+          padding: 1px;
+          cursor: pointer;
+        }
+      }
+    </style>
+    <title>Quick Chat</title>
+  </head>
+  <body>
+    <h3 id="welcomeText"></h3>
+
+    <ul id="messages"></ul>
+
+    <ul id="announcement"></ul>
+
+    <form id="chatForm">
+      <input
+        id="m"
+        name="chatMessage"
+        autocomplete="off"
+        placeholder="Enter message here..."
+      />
+      <button type="submit">Send</button>
+    </form>
+
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    {{!-- <script src="/assets/js/pages/form-wizard.init.js"></script> --}}
+
+    <script src="/socket/js/socket.js"></script>
+    <script src="/socket/js/chat.js"></script>
+  </body>
+</html>

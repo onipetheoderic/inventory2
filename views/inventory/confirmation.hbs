@@ -1,0 +1,225 @@
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Departments Product Verification</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+        <!-- /card header -->
+
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+            <!-- Form -->
+            
+          
+
+                <!-- Form Row -->
+                {{!-- Admin Confirmation Aspect --}}
+                {{#unless data.admin_verified}}
+                    <form action="/confirmation/{{data.id}}" method="POST">
+                        <div class="form-row">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-1">Admin Department Email</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="text" name="admin_email" class="form-control" id="normal-input-1"
+                                        placeholder="Enter Department Email">
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-top:20px;">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-2">Admin Department Password</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="password" name="admin_password" class="form-control" id="normal-input-2"
+                                        placeholder="Enter Admin Department Password">
+                                        <input type="hidden" name="current_department" value="admin"/>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top:20px">
+                            <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                        <button type="submit" class="btn btn-primary btn-block">Admin Department Confirmation</button>
+                        </div>
+                        </div>
+                        
+                    </form>
+                {{else}}
+                 <div class="form-row" >
+                     
+                    <div class="col-md-6 col-sm-6">
+                    <img src="/eventory/assets/images/mark.png" alt="Mark" style="margin-top:100px; width:100px;">
+                    <h3>Admin Verified</h3>
+                    </div>
+                  </div>
+                {{/unless}}
+                <hr class="border-dashed my-8">
+                {{#unless data.store_verified}}
+                    <form action="/confirmation/{{data.id}}" method="POST">
+                        <div class="form-row">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-1">Store Department Email</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="text" name="store_email" class="form-control" id="normal-input-1"
+                                        placeholder="Enter Store Department Email">
+                            </div>
+                        </div>
+                         <div class="form-row" style="margin-top:20px;">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-2">Store Department Password</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="password" name="store_password" class="form-control" id="normal-input-2"
+                                        placeholder="Enter Store Department Password">
+                                        <input type="hidden" name="current_department" value="store"/>
+                            </div>
+                        </div>
+                         <div class="row" style="padding-top:20px">
+                            <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                        <button type="submit" class="btn btn-primary btn-block">Store Department Confirmation</button>
+                        </div>
+                        </div>
+                        
+                    </form>
+                {{else}}
+                 <div class="form-row" >
+  
+                    <div class="col-md-6 col-sm-6">
+                    <img src="/eventory/assets/images/mark.png" alt="Mark" style="margin-top:100px; width:100px;">
+                    <h3>Store User Verified</h3>
+                    </div>
+                  </div>
+                {{/unless}}
+                <hr class="border-dashed my-8">
+                {{#unless data.audit_verified}}
+                    <form action="/confirmation/{{data.id}}" method="POST">
+                        <div class="form-row">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-1">Audit Department Email</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="text" name="audit_email" class="form-control" id="normal-input-1"
+                                        placeholder="Enter Audit Department Email">
+                            </div>
+                        </div>
+                         <div class="form-row" style="margin-top:20px;">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-2">Audit Department Password</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="password" name="audit_password" class="form-control" id="normal-input-2"
+                                        placeholder="Enter Audit Department Password">
+                                        <input type="hidden" name="current_department" value="audit"/>
+                            </div>
+                        </div>
+                         <div class="row" style="padding-top:20px">
+                            <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                        <button type="submit" class="btn btn-primary btn-block">Audit Department Confirmation</button>
+                        </div>
+                        </div>
+                        
+                    </form>
+                {{else}}
+                 <div class="form-row" >
+  
+                    <div class="col-md-6 col-sm-6">
+                    <img src="/eventory/assets/images/mark.png" alt="Mark" style="margin-top:100px; width:100px;">
+                    <h3>Audit User Verified</h3>
+                    </div>
+                  </div>
+                {{/unless}}
+
+                     <hr class="border-dashed my-8">
+                {{#unless data.user_verified}}
+                    <form action="/confirmation/{{data.id}}" method="POST">
+                        <div class="form-row">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-1">User Department Email</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="text" name="user_email" class="form-control" id="normal-input-1"
+                                        placeholder="Enter User Department Email">
+                            </div>
+                        </div>
+                         <div class="form-row" style="margin-top:20px;">
+                            <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                                    for="normal-input-2">User Department Password</label>
+
+                            <div class="col-md-10 col-sm-9">
+                                <input type="password" name="user_password" class="form-control" id="normal-input-2"
+                                        placeholder="Enter User Department Password">
+                                        <input type="hidden" name="current_department" value="user"/>
+                            </div>
+                        </div>
+                         <div class="row" style="padding-top:20px">
+                            <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                        <button type="submit" class="btn btn-primary btn-block">User Department Confirmation</button>
+                        </div>
+                        </div>
+                        
+                    </form>
+                {{else}}
+                 <div class="form-row" >
+  
+                    <div class="col-md-6 col-sm-6">
+                    <img src="/eventory/assets/images/mark.png" alt="Mark" style="margin-top:100px; width:100px;">
+                    <h3>User Department Verified</h3>
+                    </div>
+                  </div>
+                {{/unless}}
+    <!-- Separator -->
+                <hr class="border-dashed my-8">
+               
+                 
+                 
+                 
+                 <!-- Separator -->
+                <hr class="border-dashed my-8">
+               
+           
+
+                
+
+                
+                <!-- Separator -->
+                <hr class="border-dashed my-8">
+                <!-- /separator -->
+
+
+                
+
+               
+                <!-- /form row -->
+               
+                <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <form method="POST" action="/generate_report_form/{{data.id}}">
+
+                        <button type="submit" class="btn btn-primary btn-block" {{data.overall_confirmation}}>Proceed</button>
+                    </form>
+                        </div>
+                </div>
+         
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

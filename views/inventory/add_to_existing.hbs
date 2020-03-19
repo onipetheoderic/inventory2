@@ -1,0 +1,72 @@
+
+<!-- Grid Item -->
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Add to Existing Store Products</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+        <!-- /card header -->
+
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+        
+               <form action="/add_to_existing" method="POST" enctype="multipart/form-data" >
+         
+                <div class="form-row">
+
+                <input type="hidden" value="{{subs}}" id="myInput">
+                <div class="col-sm-3 mb-3">
+                    <label for="simple-select">Existing Products</label>                           
+                        <select class="form-control" onchange="getval(this);" name="product_id" id="simple-select">
+                            
+                            <option></option>
+                                {{#each data.products}}
+                                    <option value="{{jbi this}}">{{{jb this}}}</option>
+                                {{/each}}
+                        </select>          
+                        </div>
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationDefault03">Unit</label>
+                        <input type="number" name="unit" class="form-control" id="validationDefault03"
+                                placeholder="20" required>
+                    </div>    
+                     <div class="col-sm-3 mb-3">
+                        <label for="validationDefault03">Unit Price</label>
+                        <input type="number" name="unit_price" class="form-control" id="validationDefault03"
+                                placeholder="20" required>
+                    </div> 
+                        
+                </div>
+                
+                    
+
+                  
+               
+             
+                <div class="row" style="padding-top:50px">
+                    <div class="col-md-2 col-sm-2"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Add To Unit</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

@@ -1,0 +1,384 @@
+<div class="main-content">
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box d-flex align-items-center justify-content-between">
+                                    <h4 class="mb-0 font-size-18">Welcome to Contract Compliance and Management System</h4>
+
+                                    {{!-- <div class="page-title-right">
+                                        <ol class="breadcrumb m-0">
+                                            <li class="breadcrumb-item"><a href="javascript: void(0);">Layouts</a></li>
+                                            <li class="breadcrumb-item active">Boxed width</li>
+                                        </ol>
+                                    </div> --}}
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card overflow-hidden">
+                                    
+                                    {{!-- <div class="card-body pt-0" style="margin-bottom: 40px;" >
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div class="avatar-md profile-user-wid mb-4">
+                                                    <img src="/assets/images/users/avatar-1.jpg" alt="" class="img-thumbnail rounded-circle">
+                                                </div>
+                                                <h5 class="font-size-15 text-truncate">Theoderic Onipe</h5>
+                                                <p class="text-muted mb-0 text-truncate">UI/UX Designer</p>
+                                            </div>
+
+                                            <div class="col-sm-8">
+                                                <div class="pt-4">
+
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <h5 class="font-size-15">125</h5>
+                                                            <p class="text-muted mb-0">Projects</p>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <h5 class="font-size-15">$1245</h5>
+                                                            <p class="text-muted mb-0">Revenue</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-4">
+                                                        <a href="#" class="btn btn-primary waves-effect waves-light btn-sm">View Profile <i class="mdi mdi-arrow-right ml-1"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> --}}
+                                </div>
+                                {{!-- #299a4a #556ee6--}}
+                            </div>
+                            <div class="col-xl-12">
+                                
+                                <!-- end row -->
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title mb-4 float-sm-left">Contract Performance for Each State</h4>
+                                        <div class="float-sm-right">
+                                            {{!-- <ul class="nav nav-pills">
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="#">Week</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="#">Month</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" href="#">Year</a>
+                                                </li>
+                                            </ul> --}}
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        
+
+                                        <div id="stacked-column-chart" class="apex-charts" dir="ltr"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <a href="/register_user"><p class="text-muted font-weight-medium">Create A User</p></a>
+                                                     <h4 class="mb-0">{{datas.user_count}}</h4>
+                                                    </div>
+
+                                                    <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-copy-alt font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                     <a href="/create_contract">   <p class="text-muted font-weight-medium">Create A Contract</p></a>
+                                                         <h4 class="mb-0">{{datas.contract_count}}</h4>
+                                                    </div>
+
+                                                    <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-archive-in font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                     <a href="/create_contractor">   <p class="text-muted font-weight-medium">Create A Contractor</p></a>
+                                                         <h4 class="mb-0">{{datas.contractor_count}}</h4>
+                                                    </div>
+
+                                                    <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        <!-- end row -->
+                        <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <a href="/view_all_contract"><p class="text-muted font-weight-medium">View Contract Database</p></a>
+                                                          <h4 class="mb-0">{{datas.contract_count}}</h4>
+                                                    </div>
+
+                                                    <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-copy-alt font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                     <a href="/create_consultant">   <p class="text-muted font-weight-medium">Create A Consultant</p></a>
+                                                        <h4 class="mb-0">1</h4>
+                                                    </div>
+
+                                                    <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-archive-in font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                     <a href="/view_all_contractors">   <p class="text-muted font-weight-medium">View All Contractors</p></a>
+                                                        <h4 class="mb-0">{{datas.contractor_count}}</h4>
+                                                    </div>
+
+                                                    <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                                        <span class="avatar-title rounded-circle bg-primary">
+                                                            <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <a href="/view_all_contract"><p class="text-muted font-weight-medium">Update Payment of Contract</p></a>
+                                                          <h4 class="mb-0">{{datas.contract_count}}</h4>
+                                                    </div>
+
+                                                    <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-copy-alt font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <div class="col-md-4">
+                                        <div class="card mini-stats-wid">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <a href="/manage_roles"><p class="text-muted font-weight-medium">Manage Roles</p></a>
+                                                          <h4 class="mb-0">{{datas.contract_count}}</h4>
+                                                    </div>
+
+                                                    <div class="mini-stat-icon avatar-sm rounded-circle bg-primary align-self-center">
+                                                        <span class="avatar-title">
+                                                            <i class="bx bx-copy-alt font-size-24"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                               
+                                
+                                   
+                                
+
+                        <div class="row">
+
+
+
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title mb-4">List of Contract transactions in each State in Nigeria</h4>
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            
+                           
+                            
+                            <th>Project Title</th>
+                            <th>State</th>
+                            <th>L.G.A</th>
+                            <th>Name of Consultant</th>
+                            <th>MTB</th>
+                            <th>BPP</th>
+                            <th>Contractors Defualt</th>
+                            <th>Internal Defualt</th>
+                            <th>View Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+
+
+
+
+
+                            {{#each datas.all_contract}}
+            {{#if this.prioritize}}                                                      
+                        <tr>
+                  
+                   
+                    <td><strong>{{this.projectTitle}}</strong></td>
+                    <td>{{this.state}}</td>
+                   <td>{{this.lga}}</td>
+                    <td>{{{jsonp this.consultant}}}</td>
+                    <td>{{this.mtb}}</td>
+                    <td><a href="/single_contract_page/{{this.id}}">{{this.bpp}}</a></td>
+                    <td>
+                        {{#if this.default}}
+                        <span class="badge badge-pill badge-soft-danger font-size-12">Contractors Default</span>
+                        {{else}}
+                        <span class="badge badge-pill badge-soft-success font-size-12">No Default</span>
+                        {{/if}}
+                    </td>
+                     <td>
+                        {{#if this.internal_default}}
+                        <span class="badge badge-pill badge-soft-danger font-size-12">Internal Default</span>
+                        {{else}}
+                        <span class="badge badge-pill badge-soft-success font-size-12">No Default</span>
+                        {{/if}}
+                    </td>
+                    {{!--  <td>
+                            <span class="badge badge-pill badge-soft-danger font-size-12">Contractors Default</span>
+                        </td> --}}
+                    <td>
+                        <!-- Button trigger modal -->
+                        <a href="/single_contract_page/{{this.id}}">
+                        <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
+                            View Details
+                        </button>
+                        </a>
+                    </td>
+                
+                        </tr>
+                        {{else}}
+           <tr>
+                   
+                   
+                    <td>{{this.projectTitle}}</td>
+                    <td>{{this.state}}</td>
+                    <td>{{{this.lga}}}</td>
+                    <td>{{{jsonp this.consultant}}}</td>
+                    <td>{{this.mtb}}</td>
+                    <td><a href="/single_contract_page/{{this.id}}">{{this.bpp}}</a></td>
+                    <td>
+                        {{#if this.default}}
+                        <span class="badge badge-pill badge-soft-danger font-size-12">Contractors Default</span>
+                        {{else}}
+                        <span class="badge badge-pill badge-soft-success font-size-12">No Default</span>
+                        {{/if}}
+                    </td>
+                     <td>
+                        {{#if this.internal_default}}
+                        <span class="badge badge-pill badge-soft-danger font-size-12">Internal Default</span>
+                        {{else}}
+                        <span class="badge badge-pill badge-soft-success font-size-12">No Default</span>
+                        {{/if}}
+                    </td>
+                    {{!--  <td>
+                            <span class="badge badge-pill badge-soft-danger font-size-12">Contractors Default</span>
+                        </td> --}}
+                    <td>
+                        <!-- Button trigger modal -->
+                        <a href="/single_contract_page/{{this.id}}">
+                        <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
+                            View Details
+                        </button>
+                        </a>
+                    </td>
+                        {{/if}}
+
+                        {{/each}}
+                        
+                    </tbody>
+                </table>
+            </div>
+            <!-- end table-responsive -->
+        </div>
+    </div>
+</div>
+{{!-- /view_inspections --}}
+<div style="text-align:center; width:100%">
+<a href="{{datas.BASEURL}}/view_inspections" target="_blank">
+    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light">
+       Highway Inspectors Record
+    </button>
+</a>
+
+</div>
+
+                        </div>
+                        <!-- end row -->
+                    </div>
+                    <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+
+               

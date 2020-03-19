@@ -1,0 +1,159 @@
+
+<!-- Grid Item -->
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Create a Product</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+        <!-- /card header -->
+
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+        
+               <form action="/create_product" method="POST" enctype="multipart/form-data" >
+         
+                <div class="form-row">
+                    <div class="col-sm-4 mb-3">
+                        <label for="validationDefault01">Product name</label>
+                        <input type="text" name="name" class="form-control" id="validationDefault01"
+                                placeholder="Product Name"
+                                
+                                required>
+                    </div>
+                
+                    <div class="col-sm-8 mb-6">
+                        <label for="validationDefault02">Description</label>
+                        <input type="text" name="description" class="form-control" id="validationDefault02"
+                                placeholder="Description"
+                              
+                                required>
+                    </div>
+                 
+                    
+                </div>
+              <!-- Form 
+            name: String,
+    description: String,
+    price: String,
+    logo: String,    
+    ref_name: String,
+    category: String,
+            -->
+                <div class="form-row">
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationDefault03">Unit Price</label>
+                        <input type="number" name="price" class="form-control" id="validationDefault03"
+                                placeholder="20000" required>
+                    </div> 
+                     <div class="col-sm-3 mb-3">
+                        <label for="validationDefault03">Unit</label>
+                        <input type="number" name="unit" class="form-control" id="validationDefault03"
+                                placeholder="20000" required>
+                    </div>               
+<script>
+    function getval(sel)
+{
+   
+    const stateSelected = sel.value
+    console.log(stateSelected);
+      var inputVal = document.getElementById("myInput").value;
+      var parsedValue = JSON.parse(inputVal)
+      let selectedVals=[]
+      for(var i in parsedValue){
+          console.log(parsedValue[i])
+          if(parsedValue[i].parent_id == stateSelected){
+              selectedVals.push(parsedValue[i])
+          }
+      }
+      console.log(selectedVals);
+
+        var select = document.getElementById("sub_category")
+        var length = select.options.length;
+        for (i = length-1; i >= 0; i--) {
+        select.options[i] = null;
+        }
+
+        for(var i in selectedVals)
+        {
+        console.log("elected", selectedVals[i])
+        var opt = document.createElement("option");
+        console.log("this is the id",selectedVals[i]._id)
+        opt.value = selectedVals[i]._id;
+        opt.innerHTML = selectedVals[i].name; // whatever property it has
+
+        // then append it to the select element
+        select.appendChild(opt);
+        }
+
+
+}
+</script>
+                      <input type="hidden" value="{{subs}}" id="myInput">
+                        <div class="col-sm-3 mb-3">
+                            <label for="simple-select">category</label>                           
+                                <select class="form-control" onchange="getval(this);" name="category" id="simple-select">
+                                  
+                                    <option></option>
+                                      {{#each data.category}}
+                                    <option value="{{this._id}}">{{this.name}}</option>
+                                  
+                                    {{/each}}
+                                </select>          
+                        </div>
+                        <div class="col-sm-3 mb-3">
+                            <label for="simple-select">Subcategory</label>                           
+                                <select class="form-control" name="sub_category" id="sub_category">
+                                    
+                                  
+                                </select>          
+                        </div>
+                        <div class="col-md-3 col-sm-3">
+                            <label for "file-field">Logo/Image</label>
+                            <div class="custom-file">
+                                <input type="file" name="logo" class="custom-file-input" id="file-field">
+                                <label class="custom-file-label" for="file-field">Choose
+                                    file...</label>
+                            </div>
+                        </div>
+                </div>
+                
+                    
+
+                  
+               
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value=""
+                                id="invalidCheck2" required>
+                        <label class="form-check-label" for="invalidCheck2">
+                            Agree to terms and conditions
+                        </label>
+                    </div>
+                </div>
+                <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Create Product</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

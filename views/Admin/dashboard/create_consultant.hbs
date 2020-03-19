@@ -1,0 +1,92 @@
+
+<div class="container" >
+    <div class="row justify-content-center">
+<div class="col-md-8 col-lg-6 col-xl-5">
+        <br><br><br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+                        <div class="card overflow-hidden">
+
+
+<div class="bg-soft-primary">
+
+                                <div class="row">
+                                    <div class="col-7">
+                                        <div class="text-primary p-4">
+                                            <h5 class="text-primary">Quickly Create A Consultant</h5>
+                                            <p>Quickly fill in the Consultant Information</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-5 align-self-end">
+                                        <img src="/assets/images/profile-img.png" alt="" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0" style="margin-bottom: 40px;" > 
+                                <div>
+                                    <a href="index.html">
+                                        <div class="avatar-md profile-user-wid mb-4">
+                                            <span class="avatar-title rounded-circle bg-light">
+                                                <img src="/assets/images/logo.svg" alt="" class="rounded-circle" height="34">
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
+<div class="p-2">
+    <form class="form-horizontal" action="/create_consultant" method="POST" enctype="multipart/form-data">
+
+        
+        <div class="form-group">
+            <label for="companyName">Company Name</label>
+            <input type="text" name="companyName" class="form-control" id="companyName" placeholder="Enter company Name">
+        </div>
+         <div class="form-group">
+            <label for="companyAddress">Company Address</label>
+            <input type="text" name="companyAddress" class="form-control" id="companyAddress" placeholder="Enter Lastname">
+        </div>
+        <div class="form-group">
+            <label for="companyPhoneNumber">Phone Number</label>
+            <input type="text" name="companyPhoneNumber" type="number" class="form-control" id="companyPhoneNumber" placeholder="Enter Phone Number">
+        </div>
+        <div class="form-group">
+            <label for="companyEmail">Email Address</label>
+            <input type="text" name="companyEmail" class="form-control" id="companyEmail" placeholder="Enter Email">
+        </div>
+         <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" name="fullName" class="form-control" id="fullName" placeholder="Enter Full Name">
+        </div>
+         <div class="form-group">
+            <label class="control-label">Gender</label>
+            <select class="form-control select2" name="gender">
+                <option>Select Gender</option>
+                <optgroup label="Select User Heirachy">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>                   
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="mt-3">
+            <button class="btn btn-primary btn-block waves-effect waves-light" type="submit">Create A consultant</button>
+        </div>
+        <div class="mt-4 text-center">
+            <p class="mb-0">By registering you agree to the Our Term of Use</a></p>
+        </div>
+        <div class="mt-4 text-center">
+            <a href="auth-recoverpw.html" class="text-muted"><i class="mdi mdi-lock mr-1"></i> Forgot your password?</a>
+        </div>
+    </form>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+</div>

@@ -1,0 +1,21 @@
+[
+    {"resource_id":"1", "title": "create_a_contract"},
+    {"resource_id":"2", "title": "update_a_contract"},
+    {"resource_id":"3", "title": "delete_a_contract"},
+    {"resource_id":"4", "title": "create_a_user"},
+    {"resource_id":"5", "title": "create_a_contractor"},
+    {"resource_id":"6", "title": "create_a_consultant"},
+    {"resource_id":"7", "title": "view_contract_db"},
+    {"resource_id":"8", "title": "view_all_contractor"},
+    {"resource_id":"9", "title": "update_payment_of_contract"},
+    {"resource_id":"10", "title": "suspend_a_contractor"},
+    {"resource_id":"11", "title": "suspend_a_consultant"},
+    {"resource_id":"12", "title": "prioritize_a_contract"},
+    {"resource_id":"13", "title": "reset_roles_to_default"},
+    {"resource_id":"14", "title": "edit_user"},
+    {"resource_id":"15", "title": "edit_contractor"},
+    {"resource_id":"16", "title": "edit_consultant"},
+    {"resource_id":"17", "title": "view_single_contract"},
+    {"resource_id":"18", "title": "view_all_permission"}
+    
+]

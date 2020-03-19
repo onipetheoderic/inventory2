@@ -1,0 +1,90 @@
+
+<div class="container" >
+    <div class="row justify-content-center">
+<div class="col-md-8 col-lg-6 col-xl-5">
+        <br><br><br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+                        <div class="card overflow-hidden">
+
+
+<div class="bg-soft-primary">
+
+                                <div class="row">
+                                    <div class="col-7">
+                                        <div class="text-primary p-4">
+                                            <h5 class="text-primary">Quickly Create A User</h5>
+                                            <p>Quickly fill in the User Information</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-5 align-self-end">
+                                        <img src="/assets/images/profile-img.png" alt="" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0" style="margin-bottom: 40px;"> 
+                                <div>
+                                    <a href="index.html">
+                                        <div class="avatar-md profile-user-wid mb-4">
+                                            <span class="avatar-title rounded-circle bg-light">
+                                                <img src="/assets/images/logo.svg" alt="" class="rounded-circle" height="34">
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
+<div class="p-2">
+    <form class="form-horizontal" action="/register_user" method="POST" enctype="multipart/form-data">
+
+
+        <div class="form-group">
+            <label for="username">First Name</label>
+            <input type="text" name="first_name" class="form-control" id="username" placeholder="Enter Firstname">
+        </div>
+         <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Enter Lastname">
+        </div>
+        <div class="form-group">
+            <label for="last_name">Phone Number</label>
+            <input type="text" name="phone_number" type="number" class="form-control" id="phone_number" placeholder="Enter Phone Number">
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="text" name="email" class="form-control" id="email" placeholder="Enter Email">
+        </div>
+         <div class="form-group">
+            <label class="control-label">User Type</label>
+            <select class="form-control select2" name="user_type">
+                <option>Select</option>
+                <optgroup label="Select User Heirachy">
+                    <option value="minister">Minister</option>
+                    <option value="permanentSecretary">Perm.Sec</option>
+                        <option value="director">Director</option>
+                    <option value="siteEngineer">Site Engineer</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="mt-3">
+            <button class="btn btn-primary btn-block waves-effect waves-light" type="submit">Register User</button>
+        </div>
+        <div class="mt-4 text-center">
+            <p class="mb-0">By registering you agree to the Our Term of Use</a></p>
+        </div>
+        <div class="mt-4 text-center">
+            <a href="auth-recoverpw.html" class="text-muted"><i class="mdi mdi-lock mr-1"></i> Forgot your password?</a>
+        </div>
+    </form>
+</div>
+
+</div class="card-body>
+</div>
+
+</div>
+</div>
+</div>
