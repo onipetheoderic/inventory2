@@ -625,7 +625,15 @@ exports.view_requests = function(req, res){
         res.render('inventory/view_requests', {layout:"layout/inventory", data:{all_requests:all_requests}})
     })
 }
-
+exports.single_requisition = function(req, res){
+    Request.findOne({_id:req.params.id})
+    .populate('product')
+    .populate('requester')
+    .populate('director')
+    .exec(function(err, requests){        
+        res.render('inventory/single_requisition', {layout: "layout/table", data:{requests:requests}})
+    })
+}
 
 exports.request_product_post = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){

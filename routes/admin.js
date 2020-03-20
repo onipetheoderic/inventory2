@@ -43,6 +43,9 @@ router.route('/verify_request')
 router.route('/view_requests')
     .get(InventoryController.view_requests)
 
+router.route('/single_requisition/:id')
+    .get(InventoryController.single_requisition)
+
 router.route('/add_to_existing')
     .get(InventoryController.add_to_existing)
     .post(InventoryController.add_to_existing_post)
