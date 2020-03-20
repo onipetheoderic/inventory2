@@ -6,6 +6,9 @@ import Product from '../../models/Product/product';
 import Subcategory from '../../models/Subcategory/subcategory';
 import Store from '../../models/Store/store';
 import Request from '../../models/Request/request';
+import Installation from '../../models/Installation/installation';
+
+import overall_config from '../../config/overall_config.json'
 
 var rn = require('random-number');
 var options = {
@@ -130,6 +133,50 @@ exports.home = function(req, res){
     }
 }
 
+exports.default_config = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        let decrypted_user_role = decrypt(req.session.role, req, res)
+        Installation.find({}, function(err, installation){
+            if(installation.length===0){
+                let installer = new Installation();
+                installer.default_installation = true;
+                installer.save(function(err, install){
+                    if(err){
+                        console.log(err);
+                    }
+                    else {
+                        for(var i in overall_config){
+                            let department = new Department();
+                            department.name = overall_config[i].name;
+                            department.description = overall_config[i].description;
+                            department.ref_name = overall_config[i].ref_name;
+                            department.save(function(err, saved_department){
+                                if(err){
+                                    return;
+                                }
+                                else{
+                                    console.log(saved_department)
+                                }
+                            })
+                        
+                        }
+                        res.redirect('/');
+                    }
+                })
+                
+            }
+            else {
+                res.redirect('/');
+            }
+        })
+        
+    }
+}
 
 //incomplete_authentication.hbs
 exports.incomplete_authentication = function(req, res){
@@ -351,7 +398,7 @@ exports.confirmation_post = function(req, res){
             if(user!=null && user.passcode==req.body.user_password){
                 Department.findOne({_id:user.department}, function(err, department){
                     console.log("this is the deparetment", department)
-                    if(department.ref_name=="user_department"){
+                    if(department.ref_name !="admin_department" && department.ref_name != "store_department" && department.ref_name != "audit_department"){
                         Product.findByIdAndUpdate(req.params.id, {user_verified:true})
                         .exec(function(err, updated_staff){
                             if(err){
@@ -396,11 +443,10 @@ exports.create_department = function(req, res){
 }
 //post method of create deparment handled with the same route name
 exports.create_department_post = function(req, res){
-    let incoming_file_name = filePlacerAndNamer(req, res, req.files.logo);
+   
     let department = new Department();
     department.name = req.body.name;
     department.description = req.body.description;
-    department.logo = incoming_file_name;
     department.ref_name = req.body.ref_name;
     department.save(function(err, saved_department){
         if(err){
@@ -423,12 +469,10 @@ exports.create_category = function(req, res){
         })
     })
 }
-exports.create_category_post = function(req, res){
-    let incoming_file_name = filePlacerAndNamer(req, res, req.files.logo);
+exports.create_category_post = function(req, res){    
     let category = new Category();
     category.name = req.body.name;
     category.description = req.body.description;
-    category.logo = incoming_file_name;
     category.ref_name = req.body.ref_name;
     category.save(function(err, saved_category){
         if(err){
@@ -479,12 +523,11 @@ exports.create_user_post = function(req, res){
     User.findOne({email:req.body.email}, function(err, user){
         console.log(user);
         if(user==null){
-            let incoming_file_name = filePlacerAndNamer(req, res, req.files.logo);
- 
+            
             let user = new User();
             user.email = req.body.email;
             user.firstName = req.body.firstName;
-            user.logo = incoming_file_name;
+         
             user.passcode = req.body.passcode;
             user.position = req.body.position;
             user.department = req.body.department;
@@ -725,7 +768,7 @@ exports.add_to_existing_post = function(req, res){
         new_product.description = product.description;
         new_product.unit = parseInt(req.body.unit);
         new_product.price = parseInt(req.body.unit_price);
-        new_product.logo = product.logo
+       
         new_product.save(function(err, saved_product){
             if(err){
                 console.log(err);
@@ -764,6 +807,35 @@ exports.logout = function(req, res){
     req.session.destroy();  
     res.redirect('/login')     
 }
+
+/*
+router.route('/view_all_category')
+    .get(InventoryController.view_all_category)
+
+router.route('/view_all_department')
+    .get(InventoryController.view_all_department)
+
+router.route('/view_all_product')
+    .get(InventoryController.view_all_product)
+*/ 
+exports.view_all_category = function(req, res){
+    Category.find({}).exec(function(err, category){
+        res.render('inventory/view_all_category', {layout:"layout/inventory", category:category})
+    });
+}
+
+exports.view_all_department = function(req, res){
+    Department.find({}).exec(function(err, department){
+        res.render('inventory/view_all_department', {layout:"layout/inventory", department:department})
+    });
+}
+
+exports.view_all_product = function(req, res){
+    Product.find({}).exec(function(err, product){
+        res.render('inventory/view_all_product', {layout:"layout/inventory", product:product})
+    });
+}
+
 
 exports.register_super_post = function(req, res) {
     User.findOne({email: req.body.email}, function(err, vals){
@@ -832,12 +904,11 @@ exports.create_product_post = function(req, res){
     }
     else if(req.session.hasOwnProperty("user_id")){
     let decrypted_user_id = decrypt(req.session.user_id, req, res)
-    let incoming_file_name = filePlacerAndNamer(req, res, req.files.logo);
+    
     console.log(req.body)
     let product = new Product();
     product.name = req.body.name;
     product.description = req.body.description;
-    product.logo = incoming_file_name;
     product.category = req.body.category;
     product.sub_category = req.body.sub_category;
     product.price = req.body.price;

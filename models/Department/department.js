@@ -1,8 +1,7 @@
 var mongoose = require('mongoose');
 var DepartmentSchema = new mongoose.Schema({
     name: String,
-    description: String,
-    logo: String,    
+    description: String,   
     ref_name: String,
     user: [{//this is the user that created the department
         type: mongoose.Schema.Types.ObjectId,

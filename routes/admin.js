@@ -40,6 +40,19 @@ router.route('/product_options')
 router.route('/verify_request')
     .post(InventoryController.verify_request)
 
+router.route('/default_config')
+    .get(InventoryController.default_config)
+
+router.route('/view_all_category')
+    .get(InventoryController.view_all_category)
+
+router.route('/view_all_department')
+    .get(InventoryController.view_all_department)
+
+router.route('/view_all_product')
+    .get(InventoryController.view_all_product)
+
+
 router.route('/view_requests')
     .get(InventoryController.view_requests)
 

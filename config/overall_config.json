@@ -1,0 +1,9 @@
+[
+    {"name":"Internal Audit", "description": "They are in Charge of Internal Auditing process", "ref_name": "audit_department"},
+    {"name":"Store Department", "description": "They are in Charge of Store Activities", "ref_name": "store_department"},
+    {"name":"Admin Department", "description": "They are In Charge of Administrative Activities", "ref_name": "admin_department"}
+  
+    
+    
+]
+
