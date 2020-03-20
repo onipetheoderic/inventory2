@@ -582,6 +582,7 @@ exports.verify_request = function(req, res){
                                 if(err){
                                     console.log(err)
                                 }else {
+
                                     res.redirect(`/`)
                                 }
                             })
@@ -609,6 +610,23 @@ exports.verify_request = function(req, res){
     }
 }
 
+exports.view_requests = function(req, res){
+    Request.find({signed:true})
+    .populate('product')
+    .populate('requester')
+    .populate('director')
+    .exec(function(err, requests){
+        let all_requests = [];
+        for(var i in requests){
+            if(requests[i].admin_registrar_verified == true || requests[i].admin_director_verified == true){
+                all_requests.push(requests[i])
+            }
+        }
+        res.render('inventory/view_requests', {layout:"layout/inventory", data:{all_requests:all_requests}})
+    })
+}
+
+
 exports.request_product_post = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
         res.redirect('/login')
@@ -616,6 +634,7 @@ exports.request_product_post = function(req, res){
     else if(req.session.hasOwnProperty("user_id")){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
         let decrypted_department = decrypt(req.session.role, req, res)
+        let store_id = req.body.store_id;
         // console.log(decrypted_department, decrypted_user_id, req.body.request_unit)
         User.findOne({_id:decrypted_user_id}, function(err, user){
            
@@ -653,8 +672,23 @@ exports.request_product_post = function(req, res){
                                                 console.log(err)
                                             }
                                             else {
-                                                let msg = `Requisition form has been sent to ${director_fullname}`
-                                                home_redirector(req, res, msg)
+                                                //hhh
+                                                Store.findOne({_id:store_id}, function(err, store_item){
+                                                    let previous_unit = store_item.unit;
+                                                    let current_unit = req.body.unit
+                                                    let final_unit = parseInt(previous_unit-current_unit)
+                                                    Store.findByIdAndUpdate(store_id, {unit:final_unit})
+                                                    .exec(function(err, updated_staff){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            let msg = `Requisition form has been sent to ${director_fullname}`
+                                                            home_redirector(req, res, msg)
+                                                        }
+                                                    })
+                                                })
+                                                
+                                                
                                             }
                                         })                        
                                         console.log(user_director[0])
