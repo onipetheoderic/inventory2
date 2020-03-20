@@ -37,6 +37,9 @@ router.route('/create_subcategory')
 router.route('/product_options')
     .get(InventoryController.product_options)
 
+router.route('/verify_request')
+    .post(InventoryController.verify_request)
+
 router.route('/add_to_existing')
     .get(InventoryController.add_to_existing)
     .post(InventoryController.add_to_existing_post)

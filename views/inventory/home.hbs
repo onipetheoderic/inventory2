@@ -2,9 +2,29 @@
 
                     <!-- Page Header -->
                     <div class="dt-page__header">
-                        <h1 class="dt-page__title">Dashboard - Listing</h1>
+                        <h1 class="dt-page__title">{{user.firstName}} {{user.lastName}}</h1>
                     </div>
                     <!-- /page header -->
+{{!-- product_title, product_description, requester_name, requester_position, 
+requester_logo --}}
+{{#each requests}}
+<div class="row">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Product Requisition Alert!</h4>
+        <p>You need to enter Your Email and Passcode to Verify the Requisition for:</p>
+        <p>Product Name: <span style="color:black; text-transform:uppercase">{{{product_title this}}}</span></p>
+        <p>Product Description: <span style="color:black; text-transform:uppercase">{{{product_description this}}}</span></p>
+        <p>from: <span style="color:black; text-transform:uppercase">{{{requester_name this}}}</span></p>
+        <p>positon: <span style="color:black; text-transform:uppercase">{{{requester_position this}}}</span></p>
+        <p>Unit Requested For: <span style="color:black; text-transform:uppercase">{{this.unit}}</span></p>
+        <form action="/verify_request" method="POST">
+            <input type="hidden" name="request_id" value="{{this.id}}"/>
+            <input type="text" required name="passcode" placeholder="Enter Passcode to Verify" />
+            <button type="submit">Verify</button>
+        </form>
+    </div>
+</div>
+{{/each}}
 
                     <!-- Grid -->
                     <div class="row">

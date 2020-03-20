@@ -137,7 +137,75 @@ hbs.registerHelper('jbid', function (cont){
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].name.trim())
 })
+/*
+requester:
+   [ { department: [Array],
+       _id: 5e70f3dbbb53d21268bd1d63,
+       email: 'siteengineer@gmail.com',
+       firstName: 'theoderic',
+       logo: '1584460763898testi-s1.jpg',
+       passcode: '123456',
+       position: 'store Manager',
+       createdAt: 2020-03-17T15:59:23.904Z,
+       updatedAt: 2020-03-17T15:59:23.904Z,
+       __v: 0 } ],
+  signed: false,
+  product:
+   [ { parent_id: '',
+       category: [Array],
+       sub_category: [],
+       admin_verified: true,
+       store_verified: true,
+       audit_verified: true,
+       user_verified: true,
+       stored: true,
+       user: [],
+       _id: 5e7273cb71c9542cb03b3bce,
+       user_department_verified: false,
+       name: 'Chairs',
+       description: 'The best chair in the world',
+       logo: '1584559051638download.jpg',
+       price: 20000,
+       createdAt: 2020-03-18T19:17:31.652Z,
+       updatedAt: 2020-03-19T15:49:27.321Z,
+       __v: 0 } ],
+  _id: 5e74e4efecb2e40ac4a4eee3,
+  unit: 11,
+  srsiv_no: 1001,
+  createdAt: 2020-03-20T15:44:47.294Z,
+  updatedAt: 2020-03-20T15:44:47.294Z,
+  __v: 0 }
+*/ 
+//product_title, product_description, requester_name, requester_position, requester_logo
+hbs.registerHelper('product_title', function (cont){
+  console.log("hbs", cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.product[0].name;
+})
 
+hbs.registerHelper('product_description', function (cont){
+  console.log("hbs", cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.product[0].description;
+})
+
+hbs.registerHelper('requester_name', function (cont){
+  console.log("hbs", cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.requester[0].firstName;
+})
+
+hbs.registerHelper('requester_position', function (cont){
+  console.log("hbs", cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.requester[0].position;
+})
+
+hbs.registerHelper('requester_logo', function (cont){
+  console.log("hbs", cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.requester[0].logo;
+})
 
 hbs.registerHelper('jbi', function (cont){
   let content = JSON.parse(JSON.stringify(cont))

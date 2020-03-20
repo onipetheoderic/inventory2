@@ -23,18 +23,111 @@ const filePlacerAndNamer = (req, res, the_file) => {
    });
     return file_name
 }
-
+/*
+email: 'store_director@gmail.com',
+firstName: 'store_director',
+logo: '1584679118784elec.jpg',
+passcode: '123456',
+*/ 
 exports.home = function(req, res){
-    Department.find({}, function(err, department){
-        Category.find({}, function(err, category){
-            
-            User.find({}, function(err, users){
-                Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                    res.render('inventory/home', {layout: "layout/inventory", product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+    let decrypted_user_id = decrypt(req.session.user_id, req, res)
+    let decrypted_user_role = decrypt(req.session.role, req, res)
+    
+        if(decrypted_user_role=="director" || decrypted_user_role=="registrar"){
+            console.log("its the directore")
+            User.findOne({_id:decrypted_user_id}, function(err, user){
+                Department.findOne({_id:user.department}, function(err, department_user){
+                    if(department_user.ref_name!="admin_department"){
+                        Request.find({director:decrypted_user_id, signed:false})
+                        .populate("director")
+                        .populate("requester")
+                        .populate("product")
+                        .exec(function(err, requests){
+                            console.log("this are the requests",requests)
+                                
+                            Department.find({}, function(err, department){
+                                Category.find({}, function(err, category){                
+                                    User.find({}, function(err, users){
+                                        User.findOne({_id:decrypted_user_id}, function(err, user){                           
+                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                            res.render('inventory/home', {layout: "layout/inventory", requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+                                        })
+                                    })
+                                    });
+                                })
+                            })
+                        })
+                    }
+                    else if(department_user.ref_name=="admin_department"){
+                        if(user.position=="director"){
+                            Request.find({admin_director:decrypted_user_id, signed:true, admin_director_verified:false})
+                            .populate("director")
+                            .populate("requester")
+                            .populate("product")
+                            .exec(function(err, requests){
+                                console.log("this are the requests",requests)
+                                    
+                                Department.find({}, function(err, department){
+                                    Category.find({}, function(err, category){                
+                                        User.find({}, function(err, users){
+                                            User.findOne({_id:decrypted_user_id}, function(err, user){                           
+                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                res.render('inventory/home', {layout: "layout/inventory", requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+                                            })
+                                        })
+                                        });
+                                    })
+                                })
+                            })
+                        }
+                        else if(user.position=="registrar"){
+                            Request.find({admin_registrar:decrypted_user_id, signed:true, admin_director_verified:false, admin_registrar_verified:false})
+                            .populate("director")
+                            .populate("requester")
+                            .populate("product")
+                            .exec(function(err, requests){
+                                console.log("this are the requests",requests)
+                                    
+                                Department.find({}, function(err, department){
+                                    Category.find({}, function(err, category){                
+                                        User.find({}, function(err, users){
+                                            User.findOne({_id:decrypted_user_id}, function(err, user){                           
+                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                res.render('inventory/home', {layout: "layout/inventory", requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+                                            })
+                                        })
+                                        });
+                                    })
+                                })
+                            })
+                        }
+                       
+                    }
                 })
-            });
-        })
-    })
+            
+            })
+        }
+        
+        
+        else {
+            Department.find({}, function(err, department){
+                Category.find({}, function(err, category){                
+                    User.find({}, function(err, users){
+                        
+                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                            res.render('inventory/home', {layout: "layout/inventory", product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+                        })
+                    });
+                })
+            })
+        }
+        
+    }
 }
 
 
@@ -457,6 +550,65 @@ exports.request_product = function(req, res){
         })
     }
 }
+
+exports.verify_request = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        let request_id = req.body.request_id;
+        let passcode= req.body.passcode;
+        User.findOne({_id:decrypted_user_id, passcode:passcode})
+        .exec(function(err, user){
+            if(user!=null){
+                console.log("this user is legit")
+                Department.findOne({_id: user.department})
+                .exec(function(err, department){  
+                    if(department.ref_name!="admin_department"){
+                        Request.findByIdAndUpdate(request_id, {signed:true})
+                        .exec(function(err, updated_store){
+                            if(err){
+                                console.log(err)
+                            }else {
+                                res.redirect(`/`)
+                            }
+                        })
+                    }
+                    else {
+                        if(user.position=="registrar"){
+                            Request.findByIdAndUpdate(request_id, {admin_registrar_verified:true})
+                            .exec(function(err, updated_store){
+                                if(err){
+                                    console.log(err)
+                                }else {
+                                    res.redirect(`/`)
+                                }
+                            })
+                        }
+                        else if(user.position=="director"){
+                            Request.findByIdAndUpdate(request_id, {admin_director_verified:true})
+                            .exec(function(err, updated_store){
+                                if(err){
+                                    console.log(err)
+                                }else {
+                                    res.redirect(`/`)
+                                }
+                            })
+                        }
+                    }      
+                   
+                })
+
+            }
+            else{
+                console.log("the user is not legit")
+            }
+        });
+
+    }
+}
+
 exports.request_product_post = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
         res.redirect('/login')
@@ -468,30 +620,49 @@ exports.request_product_post = function(req, res){
         User.findOne({_id:decrypted_user_id}, function(err, user){
            
                 User.find({position:"director", department:user.department}, function(err, user_director){
-                    let srsiv_no = rn(options)
-                    let unit = req.body.request_unit;
-                    let product_id = req.body.product_id;
-                    let director_id = user_director.id
-                    let director_fullname = user_director.firstName + " " + user_director.lastName
-                    
-                    let request = new Request();
-                        request.director = director_id;
-                        request.requester = decrypted_user_id;
-                        request.product = product_id;
-                        request.unit = unit;
-                        request.srsiv_no = srsiv_no;
-                        request.save(function(err, request){
-                            if(err){
-                                console.log(err)
-                            }
-                            else {
-                                let msg = `Requisition form has been sent to ${director_fullname}`
-                                home_redirector(req, res, msg)
+                   Department.findOne({ref_name : "admin_department"}, function(err, admin_department){
+                       if(err){
+                           console.log(err)
+                       }
+                       else{
+                        //    After the confirmation Requisition will be sent to the Registrar/Director Admin for Approval
+                           let admin_department_id = admin_department.id
+                           console.log("req,", admin_department_id)
+                           //we get the director
+                            User.findOne({department:admin_department_id, position:"director"})
+                            .exec(function(err, user_admin_director){
+                                User.findOne({department:admin_department_id, position: "registrar"})
+                                .exec(function(err, user_admin_registrar){
+                                    console.log("director",user_admin_director)
+                                    console.log("registrar",user_admin_registrar)
+                                    console.log(user_director[0])
+                                    let srsiv_no = rn(options)
+                                    let unit = req.body.request_unit;
+                                    let product_id = req.body.product_id;
+                                    let director_fullname = user_director[0].firstName + " " + user_director[0].lastName
+                                    let request = new Request();
+                                        request.director = user_director[0].id;
+                                        request.requester = decrypted_user_id;
+                                        request.admin_director = user_admin_director.id;
+                                        request.admin_registrar = user_admin_registrar.id;
+                                        request.product = product_id;
+                                        request.unit = unit;
+                                        request.srsiv_no = srsiv_no;
+                                        request.save(function(err, request){
+                                            if(err){
+                                                console.log(err)
+                                            }
+                                            else {
+                                                let msg = `Requisition form has been sent to ${director_fullname}`
+                                                home_redirector(req, res, msg)
+                                            }
+                                        })                        
+                                        console.log(user_director[0])
+                                    })
+                                })
                             }
                         })
-        
-                    console.log(user_director)
-                })
+                    })
             // })
         });
         
