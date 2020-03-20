@@ -371,6 +371,17 @@ function user_redirector(req, res, msg){
 })
 }
 
+function home_redirector(req, res, msg){
+    Department.find({}, function(err, department){
+        Category.find({}, function(err, category){
+            User.find({}, function(err, users){    
+        res.render('inventory/home', {layout: "layout/inventory", message:{error:msg}, users:users, category:category, department:department, data:{department:department}})
+    })
+})
+})
+}
+
+
 exports.create_user_post = function(req, res){
     User.findOne({email:req.body.email}, function(err, user){
         console.log(user);
@@ -460,8 +471,24 @@ exports.request_product_post = function(req, res){
                     let srsiv_no = rn(options)
                     let unit = req.body.request_unit;
                     let product_id = req.body.product_id;
-                    let requester_id = decrypted_user_id;
                     let director_id = user_director.id
+                    let director_fullname = user_director.firstName + " " + user_director.lastName
+                    
+                    let request = new Request();
+                        request.director = director_id;
+                        request.requester = decrypted_user_id;
+                        request.product = product_id;
+                        request.unit = unit;
+                        request.srsiv_no = srsiv_no;
+                        request.save(function(err, request){
+                            if(err){
+                                console.log(err)
+                            }
+                            else {
+                                let msg = `Requisition form has been sent to ${director_fullname}`
+                                home_redirector(req, res, msg)
+                            }
+                        })
         
                     console.log(user_director)
                 })
