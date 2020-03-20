@@ -1,9 +1,18 @@
 import Department from '../../models/Department/department';
 import User from '../../models/User/user';
 import Category from '../../models/Category/category';
+import {encrypt, decrypt, BASEURL} from '../../utility/encryptor'
 import Product from '../../models/Product/product';
 import Subcategory from '../../models/Subcategory/subcategory';
-import Store from '../../models/Store/store'
+import Store from '../../models/Store/store';
+import Request from '../../models/Request/request';
+
+var rn = require('random-number');
+var options = {
+  min:  1000
+, integer: true
+}
+
 //sub_category
 
 const filePlacerAndNamer = (req, res, the_file) => {
@@ -425,12 +434,42 @@ exports.add_to_existing = function(req, res) {
 }
 
 exports.request_product = function(req, res){
-    Store.find({}).populate('product')
-    .exec(function(err, products){
-        res.render('inventory/request_a_product', {layout:"layout/inventory", products:products})
-    })
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+    let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        Store.find({}).populate('product')
+        .exec(function(err, products){
+            res.render('inventory/request_a_product', {layout:"layout/inventory", products:products})
+        })
+    }
 }
-
+exports.request_product_post = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        let decrypted_department = decrypt(req.session.role, req, res)
+        // console.log(decrypted_department, decrypted_user_id, req.body.request_unit)
+        User.findOne({_id:decrypted_user_id}, function(err, user){
+           
+                User.find({position:"director", department:user.department}, function(err, user_director){
+                    let srsiv_no = rn(options)
+                    let unit = req.body.request_unit;
+                    let product_id = req.body.product_id;
+                    let requester_id = decrypted_user_id;
+                    let director_id = user_director.id
+        
+                    console.log(user_director)
+                })
+            // })
+        });
+        
+    }
+}
 
 exports.add_to_existing_post = function(req, res){
     //here we are dealing with product from the store
@@ -473,8 +512,86 @@ exports.add_to_existing_post = function(req, res){
     // });
 }
 
+exports.login = function(req, res){
+    res.render('inventory/login', {layout:false})
+}
+
+exports.register_super = function(req, res){
+    console.log("this is the route")
+    res.render('inventory/register', {layout:false})
+}
+exports.logout = function(req, res){
+    req.session.destroy();  
+    res.redirect('/login')     
+}
+
+exports.register_super_post = function(req, res) {
+    User.findOne({email: req.body.email}, function(err, vals){
+        if (vals==null) { 
+            console.log("username not taken")
+            let user = new User();
+            user.email = req.body.email;
+            user.firstName = req.body.first_name;
+            user.lastName = req.body.last_name;
+            user.passcode = req.body.password;
+            user.userType = "superAdmin"; 
+            user.position = "superAdmin";
+            user.save(function(err, auth_details){       
+            if(err){
+                res.render('inventory/register', {layout: false, message:{error: "Error occured during user registration"} })
+                return;
+            } else {                    
+                res.redirect('/login')
+            }
+        });
+        }
+        else if(vals !=null){            
+            // console.log("username taken")
+            res.render('inventory/register', {layout: false, message:{error: "Email has already been taken"} })
+        }
+     })   
+
+}
+
+
+
+exports.login_post = function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+    User.findOne({email: email}, function(err, user) {
+       if(user == null)
+        {
+           res.render('inventory/login', {layout: false, message:{error: "Email not registered"}})
+        }
+        else{
+            let user_id = user.id
+            if (user.passcode == password){
+                console.log('User connected');
+                console.log(user.position)
+                  let encId = encrypt(user_id)
+                  let encRole = encrypt(user.position)
+                  req.session.user_id = encId;
+                  req.session.role = encRole;
+                  res.redirect("/")
+             
+            }else{
+                  res.render('inventory/login', {layout: false, message:{error: "invalid Phone Number or password"}})
+            }
+        }
+
+    })
+}
+
+
+
 
 exports.create_product_post = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+    let decrypted_user_id = decrypt(req.session.user_id, req, res)
     let incoming_file_name = filePlacerAndNamer(req, res, req.files.logo);
     console.log(req.body)
     let product = new Product();
@@ -496,6 +613,7 @@ exports.create_product_post = function(req, res){
         }
     })
 }
+}
 
 exports.create_subcategory = function(req, res){
 console.log(req.body)
@@ -513,9 +631,8 @@ console.log(req.body)
     })
 }
 
+// this is the outgoing aspect
 
-
-
-
-
- 
+exports.send_authentication_department = function(req, res){
+    // we will need requester_id, product_id, quantity
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from drift.g-axon.work/html-bs4/default/page-login.html by DPX Digital Network /3.x [XR&CO'2014], Thu, 16 Jan 2020 11:30:51 GMT -->
+<!-- Added by DPX Digital Network  --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by DPX Digital Network  -->
+<head>
+<!-- Meta tags -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Drift - A fully responsive, HTML5 based admin template">
+<meta name="keywords" content="Responsive, HTML5, admin theme, business, professional, jQuery, web design, CSS3, sass">
+<!-- /meta tags -->
+<title>Inventory Mgt System</title>
+
+<!-- Site favicon -->
+<link rel="shortcut icon" href="/eventory/assets/images/favicon.ico" type="image/x-icon">
+<!-- /site favicon -->
+
+<!-- Font Icon Styles -->
+<link rel="stylesheet" href="/eventory/plugins/flag-icon-css/css/flag-icon.min.css">
+<link rel="stylesheet" href="/eventory/vendors/gaxon-icon/styles.css">
+<!-- /font icon Styles -->
+
+<!-- Perfect Scrollbar stylesheet -->
+<link rel="stylesheet" href="/eventory/plugins/perfect-scrollbar/css/perfect-scrollbar.css">
+<!-- /perfect scrollbar stylesheet -->
+
+<!-- Load Styles -->    <link rel="stylesheet" href="/eventory/assets/css/semidark-style-1.min.css">
+<!-- /load styles -->
+
+</head>
+<body class="dt-sidebar--fixed dt-header--fixed">
+ <script src="/eventory/plugins/jquery/dist/jquery.min.js"></script>
+<script>
+
+  $(document).ready(function(){
+			setTimeout(function(){
+    	$('.notice_wrapper').slideUp('slow', function(){
+        	$(this).remove();
+          })
+        }, 2000);
+	
+});
+</script>
+   
+	
+
+<style type="text/css">
+
+.alert {
+    padding: 40px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+  
+.alert-success {
+color: #FFF;
+background-color: #19B698;
+border-color: #0FAC8E;
+}
+  
+.alert-info {
+color: #FFF;
+background-color: #4AA3DF;
+border-color: #4099D5;
+}
+.notice_wrapper {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    background: rgba(135,216,211,0.5);
+   
+}
+.notice_wrapper_error {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    background: rgba(102, 4, 4, 0.5);
+   
+}
+.alert, .notice {
+    padding-top: 1.7rem;
+    text-align: center;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.alert-danger {
+    color: #FFF;
+    background-color: #EA6153;
+    border-color: #E05749;
+}
+</style>
+
+<!-- Loader -->
+<div class="dt-loader-container">
+<div class="dt-loader">
+<svg class="circular" viewBox="25 25 50 50">
+    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+</svg>
+</div>
+</div>
+<!-- /loader -->
+<!-- Root -->
+<div class="dt-root">
+<div class="dt-root__inner">
+<div class="notice_wrapper">		  	
+<p class="alert">{{{message.error}}}{{{message.success}}}</p>				
+</div>
+    <!-- Login Container -->
+    <div class="dt-login--container">
+
+        <!-- Login Content -->
+        <div class="dt-login__content-wrapper">
+
+            <!-- Login Background Section -->
+            <div class="dt-login__bg-section">
+
+                <div class="dt-login__bg-content">
+                    <!-- Login Title -->
+                    <h1 class="dt-login__title">Login</h1>
+                    <!-- /login title -->
+
+                    <p class="f-16">Sign in and explore in-built apps of Drift.</p>
+                </div>
+
+
+                <!-- Brand logo -->
+                <div class="dt-login__logo">
+                    <a class="dt-brand__logo-link" href="index-2.html">
+                        
+                    </a>
+                </div>
+                <!-- /brand logo -->
+
+            </div>
+            <!-- /login background section -->
+
+            <!-- Login Content Section -->
+            <div class="dt-login__content">
+
+                <!-- Login Content Inner -->
+                <div class="dt-login__content-inner">
+
+                    <!-- Form -->
+                    <form action="/login" method="POST">
+
+                        <!-- Form Group -->
+                        <div class="form-group">
+                            <label class="sr-only" for="email-1">Email address</label>
+                            <input type="email" name="email" class="form-control" id="email-1" aria-describedby="email-1"
+                                    placeholder="Enter email">
+                        </div>
+                        <!-- /form group -->
+
+                        <!-- Form Group -->
+                        <div class="form-group">
+                            <label class="sr-only" for="password-1">Password</label>
+                            <input type="password" name="password" class="form-control" id="password-1" placeholder="Password">
+                        </div>
+                        <!-- /form group -->
+
+                        <!-- Form Group -->
+                        
+                        <!-- /form group -->
+
+                        <!-- Form Group -->
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary text-uppercase">Login</button>
+                            
+                        </div>
+                        <!-- /form group -->
+
+            
+                        <!-- /form group -->
+
+
+                    </form>
+                    <!-- /form -->
+
+                </div>
+                <!-- /login content inner -->
+
+                <!-- Login Content Footer -->
+                <div class="dt-login__content-footer">
+                    <a href="/">Can’t access your account?</a>
+                </div>
+                <!-- /login content footer -->
+
+            </div>
+            <!-- /login content section -->
+
+        </div>
+        <!-- /login content -->
+
+    </div>
+    <!-- /login container -->
+
+</div>
+</div>
+<!-- /root -->
+
+<!-- Optional JavaScript -->
+<script src="/eventory/plugins/jquery/dist/jquery.min.js"></script>
+<script src="/eventory/plugins/moment/moment.js"></script>
+<script src="/eventory/plugins/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Perfect Scrollbar jQuery -->
+<script src="/eventory/plugins/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+<!-- /perfect scrollbar jQuery -->
+
+<!-- masonry script -->
+<script src="/eventory/plugins/masonry-layout/dist/masonry.pkgd.min.js"></script>
+<script src="/eventory/plugins/sweetalert2/dist/sweetalert2.js"></script>
+<script src="/eventory/assets/js/functions.js"></script>
+<script src="/eventory/assets/js/customizer.js"></script><!-- Custom JavaScript -->
+<script src="/eventory/assets/js/script.js"></script>
+
+</body>
+
+<!-- Mirrored from drift.g-axon.work/html-bs4/default/page-login.html by DPX Digital Network /3.x [XR&CO'2014], Thu, 16 Jan 2020 11:30:51 GMT -->
+</html>

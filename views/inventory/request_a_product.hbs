@@ -39,23 +39,38 @@
                             <tr>
                                 <th>Name</th>
                                 <th>description</th>
-                                <th>Admin Verified</th>
-                                <th>Store Verified</th>
-                                <th>Audit Verified</th>
-                                <th>User Verified</th>
-                                <th>Continue Verification</th>
+                                <th>Units Available</th>
+                                <th>Request for this product</th>
                             </tr>
                             </thead>
                             <tbody>
                             {{#each products}}
                             <tr class="gradeX">
-                                <td>{{this.name}}</td>
-                                <td>{{this.description}}</td>
-                                <td>{{this.admin_verified}}</td>
-                                <td>{{this.store_verified}}</td>
-                                <td>{{this.audit_verified}}</td>
-                                <td>{{this.user_verified}}</td>
-                                <td><a href="/confirmation/{{this._id}}">Continue</a></td>
+                                <td>{{{jb this}}}</td>
+                                <td>{{{jbd this}}}</td>
+                                <td>{{this.unit}}</td>                               
+                                <td data-toggle="modal" data-target="#{{{jbid this}}}">Request for this product</td>
+                                 <div class="modal" id="{{{jbid this}}}" role="dialog" style="z-index: 100000;">
+                                    <div class="modal-dialog modals-default">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <form method="POST" action="/request_product">
+                                              <div class="modal-body">
+                                                  <h2>Enter quantity: {{this.name}}</h2>
+                                                  <p><input type="number" name="request_unit" placeholder="{{this.unit}}" min="1" max="{{this.unit}}" class="form-control"></p>
+                                                 
+                                                    <input type="hidden" name="product_id" value="{{{jbi this}}}">
+                                                                                 </div>
+                                              <div class="modal-footer">
+                                                  <button type="submit" class="btn btn-primary">Make Request</button>
+                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                              </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </tr>
                             {{/each}}
                             
@@ -64,11 +79,8 @@
                             <tr>
                                 <th>Name</th>
                                 <th>description</th>
-                                <th>Admin Verified</th>
-                                <th>Store Verified</th>
-                                <th>Audit Verified</th>
-                                <th>User Verified</th>
-                                    <th>Continue Verification</th>
+                                <th>Units Available</th>
+                                <th>Request for this product</th>
                             </tr>
                             </tfoot>
                         </table>

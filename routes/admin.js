@@ -12,6 +12,17 @@ const router = express.Router();
 router.route('/')
     .get(InventoryController.home)
 
+router.route('/login')
+    .get(InventoryController.login)
+    .post(InventoryController.login_post)
+
+router.route('/logout')
+    .get(InventoryController.logout)
+
+router.route('/register_super')
+    .get(InventoryController.register_super)
+    .post(InventoryController.register_super_post)
+
 router.route('/create_department')
     .get(InventoryController.create_department)
     .post(InventoryController.create_department_post)
@@ -32,6 +43,7 @@ router.route('/add_to_existing')
 
 router.route('/request_product')
     .get(InventoryController.request_product)
+    .post(InventoryController.request_product_post)
 
 router.route('/incomplete_authentication')
     .get(InventoryController.incomplete_authentication)
