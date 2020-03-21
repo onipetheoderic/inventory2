@@ -288,34 +288,66 @@ border-color: #4099D5;
             <!-- /menu item -->
 
             <!-- Menu Header -->
-            <li class="dt-side-nav__item dt-side-nav__header">
-                <span class="dt-side-nav__text">Department Listing</span>
-            </li>
-            <!-- /menu header -->
 
-            <!-- Menu Item -->
-              {{#each department}}
-                    <li class="dt-side-nav__item">
-                <a href="" class="dt-side-nav__link" title="Task Manager">
-                    <i class="icon icon-task-manager icon-fw icon-lg"></i>
-                    <span class="dt-side-nav__text">{{this.name}}</span>
+            <li class="dt-side-nav__item">
+                <a href="javascript:void(0)" class="dt-side-nav__link dt-side-nav__arrow" title="Widgets">
+                    <i class="icon icon-widgets icon-fw icon-lg"></i>
+                    <span class="dt-side-nav__text">Department Listing</span>
                 </a>
-            </li>
+
+                <!-- Sub-menu -->
+                <ul class="dt-side-nav__sub-menu">
+                  {{#each department}}
+                    <li class="dt-side-nav__item">
+                        <a href="widget.html" class="dt-side-nav__link" title="Classic">
+                            <i class="icon icon-components icon-fw icon-lg"></i>
+                            <span class="dt-side-nav__text">{{this.name}}</span>
+                        </a>
+                    </li>
                     {{/each}}
+
+
+                   
+                </ul>
+                <!-- /sub-menu -->
+
+            </li>
+            <li class="dt-side-nav__item">
+                <a href="javascript:void(0)" class="dt-side-nav__link dt-side-nav__arrow" title="Widgets">
+                    <i class="icon icon-widgets icon-fw icon-lg"></i>
+                    <span class="dt-side-nav__text">Category Listing</span>
+                </a>
+
+                <!-- Sub-menu -->
+                <ul class="dt-side-nav__sub-menu">
+                  {{#each category}}
+                    <li class="dt-side-nav__item">
+                        <li class="dt-side-nav__link" title="Classic">
+                            <i class="icon icon-components icon-fw icon-lg"></i>
+                            <span class="dt-side-nav__text">{{this.name}}</span>
+                        </li>
+                    </li>
+                    {{/each}}
+
+
+                   
+                </ul>
+                <!-- /sub-menu -->
+
+            </li>
+           
+           
            <style>
              .modal-backdrop{
                z-index:1!important;
              }
            </style>
          
-            <!-- /menu item -->
 
             <!-- Menu Header -->
-            <li class="dt-side-nav__item dt-side-nav__header">
-                <span class="dt-side-nav__text">Products Category Listing</span>
-            </li>
-            <!-- /menu header -->
- {{#each category}}
+
+            {{!--      {{#each category}}
+      
             <li class="dt-side-nav__item">
                 
                 <p class="dt-side-nav__link" data-toggle="modal" data-target="#{{this.ref_name}}">
@@ -334,7 +366,7 @@ border-color: #4099D5;
                                                   <p><input type="text" name="sub_category_name" placeholder="Enter Subcategory Name" class="form-control"></p>
                                                   <p><textarea class="form-control" name="sub_category_description" id="text-area-1" rows="3"
                                     placeholder="Enter Subcategory Description"></textarea></p>
-                                    <input type="hidden" name="parent_id" value="{{this.id}}">
+                                    <input type="hidden" name="parent_id" value="{{this._id}}">
                                                                                  </div>
                                               <div class="modal-footer">
                                                   <button type="submit" class="btn btn-primary">Save changes</button>
@@ -350,12 +382,10 @@ border-color: #4099D5;
            
                 <!-- /sub-menu -->
             </li>
-             {{/each}}
-            <!-- /menu item -->
-
-                <!-- /sub-menu -->
-                       <!-- /menu item -->
-
+      {{/each}}  --}}
+ 
+              
+             </li>
         </ul>
         <!-- /sidebar navigation -->
 

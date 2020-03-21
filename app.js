@@ -139,6 +139,7 @@ hbs.registerHelper('jbid', function (cont){
 })
 
 
+
 hbs.registerHelper('product_title', function (cont){
   console.log("hbs", cont)
   let content = JSON.parse(JSON.stringify(cont))

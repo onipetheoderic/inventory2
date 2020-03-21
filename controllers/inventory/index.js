@@ -118,15 +118,34 @@ exports.home = function(req, res){
         
         
         else {
+            console.log("this is the normal user")
             Department.find({}, function(err, department){
-                Category.find({}, function(err, category){                
+                Category.find({}, function(err, category){ 
+                    Subcategory.find({}, function(err, sub_category){ 
+                        console.log(sub_category)
+                        let categories = []                   
+                        for(var i in category){
+                            let sub_categories = [];
+                            for(var k in sub_category){                               
+                                if(category[i]._id == sub_category[k].parent_id){
+                                    console.log("true")                                    
+                                    sub_categories.push({
+                                        name:sub_category[k].name
+                                    })
+                                }
+                                
+                            }
+                            categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                        }
+                        console.log(categories)
                     User.find({}, function(err, users){
                         
                         Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                            res.render('inventory/home', {layout: "layout/inventory", product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+                            res.render('inventory/home', {layout: "layout/inventory", product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
                         })
                     });
                 })
+            })
             })
         }
         
