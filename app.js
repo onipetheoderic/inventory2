@@ -134,6 +134,7 @@ hbs.registerHelper('jbd', function (cont){
 })
 
 hbs.registerHelper('jbid', function (cont){
+  console.log(cont)
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].name.trim())
 })

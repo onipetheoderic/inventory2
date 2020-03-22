@@ -30,6 +30,7 @@ requester_logo --}}
                     <div class="row">
 
                         <!-- Grid Item -->
+                        {{#if superAdmin}}
                         <div class="col-xl-3 col-sm-6 col-12">
 
                             <!-- Card -->
@@ -50,7 +51,7 @@ requester_logo --}}
                             <!-- /card -->
 
                         </div>
-
+                      
                         
                         <!-- /grid item -->
 
@@ -99,7 +100,7 @@ requester_logo --}}
 
                         </div>
                         <!-- /grid item -->
-
+{{/if}}
                         <!-- Grid Item -->
                         <div class="col-xl-3 col-sm-6 col-12">
 
@@ -122,26 +123,7 @@ requester_logo --}}
 
                         </div>
 
-                           <div class="col-xl-3 col-sm-6 col-12">
-
-                            <!-- Card -->
-                            <div class="dt-card">
-
-                                <!-- Card Body -->
-                                <div class="dt-card__body px-5 py-4">
-                                    <a href="/view_all_department"></a><h6 class="text-body text-uppercase mb-2">View Departments</h6>
-                                    <div class="d-flex align-items-baseline mb-4">
-                                        <i class="icon icon-eye" style="font-size:40px;"></i>
-                                    </div>
-
-                                    
-                                </div>
-                                <!-- /bard body -->
-
-                            </div>
-                            <!-- /card -->
-
-                        </div>
+                           
 
                         <div class="col-xl-3 col-sm-6 col-12">
 
@@ -169,7 +151,7 @@ requester_logo --}}
 
                                 <!-- Card Body -->
                                 <div class="dt-card__body px-5 py-4">
-                                    <a href="/view_all_products"><h6 class="text-body text-uppercase mb-2">View All Products</h6></a>
+                                    <a href="/view_all_product"><h6 class="text-body text-uppercase mb-2">View All Products</h6></a>
                                     <div class="d-flex align-items-baseline mb-4">
                                          <i class="icon icon-mywallet" style="font-size:40px;"></i>
                                     </div>
@@ -235,7 +217,7 @@ requester_logo --}}
                             </div>
                             <!-- /card -->
                         </div>
-                    
+                    {{#if superAdmin}}
                         <div class="col-xl-3 col-sm-6 col-12">
 
                             <!-- Card -->
@@ -256,5 +238,6 @@ requester_logo --}}
 
 
                     </div>
+                    {{/if}}
                     <!-- /grid -->
 </div>
