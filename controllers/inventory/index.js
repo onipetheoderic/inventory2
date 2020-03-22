@@ -889,21 +889,169 @@ router.route('/view_all_product')
     .get(InventoryController.view_all_product)
 */ 
 exports.view_all_category = function(req, res){
-    Category.find({}).exec(function(err, category){
-        res.render('inventory/view_all_category', {layout:"layout/inventory", category:category})
-    });
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        Category.find({}).exec(function(err, category){
+            res.render('inventory/view_all_category', {layout:"layout/inventory", category:category})
+        });
+    }
 }
 
 exports.view_all_department = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
     Department.find({}).exec(function(err, department){
         res.render('inventory/view_all_department', {layout:"layout/inventory", department:department})
     });
 }
+}
 
 exports.view_all_product = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
     Product.find({}).exec(function(err, product){
         res.render('inventory/view_all_product', {layout:"layout/inventory", product:product})
     });
+}
+}
+
+exports.edit_product = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+    Product.findOne({_id:req.params.id}).exec(function(err, product){
+        res.render('inventory/edit_product', {layout:"layout/inventory", product:product})
+    })
+}
+}
+
+
+exports.delete_a_product_get = function(req, res) {
+    
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        Product.findByIdAndRemove({_id:req.params.id},
+            function(err, comps){
+                if(err){
+                    console.log(err)
+                }
+                else {
+                    res.redirect('/view_all_product')
+                }
+        })
+    }
+}
+
+
+exports.delete_a_department_get = function(req, res) {
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        Department.findByIdAndRemove({_id:req.params.id},
+            function(err, comps){
+                if(err){
+                    console.log(err)
+                }
+                else {
+                    res.redirect('/view_all_department')
+                }
+        })
+    }
+}
+
+
+exports.delete_a_category_get = function(req, res) {
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        Category.findByIdAndRemove({_id:req.params.id},
+            function(err, comps){
+                if(err){
+                    console.log(err)
+                }
+                else {
+                    res.redirect('/view_all_category')
+                }
+        })
+    }
+}
+
+
+exports.edit_category = function(req, res){
+    Category.findOne({_id:req.params.id}).exec(function(err, category){
+        res.render('inventory/edit_category', {layout:"layout/inventory", category:category})
+    })
+}
+
+exports.edit_department = function(req, res){
+    Department.findOne({_id:req.params.id}).exec(function(err, department){
+        res.render('inventory/edit_department', {layout:"layout/inventory", department:department})
+    })
+}
+
+exports.edit_product_post = function(req, res){
+   
+    Product.findByIdAndUpdate(req.params.id, {
+        name: req.body.name,
+        description: req.body.description,
+        category: req.body.category,
+        sub_category: req.body.sub_category,
+        price: req.body.price,
+        unit_price: req.body.price
+    })
+    .exec(function(err, updated_staff){
+        if(err){
+            console.log(err)
+        }else {
+            res.redirect(`/view_all_product`)
+        }
+    })
+}
+
+exports.edit_department_post = function(req, res){
+    Department.findByIdAndUpdate(req.params.id, {
+        name: req.body.name,
+        description: req.body.description,
+    })
+    .exec(function(err, updated_staff){
+        if(err){
+            console.log(err)
+        }else {
+            res.redirect(`/view_all_department`)
+        }
+    })
+}
+
+exports.edit_category_post = function(req, res){
+    Category.findByIdAndUpdate(req.params.id, {
+        name: req.body.name,
+        description: req.body.description,
+    })
+    .exec(function(err, updated_staff){
+        if(err){
+            console.log(err)
+        }else {
+            res.redirect(`/view_all_category`)
+        }
+    })
 }
 
 

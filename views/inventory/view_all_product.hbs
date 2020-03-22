@@ -44,6 +44,8 @@
                                                 <th>Store Verified</th>
                                                 <th>Audit Verified</th>
                                                 <th>User Verified</th>
+                                                <th>Edit</th>
+                                                <th>Delete</th>
                                                
                                             </tr>
                                             </thead>
@@ -57,6 +59,9 @@
                                                 <td>{{this.store_verified}}</td>
                                                 <td>{{this.audit_verified}}</td>
                                                 <td>{{this.user_verified}}</td>
+                                                <td><a href="/edit_product/{{this._id}}">Edit</a></td>
+                                              
+                                                <td><a href="/delete_a_product_get/{{this._id}}">Edit</a></td>
                                                 
                                             </tr>
                                             {{/each}}
@@ -65,12 +70,14 @@
                                             <tfoot>
                                             <tr>
                                                 <th>Name</th>
-                                                <th>description</th>
+                                                <th>Description</th>
+                                                <th>Price</th>
                                                 <th>Admin Verified</th>
                                                 <th>Store Verified</th>
                                                 <th>Audit Verified</th>
                                                 <th>User Verified</th>
-                                                 <th>Continue Verification</th>
+                                                 <th>Edit</th>
+                                                <th>Delete</th>
                                             </tr>
                                             </tfoot>
                                         </table>

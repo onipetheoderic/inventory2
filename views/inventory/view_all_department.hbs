@@ -39,7 +39,8 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>description</th>
-                                                
+                                                <th>Edit</th>
+                                                <th>Delete</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -47,7 +48,9 @@
                                             <tr class="gradeX">
                                                 <td>{{this.name}}</td>
                                                 <td>{{this.description}}</td>
-                                                
+                                                <td><a href="/edit_department/{{this._id}}">Edit</a></td>
+                                                <td><a href="/delete_a_department_get/{{this._id}}">Delete</a></td>
+
                                             </tr>
                                             {{/each}}
                                            
@@ -56,6 +59,8 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>description</th>
+                                                 <th>Edit</th>
+                                                <th>Delete</th>
                                                 
                                             </tr>
                                             </tfoot>

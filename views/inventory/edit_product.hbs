@@ -1,0 +1,74 @@
+
+<!-- Grid Item -->
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Edit Product</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+       
+        <div class="dt-card__body">
+
+               <form action="/edit_product/{{product.id}}" method="POST" enctype="multipart/form-data" >
+         
+                <div class="form-row">
+                    <div class="col-sm-4 mb-3">
+                        <label for="validationDefault01">Product name</label>
+                        <input type="text" name="name" class="form-control" id="validationDefault01"
+                               value="{{product.name}}" placeholder="Product Name"
+                                
+                                >
+                    </div>
+                
+                    <div class="col-sm-8 mb-6">
+                        <label for="validationDefault02">Description</label>
+                        <input type="text" name="description" class="form-control" id="validationDefault02"
+                                value="{{product.description}}"
+                              
+                                >
+                    </div>
+                 
+                    
+                </div>
+
+                <div class="form-row">
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationDefault03">Unit Price</label>
+                        <input type="number" name="price" class="form-control" id="validationDefault03"
+                                value="{{product.price}}">
+                    </div> 
+
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationDefault03">Company Name</label>
+                        <input type="text" name="company_name" class="form-control" id="validationDefault03"
+                                value="{{product.company_name}}">
+                    </div> 
+                                 
+
+                </div>
+
+                <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Edit Product</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

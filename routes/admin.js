@@ -84,7 +84,28 @@ router.route('/create_category')
 router.route('/create_user')
     .get(InventoryController.create_user)
     .post(InventoryController.create_user_post)
+
+router.route('/edit_category/:id')
+    .get(InventoryController.edit_category)
+    .post(InventoryController.edit_category_post)
+
+router.route('/edit_product/:id')
+    .get(InventoryController.edit_product)
+    .post(InventoryController.edit_product_post)
+
+router.route('/edit_department/:id')
+    .get(InventoryController.edit_department)
+    .post(InventoryController.edit_department_post)
     
+router.route('/delete_a_category_get/:id')
+    .get(InventoryController.delete_a_category_get)
+   
+router.route('/delete_a_department_get/:id')
+    .get(InventoryController.delete_a_department_get)
+
+router.route('/delete_a_product_get/:id')
+    .get(InventoryController.delete_a_product_get)
+
 router.route('/create_product')
     .get(InventoryController.create_product)
     .post(InventoryController.create_product_post)

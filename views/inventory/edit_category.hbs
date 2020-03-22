@@ -1,0 +1,78 @@
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Category Information</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+        <!-- /card header -->
+
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+            <!-- Form -->
+            <form action="/edit_category/{{category.id}}" method="POST" enctype="multipart/form-data" >
+                <!-- Form Row -->
+                <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Category Name</label>
+
+                    <div class="col-md-10 col-sm-9">
+                        <input value="{{category.name}}" type="text" name="name" class="form-control" id="normal-input-1">
+                    </div>
+                </div>
+                <!-- /form row -->
+
+                
+
+                
+                <!-- Separator -->
+                <hr class="border-dashed my-8">
+                <!-- /separator -->
+
+
+                <!-- Form Row -->
+                <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="text-area-1">Category Descriptions</label>
+
+                    <div class="col-md-10 col-sm-9">
+                        <input type="text" name="description" value="{{category.description}}" class="form-control" id="normal-input-1"
+                                >
+                    </div>
+                </div>
+                <!-- /form row -->
+ <hr class="border-dashed my-8">
+               
+                    <!-- Separator -->
+                <hr class="border-dashed my-8">
+                <!-- /separator -->
+
+
+                <!-- Form Row -->
+               
+                <!-- /form row -->
+ <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Edit Category</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>
