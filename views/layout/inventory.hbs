@@ -321,15 +321,15 @@ border-color: #4099D5;
             <li class="dt-side-nav__item">
                 <li class="dt-side-nav__item" style="margin-left:20px; margin-bottom:10px; color:#d1c4e9">
                         
-                            <i class="icon icon-components icon-fw icon-lg"></i>
-                            <span class="dt-side-nav__text" style="font-size: 11px;>{{this.name}}</span>
+                <i class="icon icon-components icon-fw icon-lg"></i>
+                <span class="dt-side-nav__text">{{this.name}}</span>
                        
                     </li>
               {{#each this.sub_category}}
                 <li class="dt-side-nav__item">
                   <li class="dt-side-nav__link" title="Classic">
                   <i class="icon icon-arrow-right icon-fw icon-lg"></i>
-                  <span class="dt-side-nav__text">{{this.name}}</span>
+                  <span class="dt-side-nav__text" style="font-size:11px;">{{this.name}}</span>
                   </li>
                 </li>
               {{/each}}
