@@ -312,6 +312,60 @@ border-color: #4099D5;
                 <!-- /sub-menu -->
 
             </li>
+            <li class="dt-side-nav__item dt-side-nav__header">
+                <span class="dt-side-nav__text">Category Listing</span>
+            </li>
+          {{#each category}}
+            <li class="dt-side-nav__item">
+                <a href="#" class="dt-side-nav__link" title="Task Manager">
+                    <i class="icon icon-task-manager icon-fw icon-lg"></i>
+                    <span class="dt-side-nav__text">{{this.name}}</span>
+                </a>
+              {{#each this.sub_category}}
+                <li class="dt-side-nav__item">
+                  <li class="dt-side-nav__link" title="Classic">
+                  <i class="icon icon-arrow-right icon-fw icon-lg"></i>
+                  <span class="dt-side-nav__text">{{this.name}}</span>
+                  </li>
+                </li>
+              {{/each}}
+              <p style="margin-left:40px;" data-toggle="modal" data-target="#{{this.ref_name}}">
+
+  <i class="icon icon-plus icon-fw icon-lg"></i>Add Sub-category
+  <div class="modal" id="{{this.ref_name}}" role="dialog" style="z-index: 100000;">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form method="POST" action="/create_subcategory">
+              <div class="modal-body">
+                  <h2>Create Sub-category for: {{this.name}}</h2>
+                  <p><input type="text" name="sub_category_name" placeholder="Enter Subcategory Name" class="form-control"></p>
+                  <p><textarea class="form-control" name="sub_category_description" id="text-area-1" rows="3"
+    placeholder="Enter Subcategory Description"></textarea></p>
+    <input type="hidden" name="parent_id" value="{{this._id}}">
+                                                  </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+        </div>
+    </div>
+</div>
+<li>      
+  </p>
+            </li>
+          {{/each}}  
+            
+            
+            
+            
+            
+            
+{{!--             
+            
             <li class="dt-side-nav__item">
                 <a href="javascript:void(0)" class="dt-side-nav__link dt-side-nav__arrow" title="Widgets">
                     <i class="icon icon-widgets icon-fw icon-lg"></i>
@@ -334,30 +388,38 @@ border-color: #4099D5;
                               </li>
                             {{/each}}
                         </li>
+<p style="margin-left:40px;" data-toggle="modal" data-target="#{{this.ref_name}}">
+
+  <i class="icon icon-plus icon-fw icon-lg"></i>Add Sub-category
+  <div class="modal" id="{{this.ref_name}}" role="dialog" style="z-index: 100000;">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form method="POST" action="/create_subcategory">
+              <div class="modal-body">
+                  <h2>Create Sub-category for: {{this.name}}</h2>
+                  <p><input type="text" name="sub_category_name" placeholder="Enter Subcategory Name" class="form-control"></p>
+                  <p><textarea class="form-control" name="sub_category_description" id="text-area-1" rows="3"
+    placeholder="Enter Subcategory Description"></textarea></p>
+    <input type="hidden" name="parent_id" value="{{this._id}}">
+                                                  </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+        </div>
+    </div>
+</div>
+<li>      
+  </p>
+    <li>
+            
                     </li>
-                    <p style="margin-left:40px;" data-toggle="modal" data-target="#{{this.ref_name}}"><i class="icon icon-plus icon-fw icon-lg"></i>Add Sub-category</p>
-                    <div class="modal" id="{{this.ref_name}}" role="dialog" style="z-index: 100000;">
-                                    <div class="modal-dialog modals-default">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <form method="POST" action="/create_subcategory">
-                                              <div class="modal-body">
-                                                  <h2>Create Sub-category for: {{this.name}}</h2>
-                                                  <p><input type="text" name="sub_category_name" placeholder="Enter Subcategory Name" class="form-control"></p>
-                                                  <p><textarea class="form-control" name="sub_category_description" id="text-area-1" rows="3"
-                                    placeholder="Enter Subcategory Description"></textarea></p>
-                                    <input type="hidden" name="parent_id" value="{{this._id}}">
-                                                                                 </div>
-                                              <div class="modal-footer">
-                                                  <button type="submit" class="btn btn-primary">Save changes</button>
-                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                              </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                  
+
                     {{/each}}
 
 
@@ -365,7 +427,7 @@ border-color: #4099D5;
                 </ul>
                 <!-- /sub-menu -->
 
-            </li>
+            </li> --}}
            
            
            <style>
