@@ -938,7 +938,7 @@ exports.edit_product = function(req, res){
 
 
 exports.delete_a_product_get = function(req, res) {
-    
+
     if(!req.session.hasOwnProperty("user_id")){
         console.log("its working", req.session.user_id)
         res.redirect('/login')
@@ -1130,6 +1130,7 @@ exports.create_product_post = function(req, res){
     product.category = req.body.category;
     product.sub_category = req.body.sub_category;
     product.price = req.body.price;
+    product.company_name = req.body.company_name;
     product.unit_price = req.body.price;
     product.unit = req.body.unit;
    //lets append it to existing product

@@ -3,6 +3,7 @@ var ProductSchema = new mongoose.Schema({
     name: String,
     description: String,
     price: Number,
+    company_name: String,
     ref_name: String,
     unit: Number,
     parent_id:{type:String, default:""},
