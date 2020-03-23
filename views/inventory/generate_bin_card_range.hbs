@@ -1,0 +1,52 @@
+
+{{!-- /eventory/assets/images/download.jpg --}}
+
+<div class="row" style="margin-top:50px; width:80%; margin:auto;">
+<div class="col-md-2" >
+<img src="/eventory/assets/images/download.jpg"style="width:150px;">
+</div>
+
+<div class="col-md-8">
+    <center>
+<h1 style="margin-bottom:2px;">TEACHERS REGISTRATION COUNCIL OF NIGERIA</h1>
+<h3 style="margin-bottom:2px;">12 Oda Crescent, Off Aminu Kano Crescent</h3>
+<h3 style="margin-bottom:2px;">Wuse II, Abuja-Nigeria</h3>
+<h2 style="margin-bottom:2px;">BIN CARD</h2>
+</center>
+</div>
+
+<div class="col-md-2" >
+<img src="/eventory/assets/images/trcn.png"style="width:150px;">
+</div>
+</div>
+
+
+<div style="margin-top:50px; width:80%; margin:auto;">
+<table class="table table-bordered">
+  <thead>
+    <tr>
+    
+      <th scope="col">Date</th>
+      <th scope="col">From Whom Recieved or to Whom Issued</th>
+      <th scope="col">SIV/SRV No.</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Stock Balance</th>
+      <th scope="col">Signature</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each cards}}
+    <tr>
+     
+      <td>{{{formatDate this.createdAt}}}</td>
+      <td>{{{identifier this}}}</td>
+      <td>{{this.siv_number}}{{this.sv_number}}</td>
+        <td>{{this.quantity}}</td>
+      <td>{{this.stock_balance}}</td>
+      <td></td>
+    </tr>
+    {{/each}}
+   
+  </tbody>
+</table>
+</div>

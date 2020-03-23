@@ -124,6 +124,7 @@ hbs.registerHelper('json', function (content) {
 });
 
 hbs.registerHelper('jb', function (cont){
+  console.log("debugging",cont)
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].name)
 })
@@ -197,6 +198,18 @@ hbs.registerHelper('uppercase', function (str) {
   }
   return '';
 });
+
+hbs.registerHelper('identifier', function(obj){
+  if(obj.sv_number!=undefined){
+    console.log("this is the requester obj",obj)
+    return obj.requester
+  }
+  else {
+    console.log("this is not the requester")
+    return obj.product[0].company_name
+  }
+  
+})
 
 hbs.registerHelper('truncator', function (str) {
   if(str.length>=600) {

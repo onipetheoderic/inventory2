@@ -7,7 +7,7 @@ import Subcategory from '../../models/Subcategory/subcategory';
 import Store from '../../models/Store/store';
 import Request from '../../models/Request/request';
 import Installation from '../../models/Installation/installation';
-
+import BinCard from '../../models/BinCard/binCard';
 import overall_config from '../../config/overall_config.json'
 
 var rn = require('random-number');
@@ -54,9 +54,9 @@ exports.home = function(req, res){
                                     User.find({}, function(err, users){
                                         User.findOne({_id:decrypted_user_id}, function(err, user){ 
                                             let superAdmin = user.userType=="superAdmin"?true:false;                                                 
-                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                            res.render('inventory/home', {layout: "layout/inventory", superAdmin:superAdmin, requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
-                                        })
+                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                res.render('inventory/home', {layout: "layout/inventory", superAdmin:superAdmin, requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
+                                            })
                                     })
                                     });
                                 })
@@ -323,6 +323,25 @@ exports.report_page = function(req, res){
         )
     })
 }
+exports.generate_bin_card = function(req, res){
+    console.log("this is the generate card page");
+    res.render('inventory/generation_page', {          
+        layout: "layout/inventory", }
+    )
+}
+
+exports.generate_bin = function(req, res){
+    console.log("this is the generate card page");
+    res.render('inventory/generate_bin', {          
+        layout: "layout/inventory", }
+    )
+}
+exports.generate_ledger = function(req, res){
+    console.log("this is the generate card page");
+    res.render('inventory/generate_ledger', {          
+        layout: "layout/inventory", }
+    )
+}
 
 exports.generate_report_form = function(req, res){
     console.log(req.params.id)
@@ -340,12 +359,28 @@ exports.generate_report_form = function(req, res){
                     console.log(err)
                 }
                 else {
+                    //ppppp
                     Product.findByIdAndUpdate(req.params.id, {stored:true})
                     .exec(function(err, updated_staff){
                         if(err){
                             console.log(err)
-                        }else {
-                            res.redirect(`/report_page/${req.params.id}`)
+                        }else {                            
+                            BinCard.find({}, function(err, cards){ 
+                               
+                                let binCard = new BinCard;
+                                binCard.product = product._id
+                                binCard.stock_balance = product.unit
+                                binCard.siv_number = parseInt(cards.length+1)
+                                binCard.quantity = product.unit;
+                                binCard.save(function(err, card){
+                                    if(err){
+                                        console.log(err)
+                                    }
+                                    else {
+                                        res.redirect(`/report_page/${req.params.id}`)
+                                    }
+                                })
+                            })                          
                         }
                     })
                 }
@@ -359,7 +394,23 @@ exports.generate_report_form = function(req, res){
                 if(err){
                     console.log(err)
                 }else {
-                    res.redirect(`/report_page/${req.params.id}`);
+                    BinCard.find({}, function(err, cards){   
+                                                                                 
+                        let binCard = new BinCard;
+                        binCard.product = product._id;
+                        binCard.stock_balance = unit
+                        binCard.siv_number = parseInt(cards.length+1)
+                        binCard.quantity = prev_unit;
+                        binCard.save(function(err, card){
+                            if(err){
+                                console.log(err)
+                            }
+                            else {
+                                res.redirect(`/report_page/${req.params.id}`);
+                            }
+                        })
+                    })    
+                   
                 }
             })
            
@@ -561,8 +612,7 @@ exports.create_user = function(req, res){
         res.render('inventory/create_user', {layout: "layout/inventory", users:users, category:category, department:department, data:{department:department}})
     })
 })
-
-    })
+})
 }
 
 function user_redirector(req, res, msg){
@@ -594,7 +644,7 @@ exports.create_user_post = function(req, res){
             let user = new User();
             user.email = req.body.email;
             user.firstName = req.body.firstName;
-         
+            user.lastName = req.body.lastName;
             user.passcode = req.body.passcode;
             user.position = req.body.position;
             user.department = req.body.department;
@@ -656,6 +706,7 @@ exports.request_product = function(req, res){
     let decrypted_user_id = decrypt(req.session.user_id, req, res)
         Store.find({}).populate('product')
         .exec(function(err, products){
+            console.log("this are the products",products)
             res.render('inventory/request_a_product', {layout:"layout/inventory", products:products})
         })
     }
@@ -755,6 +806,7 @@ exports.request_product_post = function(req, res){
         let store_id = req.body.store_id;
         // console.log(decrypted_department, decrypted_user_id, req.body.request_unit)
         User.findOne({_id:decrypted_user_id}, function(err, user){
+            let user_fullname = user.firstName + " " + user.lastName;
            
                 User.find({position:"director", department:user.department}, function(err, user_director){
                    console.log("this is the directore",user_director[0])
@@ -777,9 +829,9 @@ exports.request_product_post = function(req, res){
                                     let srsiv_no = rn(options)
                                     let unit = req.body.request_unit;
 
-console.log("this is the unit", unit)
+                                    console.log("this is the unit", unit)
                                     let product_id = req.body.product_id;
-                                    let director_fullname = user_director[0].firstName + " " + user_director[0].lastName
+                                    let director_fullname = user_director[0].firstName
                                     let request = new Request();
                                         request.director = user_director[0].id;
                                         request.requester = decrypted_user_id;
@@ -797,14 +849,34 @@ console.log("this is the unit", unit)
                                                 Store.findOne({_id:store_id}, function(err, store_item){
                                                     let previous_unit = store_item.unit;
                                                     let current_unit = req.body.request_unit;
+                                                    
                                                     let final_unit = parseInt(previous_unit-current_unit)
                                                     Store.findByIdAndUpdate(store_id, {unit:final_unit})
                                                     .exec(function(err, updated_staff){
                                                         if(err){
                                                             console.log(err)
                                                         }else {
-                                                            let msg = `Requisition form has been sent to ${director_fullname}`
-                                                            home_redirector(req, res, msg)
+                                                            Product.findOne({_id:product_id}, function(err, prod){
+                                                                BinCard.find({}, function(err, cards){                                                              
+                                                                let binCard = new BinCard;
+                                                                binCard.product = prod._id;
+                                                                binCard.stock_balance = final_unit
+                                                                binCard.sv_number = parseInt(cards.length+1);
+                                                                binCard.quantity = current_unit;
+                                                                binCard.requester = user_fullname;
+
+                                                                binCard.save(function(err, card){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        let msg = `Requisition form has been sent to ${director_fullname}`
+                                                                        home_redirector(req, res, msg)
+                                                                    }
+                                                                })
+                                                            })
+                                                                
+                                                            })
                                                         }
                                                     })
                                                 })
@@ -824,6 +896,39 @@ console.log("this is the unit", unit)
     }
 }
 
+
+exports.generate_bin_card_post = function(req, res){
+    let start_date = req.body.start;
+    let end_date = req.body.end;
+    res.redirect(`/generate_bin_card_range/${start_date}/${end_date}`)
+    
+}
+
+exports.generate_ledger_post = function(req, res){
+    let start_date = req.body.start;
+    let end_date = req.body.end;
+    res.redirect(`/generate_ledger_range/${start_date}/${end_date}`)
+    
+}
+exports.generate_bin_card_range = function(req, res){
+    let start_date = req.params.start_date;
+    let end_date = req.params.end_date;
+    BinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
+      sort({ createdAt: 1 }).populate('product').exec(function(err, cards){
+        console.log(cards)
+        res.render('inventory/generate_bin_card_range', {layout:"layout/table", cards:cards})
+    })    
+}
+
+exports.generate_ledger_range = function(req, res){
+    let start_date = req.params.start_date;
+    let end_date = req.params.end_date;
+    BinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
+      sort({ createdAt: 1 }).populate('product').exec(function(err, cards){
+        console.log(cards)
+        res.render('inventory/generate_ledger_range', {layout:"layout/table", cards:cards})
+    })    
+}
 exports.add_to_existing_post = function(req, res){
     //here we are dealing with product from the store
     console.log(req.body)

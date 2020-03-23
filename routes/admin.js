@@ -103,6 +103,27 @@ router.route('/delete_a_category_get/:id')
 router.route('/delete_a_department_get/:id')
     .get(InventoryController.delete_a_department_get)
 
+router.route('/generate_bin_card')
+    .get(InventoryController.generate_bin_card)
+
+router.route('/generate_bin_card_post')
+    .post(InventoryController.generate_bin_card_post)
+
+router.route('/generate_ledger_post')
+    .post(InventoryController.generate_ledger_post)
+
+router.route('/generate_bin_card_range/:start_date/:end_date')
+    .get(InventoryController.generate_bin_card_range)
+
+router.route('/generate_ledger_range/:start_date/:end_date')
+    .get(InventoryController.generate_ledger_range)
+
+router.route('/generate_ledger')
+    .get(InventoryController.generate_ledger)
+
+router.route('/generate_bin')
+    .get(InventoryController.generate_bin)
+
 router.route('/delete_a_product_get/:id')
     .get(InventoryController.delete_a_product_get)
 
