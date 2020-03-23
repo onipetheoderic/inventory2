@@ -1,0 +1,109 @@
+
+<!-- Grid Item -->
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Register User</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+        <!-- /card header -->
+
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+            <!-- Form -->
+              <form action="/create_user" method="POST" enctype="multipart/form-data" >
+         
+                <div class="form-row">
+                    <div class="col-sm-4 mb-3">
+                        <label for="validationDefault01">First name</label>
+                        <input type="text" name="firstName" class="form-control" id="validationDefault01"
+                                placeholder="First name"
+                               
+                                required>
+                    </div>
+                    <div class="col-sm-4 mb-3">
+                        <label for="validationDefault02">Last name</label>
+                        <input type="text" name="lastName" class="form-control" id="validationDefault02"
+                                placeholder="Last name"
+                                
+                                required>
+                    </div>
+                 
+                    <div class="col-sm-4 mb-3">
+                        <label for="validationDefaultUsername">Email</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroupPrepend2">@</span>
+                            </div>
+                            <input type="text" class="form-control"
+                                    id="validationDefaultUsername" name="email" placeholder="Email Address"
+                                    aria-describedby="inputGroupPrepend2" required>
+                        </div>
+                    </div>
+                </div>
+                 
+                <div class="form-row">
+                    <div class="col-sm-6 mb-3">
+                        <label for="validationDefault03">Phone Number</label>
+                        <input type="text" name="phoneNumber" class="form-control" id="validationDefault03"
+                                placeholder="Phone number" required>
+                    </div>
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationDefault04">Password</label>
+                        <input type="text" name="passcode" class="form-control" id="validationDefault04"
+                                placeholder="Password" required>
+                    </div>
+
+                    
+                     <div class="col-sm-3 mb-3">
+                             <label for="validationDefault04">Designation</label>
+
+                           
+                                <select class="form-control" name="position" id="simple-select">
+                                      <option value="permanent_secretary">permanent secretary</option>
+                                      <option value="front_desk">front desk</option>
+                                </select>
+          
+                        </div>
+                        <div class="col-sm-3 mb-3">
+                            <label for="simple-select">Department</label>
+
+                           
+                                <select class="form-control" name="department" id="simple-select">
+                                    {{#each data.department}}
+                                    <option value="{{this._id}}">{{this.name}}</option>
+                                  
+                                    {{/each}}
+                                </select>
+          
+                        </div>
+                       
+                </div>
+               
+               
+                 <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Create User</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

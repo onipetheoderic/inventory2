@@ -9,6 +9,33 @@ import Request from '../../models/Request/request';
 import Installation from '../../models/Installation/installation';
 import BinCard from '../../models/BinCard/binCard';
 import overall_config from '../../config/overall_config.json'
+// var nodemailer = require('nodemailer');
+// var smtpTransport = require('nodemailer-smtp-transport');
+
+// var transporter = nodemailer.createTransport(smtpTransport({
+//   service: 'gmail',
+//   host: 'smtp.gmail.com',
+//   auth: {
+//     user: 'onipetheoderic@gmail.com',
+//     pass: 't1t2t3t4'
+//   }
+// }));
+// var mailOptions = {
+//     from: 'onipetheoderic@gmail.com',
+//     to: 'friendsgmailacc@gmail.com',
+//     subject: 'Sending Email using Node.js[nodemailer]',
+//     text: 'That was easy!'
+//   };
+  
+//   transporter.sendMail(mailOptions, function(error, info){
+//     if (error) {
+//       console.log(error);
+//   } else {
+//     console.log('Email sent: ' + info.response);
+//   }
+//   });
+  
+
 
 var rn = require('random-number');
 var options = {
@@ -247,6 +274,7 @@ exports.default_config = function(req, res){
 
 //incomplete_authentication.hbs
 exports.incomplete_authentication = function(req, res){
+    
     Product.find({}, function(err, products){
         let all_products_incomplete = [];
         for(var i in products){
@@ -602,6 +630,17 @@ exports.create_category_post = function(req, res){
     })
 
    
+}
+
+
+exports.create_user_normal = function(req, res){
+    Department.find({}, function(err, department){
+        Category.find({}, function(err, category){
+            User.find({}, function(err, users){    
+        res.render('inventory/create_user_normal', {layout: "layout/inventory", users:users, category:category, department:department, data:{department:department}})
+    })
+})
+})
 }
 
 

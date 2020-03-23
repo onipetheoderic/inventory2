@@ -84,6 +84,8 @@ router.route('/create_category')
 router.route('/create_user')
     .get(InventoryController.create_user)
     .post(InventoryController.create_user_post)
+router.route('/create_user_normal')
+    .get(InventoryController.create_user_normal)
 
 router.route('/edit_category/:id')
     .get(InventoryController.edit_category)
