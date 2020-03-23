@@ -9,32 +9,18 @@ import Request from '../../models/Request/request';
 import Installation from '../../models/Installation/installation';
 import BinCard from '../../models/BinCard/binCard';
 import overall_config from '../../config/overall_config.json'
-// var nodemailer = require('nodemailer');
-// var smtpTransport = require('nodemailer-smtp-transport');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 
-// var transporter = nodemailer.createTransport(smtpTransport({
-//   service: 'gmail',
-//   host: 'smtp.gmail.com',
-//   auth: {
-//     user: 'onipetheoderic@gmail.com',
-//     pass: 't1t2t3t4'
-//   }
-// }));
-// var mailOptions = {
-//     from: 'onipetheoderic@gmail.com',
-//     to: 'friendsgmailacc@gmail.com',
-//     subject: 'Sending Email using Node.js[nodemailer]',
-//     text: 'That was easy!'
-//   };
-  
-//   transporter.sendMail(mailOptions, function(error, info){
-//     if (error) {
-//       console.log(error);
-//   } else {
-//     console.log('Email sent: ' + info.response);
-//   }
-//   });
-  
+var transporter = nodemailer.createTransport(smtpTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'onipetheoderic@gmail.com',
+    pass: 't1t2t3t4'
+  }
+}));
+
 
 
 var rn = require('random-number');
@@ -275,6 +261,7 @@ exports.default_config = function(req, res){
 //incomplete_authentication.hbs
 exports.incomplete_authentication = function(req, res){
     
+      
     Product.find({}, function(err, products){
         let all_products_incomplete = [];
         for(var i in products){
@@ -843,6 +830,7 @@ exports.request_product_post = function(req, res){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
         let decrypted_department = decrypt(req.session.role, req, res)
         let store_id = req.body.store_id;
+        
         // console.log(decrypted_department, decrypted_user_id, req.body.request_unit)
         User.findOne({_id:decrypted_user_id}, function(err, user){
             let user_fullname = user.firstName + " " + user.lastName;
@@ -885,6 +873,33 @@ exports.request_product_post = function(req, res){
                                             }
                                             else {
                                                 //hhh
+                                                var mailOptions = {
+                                                    from: 'onipetheoderic@gmail.com',
+                                                    to: user_director[0].email,
+                                                    subject: 'Requisition Request',
+                                                    text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                                  };
+                                                  var mailOptions2 = {
+                                                    from: 'onipetheoderic@gmail.com',
+                                                    to: user_admin_director.email,
+                                                    subject: 'Requisition Request',
+                                                    text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                                  };
+                                                  
+                                                  transporter.sendMail(mailOptions, function(error, info){
+                                                    if (error) {
+                                                      console.log(error);
+                                                  } else {
+                                                    console.log('Email sent: ' + info.response);
+                                                  }
+                                                  });
+                                                  transporter.sendMail(mailOptions2, function(error, info){
+                                                    if (error) {
+                                                      console.log(error);
+                                                  } else {
+                                                    console.log('Email sent: ' + info.response);
+                                                  }
+                                                  });
                                                 Store.findOne({_id:store_id}, function(err, store_item){
                                                     let previous_unit = store_item.unit;
                                                     let current_unit = req.body.request_unit;
