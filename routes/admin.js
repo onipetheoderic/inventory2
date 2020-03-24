@@ -95,6 +95,12 @@ router.route('/edit_product/:id')
     .get(InventoryController.edit_product)
     .post(InventoryController.edit_product_post)
 
+router.route('/view_all_users')
+    .get(InventoryController.view_all_users)
+
+router.route('/delete_a_user_get/:id')
+    .get(InventoryController.delete_a_user_get)
+
 router.route('/edit_department/:id')
     .get(InventoryController.edit_department)
     .post(InventoryController.edit_department_post)

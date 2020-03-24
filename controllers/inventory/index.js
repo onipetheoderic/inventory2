@@ -697,14 +697,13 @@ function home_redirector(req, res, msg){
 exports.create_user_post = function(req, res){
     User.findOne({email:req.body.email}, function(err, user){
         console.log(user);
-        if(user==null){
-            
+        if(user==null){            
             let user = new User();
             user.email = req.body.email;
             user.firstName = req.body.firstName;
             user.lastName = req.body.lastName;
             user.passcode = req.body.passcode;
-            user.position = req.body.position;
+            user.position = req.body.position.split(' ').join('_').toLowerCase();
             user.department = req.body.department;
             user.staff_number = req.body.staff_number;
             user.save(function(err, saved_user){
@@ -1132,6 +1131,29 @@ exports.edit_product = function(req, res){
 }
 }
 
+
+exports.view_all_users = function(req, res) {
+    User.find({}).populate('department').exec(function(req, user){
+        res.render('inventory/view_all_users', {layout:"layout/inventory", user:user})
+    })
+}
+exports.delete_a_user_get = function(req, res) {
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        User.findByIdAndRemove({_id:req.params.id},
+            function(err, comps){
+                if(err){
+                    console.log(err)
+                }
+                else {
+                    res.redirect('/view_all_users')
+                }
+        })
+    }
+}
 
 exports.delete_a_product_get = function(req, res) {
 
