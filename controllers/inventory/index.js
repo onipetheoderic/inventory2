@@ -40,6 +40,38 @@ const filePlacerAndNamer = (req, res, the_file) => {
     return file_name
 }
 
+function collectionInherit(){
+    var categories = []
+    var departments = []    
+    Department.find({}, function(err, department){
+        Category.find({}, function(err, category){                
+            Subcategory.find({}, function(err, sub_category){ 
+                console.log(sub_category)
+                              
+                for(var i in category){
+                    let sub_categories = [];
+                    for(var k in sub_category){                               
+                        if(category[i]._id == sub_category[k].parent_id){
+                            console.log("true")                                    
+                            sub_categories.push({
+                                name:sub_category[k].name
+                            })
+                        }
+                        
+                    }
+                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                    
+                }
+                for(var i in department){
+                    departments.push(department[i])
+                }
+               
+            });
+        
+        })
+    })
+    return {category:categories, department:departments}
+}
 
 exports.home = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
@@ -674,6 +706,7 @@ exports.create_user_post = function(req, res){
             user.passcode = req.body.passcode;
             user.position = req.body.position;
             user.department = req.body.department;
+            user.staff_number = req.body.staff_number;
             user.save(function(err, saved_user){
                 if(err){
                     console.log(err)
@@ -1054,7 +1087,8 @@ exports.view_all_category = function(req, res){
     else if(req.session.hasOwnProperty("user_id")){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
         Category.find({}).exec(function(err, category){
-            res.render('inventory/view_all_category', {layout:"layout/inventory", category:category})
+            let objs = collectionInherit()
+            res.render('inventory/view_all_category', {layout:"layout/inventory",objs, category:category})
         });
     }
 }
@@ -1065,8 +1099,11 @@ exports.view_all_department = function(req, res){
     }
     else if(req.session.hasOwnProperty("user_id")){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
+      
     Department.find({}).exec(function(err, department){
-        res.render('inventory/view_all_department', {layout:"layout/inventory", department:department})
+        let objs = collectionInherit()
+        console.log("all objjs",objs)
+        res.render('inventory/view_all_department', {layout:"layout/inventory", objs, department:department})
     });
 }
 }
@@ -1292,6 +1329,7 @@ exports.create_product_post = function(req, res){
     product.company_name = req.body.company_name;
     product.unit_price = req.body.price;
     product.unit = req.body.unit;
+    product.source_fund = req.body.source_fund;
    //lets append it to existing product
     product.save(function(err, saved_product){
         if(err){

@@ -8,7 +8,7 @@ var UserSchema = new mongoose.Schema({
    	passcode: String,
     userType: String,
     position: String,
-
+    staff_number: Number,
     department:  [{//this is the user that created the Product
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Department'

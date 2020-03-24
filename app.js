@@ -135,22 +135,43 @@ hbs.registerHelper('jbd', function (cont){
 })
 
 hbs.registerHelper('jbid', function (cont){
-  console.log(cont)
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].name.trim())
 })
 
 hbs.registerHelper('jbiid', function(cont){
-  console.log(cont)
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].name.replace(/\s/g, ""))
 })
 
 
 hbs.registerHelper('product_title', function (cont){
-  console.log("hbs", cont)
   let content = JSON.parse(JSON.stringify(cont))
   return content.product[0].name;
+})
+
+
+hbs.registerHelper('srv', function (cont){
+  if(cont!=undefined){
+    console.log("hbs amount", cont)
+    return `TRCN/SRV/000${cont}`;
+  }
+  else return;
+  
+})
+
+hbs.registerHelper('siv', function (cont){
+  if(cont!=undefined){
+  console.log("hbs amount", cont)
+  return `TRCN/SIV/000${cont}`;
+  }
+  else return;
+})
+
+hbs.registerHelper('amount', function (cont){
+  console.log("hbs amount", cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.product[0].price * content.quantity;
 })
 
 hbs.registerHelper('product_description', function (cont){
