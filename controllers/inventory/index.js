@@ -1176,16 +1176,31 @@ exports.edit_product = function(req, res){
     }
     else if(req.session.hasOwnProperty("user_id")){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
     Product.findOne({_id:req.params.id}).exec(function(err, product){
         res.render('inventory/edit_product', {layout:"layout/inventory", product:product})
     })
 }
 }
+}
 
 
 exports.view_all_users = function(req, res) {
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        let role = decrypt(req.session.role, req, res)
+        var isSuperAdmin = role=="superAdmin"?true:false;
+        console.log("current_role",role);
     var categories = [];
     var departments = [];
+
     Department.find({}, function(err, department){
         Category.find({}, function(err, category){
             User.find({}).populate('department').exec(function(err, user){    
@@ -1216,12 +1231,12 @@ exports.view_all_users = function(req, res) {
                                 users.push(user[i]);
                             }
                         }
-        res.render('inventory/view_all_users', {layout: "layout/inventory", users:users, user:users, category:categories, sub_category:sub_category, department:department, data:{department:department}})
+        res.render('inventory/view_all_users', {layout: "layout/inventory", isSuperAdmin:isSuperAdmin, users:users, user:users, category:categories, sub_category:sub_category, department:department, data:{department:department}})
     })
 });
 })
 })
-
+    }
 }
 exports.delete_a_user_get = function(req, res) {
     if(!req.session.hasOwnProperty("user_id")){

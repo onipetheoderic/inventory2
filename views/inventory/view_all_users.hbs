@@ -42,7 +42,9 @@
                                                 <th>Email</th>
                                                 <th>Position</th>
                                                 <th>Department</th>
+                                               {{#if isSuperAdmin}}
                                                 <th>Delete</th>
+                                                {{/if}}
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -53,8 +55,9 @@
                                                     <td>{{this.email}}</td>
                                                 <td>{{this.position}}</td>
                                                <td>{{{dept this}}}</td>
+                                               {{#if ../isSuperAdmin}}
                                                 <td><a href="/delete_a_user_get/{{this._id}}">Delete</a></td>
-
+                                                {{/if}}
                                             </tr>
                                             {{/each}}
                                            
@@ -66,7 +69,9 @@
                                                 <th>Email</th>
                                                 <th>Position</th>
                                                <th>Department</th>
+                                               {{#if isSuperAdmin}}
                                                 <th>Delete</th>
+                                                {{/if}}
                                                 
                                             </tr>
                                             </tfoot>
