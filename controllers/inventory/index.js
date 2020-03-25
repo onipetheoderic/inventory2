@@ -653,6 +653,8 @@ exports.create_category_post = function(req, res){
 
 
 exports.create_user_normal = function(req, res){
+    var categories = [];
+    var departments = [];
     Department.find({}, function(err, department){
         Category.find({}, function(err, category){
             User.find({}, function(err, users){    
@@ -678,7 +680,7 @@ exports.create_user_normal = function(req, res){
                     }
                    
                
-        res.render('inventory/create_user_normal', {layout: "layout/inventory", users:users, category:category, department:department, data:{department:department}})
+        res.render('inventory/create_user_normal', {layout: "layout/inventory", users:users, category:categories, sub_category:sub_category, department:department, data:{department:department}})
     })
 });
 })
@@ -697,14 +699,40 @@ exports.create_user = function(req, res){
 }
 
 function user_redirector(req, res, msg){
+    var categories = [];
+    var departments = [];
     Department.find({}, function(err, department){
         Category.find({}, function(err, category){
             User.find({}, function(err, users){    
-        res.render('inventory/create_user', {layout: "layout/inventory", message:{error:msg}, users:users, category:category, department:department, data:{department:department}})
+                Subcategory.find({}, function(err, sub_category){ 
+                    console.log(sub_category)
+                                  
+                    for(var i in category){
+                        let sub_categories = [];
+                        for(var k in sub_category){                               
+                            if(category[i]._id == sub_category[k].parent_id){
+                                console.log("true")                                    
+                                sub_categories.push({
+                                    name:sub_category[k].name
+                                })
+                            }
+                            
+                        }
+                        categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                        
+                    }
+                    for(var i in department){
+                        departments.push(department[i])
+                    }
+                   
+               
+        res.render('inventory/create_user', {layout: "layout/inventory", users:users, category:categories, sub_category:sub_category, department:department, data:{department:department}})
     })
+});
 })
 })
 }
+
 
 function home_redirector(req, res, msg){
     Department.find({}, function(err, department){
