@@ -3,6 +3,7 @@ var CategorySchema = new mongoose.Schema({
     name: String,
     description: String,  
     ref_name: String,
+    category_code: Number,
     user: [{//this is the user that created the Category
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

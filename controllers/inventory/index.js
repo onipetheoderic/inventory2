@@ -362,12 +362,15 @@ function confirmation_redirector(req, res, msg){
 }
 exports.report_page = function(req, res){
     console.log("this is the report page", req.params.id)
-    Product.findOne({_id:req.params.id}, function(err, product){
-        console.log(product.unit)
-        res.render('inventory/report_page', {          
-            layout: "layout/table", product:product, value:product.price*product.unit
-            }
-        )
+    Store.findOne({product:req.params.id}, function(err, store){
+        Product.findOne({_id:req.params.id}, function(err, product){
+            console.log(product.unit)
+            const store = store.
+            res.render('inventory/report_page', {          
+                layout: "layout/table",  product:product, value:product.price*product.unit
+                }
+            )
+        })           
     })
 }
 exports.generate_bin_card = function(req, res){
@@ -638,7 +641,7 @@ exports.create_category_post = function(req, res){
     let category = new Category();
     category.name = req.body.name;
     category.description = req.body.description;
-    category.ref_name = req.body.ref_name;
+    category.code = req.body.category_code;
     category.save(function(err, saved_category){
         if(err){
             console.log(err)
@@ -1363,6 +1366,7 @@ exports.edit_category_post = function(req, res){
     Category.findByIdAndUpdate(req.params.id, {
         name: req.body.name,
         description: req.body.description,
+        category_code: req.body.cateogory_code
     })
     .exec(function(err, updated_staff){
         if(err){
