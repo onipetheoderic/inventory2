@@ -1185,7 +1185,14 @@ exports.edit_product = function(req, res){
 
 exports.view_all_users = function(req, res) {
     User.find({}).populate('department').exec(function(req, user){
-        res.render('inventory/view_all_users', {layout:"layout/inventory", user:user})
+        var users = [];
+        for(var i in user){
+            if(user[i].position!="superAdmin"){
+                users.push(user[i]);
+            }
+        }
+        console.log(users)
+        res.render('inventory/view_all_users', {layout:"layout/inventory", user:users})
     })
 }
 exports.delete_a_user_get = function(req, res) {
