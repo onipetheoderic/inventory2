@@ -656,8 +656,31 @@ exports.create_user_normal = function(req, res){
     Department.find({}, function(err, department){
         Category.find({}, function(err, category){
             User.find({}, function(err, users){    
+                Subcategory.find({}, function(err, sub_category){ 
+                    console.log(sub_category)
+                                  
+                    for(var i in category){
+                        let sub_categories = [];
+                        for(var k in sub_category){                               
+                            if(category[i]._id == sub_category[k].parent_id){
+                                console.log("true")                                    
+                                sub_categories.push({
+                                    name:sub_category[k].name
+                                })
+                            }
+                            
+                        }
+                        categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                        
+                    }
+                    for(var i in department){
+                        departments.push(department[i])
+                    }
+                   
+               
         res.render('inventory/create_user_normal', {layout: "layout/inventory", users:users, category:category, department:department, data:{department:department}})
     })
+});
 })
 })
 }

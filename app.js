@@ -144,6 +144,16 @@ hbs.registerHelper('jbiid', function(cont){
   return (content.product[0].name.replace(/\s/g, ""))
 })
 
+hbs.registerHelper('dept', function(cont){
+  // console.log("from dept",cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  if(content.department[0]!=undefined){
+   return(content.department[0].name)
+  }
+  else return; 
+
+})
+
 
 hbs.registerHelper('product_title', function (cont){
   let content = JSON.parse(JSON.stringify(cont))
