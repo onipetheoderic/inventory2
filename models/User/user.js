@@ -9,6 +9,11 @@ var UserSchema = new mongoose.Schema({
     userType: String,
     position: String,
     staff_number: Number,
+    director_assigned: {type:Boolean, default:false},
+    user_detail:  [{//this is the user that created the Product
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      }],
     department:  [{//this is the user that created the Product
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Department'

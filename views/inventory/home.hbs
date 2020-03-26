@@ -16,11 +16,19 @@ requester_logo --}}
         <p>Product Description: <span style="color:black; text-transform:uppercase">{{{product_description this}}}</span></p>
         <p>from: <span style="color:black; text-transform:uppercase">{{{requester_name this}}}</span></p>
         <p>positon: <span style="color:black; text-transform:uppercase">{{{requester_position this}}}</span></p>
-        <p>Unit Requested For: <span style="color:black; text-transform:uppercase">{{this.unit}}</span></p>
+       
         <form action="/verify_request" method="POST">
+         <p>Unit Requested For: <input type="number" name="unit" value="{{this.unit}}"></p>
             <input type="hidden" name="request_id" value="{{this.id}}"/>
+              <input type="hidden" name="initial_unit" value="{{this.unit}}"/>
             <input type="text" required name="passcode" placeholder="Enter Passcode to Verify" />
-            <button type="submit">Verify</button>
+             <select name="acceptance" id="simple-select" required>
+                <option value="accept">Accept</option>
+                <option value="reject">Reject</option>
+                
+            </select>
+            <button type="submit">Submit</button>
+            
         </form>
     </div>
 </div>
@@ -275,7 +283,24 @@ requester_logo --}}
                             <!-- /card -->
                         </div>
 
-                    </div>
+                    
+                    <div class="col-xl-3 col-sm-6 col-12">
+
+                            <!-- Card -->
+                            <div class="dt-card">
+
+                                <!-- Card Body -->
+                                <div class="dt-card__body px-5 py-4">
+                                   <a href="/assign_position">
+                                   <h6 class="text-body text-uppercase mb-2">Assign Task</h6></a>  
+                                    <div class="d-flex align-items-baseline mb-4">
+                                          <i class="icon icon-user" style="font-size:40px;"></i>
+                                    </div>
+                                </div>
+                                <!-- /bard body -->
+                            </div>
+                            <!-- /card -->
+                        </div>
                   
                         <div class="col-xl-3 col-sm-6 col-12">
 

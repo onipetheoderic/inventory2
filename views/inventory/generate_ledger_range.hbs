@@ -30,8 +30,9 @@
       <th scope="col">From Whom Recieved or to Whom Issued</th>
       <th scope="col">SIV/SRV No.</th>
       <th scope="col">Quantity</th>
+       <th scope="col">Amount(₦)</th>
       <th scope="col">Stock Balance</th>
-      <th scope="col">Amount(₦)</th>
+     
       <th scope="col">Signature</th>
     </tr>
   </thead>
@@ -42,9 +43,9 @@
       <td>{{{identifier this}}}</td>
       <td>{{{siv this.siv_number}}}{{{srv this.sv_number}}}</td>
       <td>{{this.quantity}}</td>
-      
-      <td>{{this.stock_balance}}</td>
       <td>{{{amount this}}}</td>
+      <td>{{this.stock_balance}}</td>
+      
       <td></td>
     </tr>
     {{/each}}

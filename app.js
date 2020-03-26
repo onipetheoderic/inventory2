@@ -164,7 +164,7 @@ hbs.registerHelper('product_title', function (cont){
 hbs.registerHelper('srv', function (cont){
   if(cont!=undefined){
     console.log("hbs amount", cont)
-    return `TRCN/SRV/000${cont}`;
+    return `TRCN/SIV/000${cont}`;
   }
   else return;
   
@@ -173,7 +173,7 @@ hbs.registerHelper('srv', function (cont){
 hbs.registerHelper('siv', function (cont){
   if(cont!=undefined){
   console.log("hbs amount", cont)
-  return `TRCN/SIV/000${cont}`;
+  return `TRCN/SRV/000${cont}`;
   }
   else return;
 })

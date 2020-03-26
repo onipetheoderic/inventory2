@@ -1,0 +1,60 @@
+
+<!-- Grid Item -->
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Assign Responsibility To User In Your department</h3>
+            </div>
+            <!-- /card heading -->
+
+        </div>
+        <!-- /card header -->
+
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+            <!-- Form -->
+              <form action="/assign_position" method="POST" enctype="multipart/form-data" >
+         
+               
+                 
+                <div class="form-row">
+                    <div class="col-sm-3 mb-3">
+                        <label for="simple-select">Department</label>
+
+                        
+                            <select class="form-control" required name="user_id" id="simple-select">
+                                {{#each assignable_users}}
+                                <option value="{{this._id}}">{{this.firstName}} {{this.lastName}}</option>
+                                
+                                {{/each}}
+                            </select>
+        
+                    </div>
+                    
+                </div>
+               
+               
+                 <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Assign User</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

@@ -101,6 +101,10 @@ router.route('/view_all_users')
 router.route('/delete_a_user_get/:id')
     .get(InventoryController.delete_a_user_get)
 
+router.route('/assign_position')
+    .get(InventoryController.assign_position)
+    .post(InventoryController.assign_position_post)
+
 router.route('/edit_department/:id')
     .get(InventoryController.edit_department)
     .post(InventoryController.edit_department_post)
