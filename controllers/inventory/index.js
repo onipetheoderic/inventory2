@@ -1459,6 +1459,7 @@ exports.request_product_post = function(req, res){
             //we notify the store
                 Department.findOne({ref_name: "store_department"}, function(err, store){
                     User.findOne({position:"director", department:store._id}, function(err, store_department){
+                        console.log("this is the store department director", store_department)
                         const store_director_id = store_department == null? "" : store_department._id;
                         const store_director_email = store_department === null ? "" : store_department.email;
                         const store_department_fullname = store_department.firstName +" "+store_department.lastName
