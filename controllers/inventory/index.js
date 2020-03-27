@@ -490,7 +490,7 @@ exports.verify_request = function(req, res){
                         
                         ]).populate("director")
                             */ 
-                        Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
+                        Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
                     
                         .exec(function(err, reqs){
                             console.log("E dey work", reqs)              
