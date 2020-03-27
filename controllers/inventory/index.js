@@ -996,11 +996,12 @@ exports.report_page = function(req, res){
     Store.findOne({product:req.params.id}, function(err, store){
         Product.findOne({_id:req.params.id}, function(err, product){
             console.log(product.unit)
-            const store = store.
-            res.render('inventory/report_page', {          
-                layout: "layout/table",  product:product, value:product.price*product.unit
-                }
-            )
+            BinCard.findOne({product:req.params.id}, function(err, binCard){
+                res.render('inventory/report_page', {          
+                    layout: "layout/table", binCard:binCard, product:product, value:product.price*product.unit
+                    }
+                )
+            })
         })           
     })
 }
