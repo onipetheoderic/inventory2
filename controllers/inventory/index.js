@@ -1432,7 +1432,7 @@ exports.single_requisition = function(req, res){
     Request.findOne({_id:req.params.id})
     .populate({
         path:'product',			
-        populate: { path: 'category' }
+        populate: { path: 'category', model: 'Category' }
       })
     .populate('requester')
     .populate('director')
