@@ -522,7 +522,7 @@ exports.verify_request = function(req, res){
                                         console.log(err)
                                     }else {
                                         if(single_request.store_director_verified==false && store_director_id.toString().trim() == user.id.toString().trim() ||
-                                        single_request.store_director_verified==false && store_director_id.toString().trim() == single_user.user_detail[0].toString().trim()
+                                        single_request.store_director_verified==false && store_director_id.toString().trim() == single_user_detail
                                         ){
                                             console.log("under store_director_id")
                                             if(acceptance=="accept"){
@@ -541,7 +541,7 @@ exports.verify_request = function(req, res){
                                             }
                                         }
                                         else if(single_request.admin_director_verified==false && admin_director_id.toString().trim() == user.id.toString().trim() ||
-                                        single_request.admin_director_verified==false && admin_director_id.toString().trim() == single_user.user_detail[0].toString().trim()
+                                        single_request.admin_director_verified==false && admin_director_id.toString().trim() == single_user_detail
                                         ){
                                             console.log("under store_director_id")
                                             if(acceptance=="accept"){
@@ -560,7 +560,7 @@ exports.verify_request = function(req, res){
                                             }
                                         }
                                         else if(single_request.audit_director_verified==false && audit_director_id.toString().trim() == user.id.toString().trim() ||
-                                        single_request.audit_director_verified==false && audit_director_id.toString().trim() == single_user.user_detail[0].toString().trim()){
+                                        single_request.audit_director_verified==false && audit_director_id.toString().trim() == single_user_detail){
                                             console.log("under audit_director_id")
                                             if(acceptance=="accept"){
                                                 Request.findByIdAndUpdate(request_id, {
