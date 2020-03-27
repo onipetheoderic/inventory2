@@ -185,25 +185,25 @@ hbs.registerHelper('amount', function (cont){
 })
 
 hbs.registerHelper('product_description', function (cont){
-  console.log("hbs", cont)
+  //console.log("hbs", cont)
   let content = JSON.parse(JSON.stringify(cont))
   return content.product[0].description;
 })
 
 hbs.registerHelper('requester_name', function (cont){
-  console.log("hbs", cont)
+  //console.log("hbs", cont)
   let content = JSON.parse(JSON.stringify(cont))
   return content.requester[0].firstName;
 })
 
 hbs.registerHelper('requester_position', function (cont){
-  console.log("hbs", cont)
+  //console.log("hbs", cont)
   let content = JSON.parse(JSON.stringify(cont))
   return content.requester[0].position;
 })
 
 hbs.registerHelper('requester_logo', function (cont){
-  console.log("hbs", cont)
+  // //console.log("hbs", cont)
   let content = JSON.parse(JSON.stringify(cont))
   return content.requester[0].logo;
 })
@@ -221,6 +221,11 @@ hbs.registerHelper('jsonp', function(cont){
   }
   else return;
   
+})
+hbs.registerHelper('category_code', function(str){
+  let content = JSON.parse(JSON.stringify(str))
+  console.log("vvvvvv",content.product[0].category[0].category_code)
+  return content.product[0].category[0].category_code
 })
 
 hbs.registerHelper('uppercase', function (str) {
