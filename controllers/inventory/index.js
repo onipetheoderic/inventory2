@@ -135,7 +135,7 @@ exports.home = function(req, res){
                     }
                     else if(department_user.ref_name=="admin_department"){
                         console.log("XXXXXXXXXXXXXXXXX")
-                        if(user.position=="director"){
+                        if(user.position=="director" || user.position=="registra/ce"){
                             console.log("from d admin department", )
                             Request.find({rejected:false, admin_director_verified:false})
                             .populate("director")
@@ -182,7 +182,7 @@ exports.home = function(req, res){
 
                     else if(department_user.ref_name=="audit_department"){
                         console.log("XXXXXXXXXXXXXXXXX")
-                        if(user.position=="director"){
+                        if(user.position=="director" || user.position=="registra/ce"){
                             console.log("from the department", )
                             Request.find({rejected:false, audit_director_verified:false})
                             .populate("director")
@@ -230,7 +230,7 @@ exports.home = function(req, res){
 
                     else if(department_user.ref_name=="store_department"){
                         console.log("XXXXXXXXXXXXXXXXX")
-                        if(user.position=="director"){
+                        if(user.position=="director" || user.position=="registra/ce"){
                             console.log("from the department", )
                             Request.find({rejected:false,store_director_verified:false})
                             .populate("director")
@@ -776,7 +776,7 @@ exports.verify_request = function(req, res){
         //                         }
         //                     })
         //                 }
-        //                 else if(user.position=="director"){
+        //                 else if(user.position=="director" || user.position=="registra/ce"){
         //                     Request.findByIdAndUpdate(request_id, {admin_director_verified:true})
         //                     .exec(function(err, updated_store){
         //                         if(err){
