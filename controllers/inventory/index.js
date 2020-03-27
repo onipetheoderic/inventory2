@@ -473,6 +473,7 @@ exports.verify_request = function(req, res){
                 // console.log("this user is legit")
                 //lets get assigned users
                 console.log("this is the user id", decrypted_user_id);
+                console.log("this is the user department", )
 
                 Department.findOne({_id: user.department})
                 .exec(function(err, department){
@@ -1451,7 +1452,8 @@ exports.request_product_post = function(req, res){
         User.findOne({_id:decrypted_user_id}, function(err, requester){
             let requester_department_id = requester.department[0]
             //we notify the director of department
-            User.findOne({position:"director", department:requester_department_id}, 
+            // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
+            User.findOne({ $or: [{position:"registrar/ce", department:requester_department_id, position:"director", department:requester_department_id}]}, 
                 function(err, requester_director){
                 const requesters_director = requester_director._id; 
                 const user_fullname = requester_director.firstName + " " + requester_director.lastName
