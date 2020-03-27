@@ -1458,7 +1458,7 @@ exports.request_product_post = function(req, res){
                     
             //we notify the store
                 Department.findOne({ref_name: "store_department"}, function(err, store){
-                    User.findOne({position:"director", department:store._id}, function(err, store_department){
+                    User.findOne({position:"registrar/ce", department:store._id}, function(err, store_department){
                         console.log("this is the store department director", store_department)
                         const store_director_id = store_department == null? "" : store_department._id;
                         const store_director_email = store_department === null ? "" : store_department.email;
@@ -1467,11 +1467,12 @@ exports.request_product_post = function(req, res){
 
                     Department.findOne({ref_name: "store_department"}, function(err, store){
                         // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
-                        User.findOne({ $or: [{position:"registrar", department:store._id},{position:"registrar/ce", department:store._id} ]}, function(err, store_registrar){
+                        User.findOne({ $or: [{position:"registrar/ce", department:store._id},{position:"registrar/ce", department:store._id} ]}, function(err, store_registrar){
                             const store_registrar_id = store_registrar == null? "" : store_registrar._id
                             const store_registrar_email = store_registrar == null ? "" : store_registrar.email;
                             Department.findOne({ref_name:"audit_department"}, function(err, audit){
                                 console.log("tthis is the audit", audit)
+                                console.log("this is the store department director", store_department)
                                 User.findOne({position:"director", department:audit._id}, function(err, audit_department){
                                     
                                     const audit_director_id = audit_department == null ? "" : audit_department._id
