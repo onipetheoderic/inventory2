@@ -1430,10 +1430,14 @@ exports.view_requests = function(req, res){
 }
 exports.single_requisition = function(req, res){
     Request.findOne({_id:req.params.id})
-    .populate('product')
+    .populate({
+        path:'product',			
+        populate: { path: 'category' }
+      })
     .populate('requester')
     .populate('director')
     .exec(function(err, requests){        
+        console.log("this is the request", requests)
         res.render('inventory/single_requisition', {layout: "layout/table", data:{requests:requests}})
     })
 }
