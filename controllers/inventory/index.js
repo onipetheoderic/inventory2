@@ -1464,7 +1464,8 @@ exports.request_product_post = function(req, res){
             // we now want to notify the audit department,
 
                     Department.findOne({ref_name: "store_department"}, function(err, store){
-                        User.findOne({position:"registrar", department:store._id}, function(err, store_registrar){
+                        // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
+                        User.findOne({ $or: [{position:"registrar", department:store._id},{position:"registrar/ce", department:store._id} ]}, function(err, store_registrar){
                             const store_registrar_id = store_registrar == null? "" : store_registrar._id
                             const store_registrar_email = store_registrar == null ? "" : store_registrar.email;
                             Department.findOne({ref_name:"audit_department"}, function(err, audit){
