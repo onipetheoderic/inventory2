@@ -283,7 +283,7 @@ requester_logo --}}
                             <!-- /card -->
                         </div>
 
-                    
+                    {{#if isDirector}}
                     <div class="col-xl-3 col-sm-6 col-12">
 
                             <!-- Card -->
@@ -292,7 +292,7 @@ requester_logo --}}
                                 <!-- Card Body -->
                                 <div class="dt-card__body px-5 py-4">
                                    <a href="/assign_position">
-                                   <h6 class="text-body text-uppercase mb-2">Assign Task</h6></a>  
+                                   <h6 class="text-body text-uppercase mb-2">Assign User</h6></a>  
                                     <div class="d-flex align-items-baseline mb-4">
                                           <i class="icon icon-user" style="font-size:40px;"></i>
                                     </div>
@@ -301,6 +301,7 @@ requester_logo --}}
                             </div>
                             <!-- /card -->
                         </div>
+                        {{/if}}
                   
                         <div class="col-xl-3 col-sm-6 col-12">
 
