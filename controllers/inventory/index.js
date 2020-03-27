@@ -1941,7 +1941,7 @@ exports.edit_category_post = function(req, res){
     Category.findByIdAndUpdate(req.params.id, {
         name: req.body.name,
         description: req.body.description,
-        category_code: req.body.cateogory_code
+        category_code: req.body.category_code
     })
     .exec(function(err, updated_staff){
         if(err){
