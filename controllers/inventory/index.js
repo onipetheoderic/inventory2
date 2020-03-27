@@ -1028,7 +1028,7 @@ exports.generate_ledger = function(req, res){
 
 exports.generate_report_form = function(req, res){
     console.log(req.params.id)
-    Product.findOne({_id:req.params.id}, function(err, product){
+    Product.findOne({_id:req.params.id}).populate('category').exec(function(err, product){
         // let unit = product.unit
     const product_id = product.parent_id == undefined || product.parent_id=="" ? req.params.id : product.parent_id
        console.log(product)
