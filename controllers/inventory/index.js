@@ -1453,7 +1453,7 @@ exports.request_product_post = function(req, res){
             let requester_department_id = requester.department[0]
             //we notify the director of department
             // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
-            User.findOne({ $or: [{position:"registrar/ce", department:requester_department_id, position:"director", department:requester_department_id}]}, 
+            User.findOne({ $or: [{position:"registrar/ce", department:requester_department_id.toString()},{position:"director", department:requester_department_id.toString()}]}, 
                 function(err, requester_director){
                 const requesters_director = requester_director._id; 
                 const user_fullname = requester_director.firstName + " " + requester_director.lastName
