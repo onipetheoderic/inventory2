@@ -472,7 +472,7 @@ exports.verify_request = function(req, res){
             if(user!=null){
                 // console.log("this user is legit")
                 //lets get assigned users
-                
+                console.log("this is the user id", decrypted_user_id);
 
                 Department.findOne({_id: user.department})
                 .exec(function(err, department){
@@ -709,11 +709,9 @@ exports.verify_request = function(req, res){
                                 })
                             }
                         }
-                    
-                        
+
                         else if(single_request.audit_director_verified==false && dept_director_id.toString().trim() == user.id.toString().trim()){
                             console.log("under dept_director_id", dept_director_id.toString().trim(), user.id.toString().trim())
-
                             if(acceptance=="accept"){
                                 Request.findByIdAndUpdate(request_id, {
                                     dept_director_verified:true,
