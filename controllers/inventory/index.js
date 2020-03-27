@@ -83,7 +83,7 @@ exports.home = function(req, res){
     let decrypted_user_role = decrypt(req.session.role, req, res)
     const isDirector = decrypted_user_role =="director"?true:false;
 
-        if(decrypted_user_role=="director" || decrypted_user_role=="registrar"){
+        if(decrypted_user_role=="director" || decrypted_user_role=="registrar/ce"){
             console.log("its the directore", decrypted_user_id)
             User.findOne({_id:decrypted_user_id}, function(err, user){
                 console.log(user)
