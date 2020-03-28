@@ -105,6 +105,10 @@ router.route('/assign_position')
     .get(InventoryController.assign_position)
     .post(InventoryController.assign_position_post)
 
+router.route('/verifiers')
+    .get(InventoryController.verifiers)
+    .post(InventoryController.verifier_post)
+
 router.route('/edit_department/:id')
     .get(InventoryController.edit_department)
     .post(InventoryController.edit_department_post)

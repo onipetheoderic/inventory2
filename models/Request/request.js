@@ -20,29 +20,19 @@ var RequestSchema = new mongoose.Schema({
     srsiv_no: Number,
     unit: Number,//main unit
     adjusted_unit:Number,
-    admin_director_verified:{type:Boolean, default:false},
-    store_director_verified: {type:Boolean, default:false},
-    store_unit: Number,
-    store_director: [{//this is the user that created the Request
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }],
-    audit_director_verified: {type:Boolean, default:false},
-    audit_unit: Number,
-    audit_director: [{//this is the user that created the Request
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }],
-    admin_unit: Number,
-    store_registrar_verified: {type:Boolean, default:false},
-    admin_director:[{//this is the user that created the Request
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }],
-    store_registrar: [{//this is the user that created the Request
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }],
+  
+    
+    store_1_verifier: String,
+    store_2_verifier: String,
+    registrar_verifier: String,
+    admin_1_verifier: String,
+
+    store_1_verified: {type:Boolean, default:false},
+    store_2_verified: {type:Boolean, default:false},
+    registrar_verified: {type:Boolean, default:false},
+    admin_1_verified: {type:Boolean, default:false},
+
+
     rejected: {type:Boolean, default:false}
 },{
     timestamps: true//this will automatically add the createdAt and the updatedAt field for us

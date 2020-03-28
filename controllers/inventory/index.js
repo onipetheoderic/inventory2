@@ -8,6 +8,7 @@ import Store from '../../models/Store/store';
 import Request from '../../models/Request/request';
 import Installation from '../../models/Installation/installation';
 import BinCard from '../../models/BinCard/binCard';
+import Verifier from '../../models/Verifier/verifier';
 import overall_config from '../../config/overall_config.json'
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
@@ -73,6 +74,72 @@ function collectionInherit(){
     return {category:categories, department:departments}
 }
 
+exports.verifiers = function(req, res){
+    User.find({}).populate("department").exec(function(err, users){
+        res.render('inventory/verifiers', {layout: "layout/inventory", users:users})
+    })
+}
+
+exports.verifier_post = function(req, res){
+    Verifier.find({}).exec(function(err, verifier){
+        const store_1_verifier = req.body.store_1_verifier.split("|")
+        const store_2_verifier = req.body.store_2_verifier.split("|") 
+        const registrar_verifier = req.body.registrar_verifier.split("|") 
+        const admin_1_verifier = req.body.admin_1_verifier.split("|")
+        if(verifier.length<1){             
+            let verifier = new Verifier();
+            verifier.store_1_verifier = store_1_verifier[0]
+            verifier.store_2_verifier = store_2_verifier[0];
+            verifier.registrar_verifier = registrar_verifier[0];
+            verifier.admin_1_verifier = admin_1_verifier[0];
+            verifier.store_1_verifier_email = store_1_verifier[1]
+            verifier.store_2_verifier_email = store_2_verifier[1];
+            verifier.registrar_verifier_email = registrar_verifier[1];
+            verifier.admin_1_verifier_email = admin_1_verifier[1];
+            verifier.store_1_verifier_full_name = store_1_verifier[2];
+            verifier.store_2_verifier_full_name = store_2_verifier[2];
+            verifier.registrar_verifier_full_name  = admin_1_verifier[2];
+            verifier.admin_1_verifier_full_name = admin_1_verifier[2];
+            verifier.save(function(err,saved_verifier){
+                if(err){
+                    console.log(err)
+                }
+                else {
+                    res.redirect('/')
+                }
+            })
+        }
+        
+        else if(verifier.length>=1) {
+            Verifier.findOne({}, function(err, verifier){
+                Verifier.findByIdAndUpdate(verifier.id, {
+                    store_1_verifier:store_1_verifier[0],
+                    store_2_verifier:store_2_verifier[0],
+                    registrar_verifier:registrar_verifier[0],
+                    admin_1_verifier: admin_1_verifier[0],
+                    store_1_verifier_email:store_1_verifier[1],
+                    store_2_verifier_email:store_2_verifier[1],
+                    registrar_verifier_email: registrar_verifier[1],
+                    admin_1_verifier_email: admin_1_verifier[1],
+                    store_1_verifier_full_name: store_1_verifier[2],
+                    store_2_verifier_full_name: store_2_verifier[2],
+                    registrar_verifier_full_name: admin_1_verifier[2],
+                    admin_1_verifier_full_name:admin_1_verifier[2],
+                   
+                })
+                .exec(function(err, updated_store){
+                    if(err){
+                        console.log(err)
+                    }else {
+                        res.redirect(`/`)
+                    }
+                })
+            })
+        }
+    })
+}
+
+
 exports.home = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
         console.log("its working", req.session.user_id)
@@ -83,18 +150,73 @@ exports.home = function(req, res){
     let decrypted_user_role = decrypt(req.session.role, req, res)
     const isDirector = decrypted_user_role =="director"?true:false;
 
-        if(decrypted_user_role=="director" || decrypted_user_role=="registrar/ce"){
-            console.log("its the directore", decrypted_user_id)
-            User.findOne({_id:decrypted_user_id}, function(err, user){
-                console.log(user)
-                Department.findOne({_id:user.department}, function(err, department_user){
-                    console.log("this is the users directors department",department_user.ref_name)
-                    
-                    Request.findOne({dept_director:decrypted_user_id}, function(err, reqs){
-                      const isReq = reqs==null?false:true;
-                    
-                    if(isReq == true){
-                        Request.find({rejected:false, dept_director_verified:false})
+    Verifier.findOne({}, function(err, verifier){
+        const store_1_verifier = verifier.store_1_verifier;
+        const store_2_verifier = verifier.store_2_verifier;
+        const registrar_verifier = verifier.registrar_verifier;
+        const admin_1_verifier = verifier.admin_1_verifier;
+
+        User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
+            const store_1_verifier_assigned_user = store_1_guy.user_detail;
+        User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
+            const store_2_verifier_assigned_user = store_2_guy.user_detail;
+        User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
+            const registrar_verifier_assigned_user = registrar_guy.user_detail;
+        User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
+            const admin_assigned_user = admin_1_guy.user_detail;
+        
+        User.findOne({_id:decrypted_user_id}, function(err, user){
+            let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
+       
+        Request.findOne({$or:[{dept_director:decrypted_user_id, dept_director_verified:false}, {dept_director:assigned_user, dept_director_verified:false}]})
+            .exec(function(err, reqs){
+                console.log("E dey work", reqs)              
+                const isReq = reqs==null?false:true;
+
+
+
+            if(isReq){
+                Request.find({rejected:false, dept_director_verified:false})
+                .populate("director")
+                .populate("requester")
+                .populate("product")
+                .exec(function(err, requests){
+                    console.log("from adm dept",requests)                                    
+                    Department.find({}, function(err, department){
+                        Category.find({}, function(err, category){                
+                            Subcategory.find({}, function(err, sub_category){ 
+                                console.log(sub_category)
+                                let categories = []                   
+                                for(var i in category){
+                                    let sub_categories = [];
+                                    for(var k in sub_category){                               
+                                        if(category[i]._id == sub_category[k].parent_id){
+                                            console.log("true")                                    
+                                            sub_categories.push({
+                                                name:sub_category[k].name
+                                            })
+                                        }
+                                        
+                                    }
+                                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                    
+                                }
+                                User.find({}, function(err, users){
+                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                        })
+                                    })
+                                });
+                            });
+                        
+                        })
+                    })
+                })
+            }
+            else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
+                Request.find({rejected:false, dept_director_verified:false})
                             .populate("director")
                             .populate("requester")
                             .populate("product")
@@ -132,19 +254,14 @@ exports.home = function(req, res){
                                     })
                                 })
                             })
-                    }
-                    else if(department_user.ref_name=="admin_department"){
-                        console.log("XXXXXXXXXXXXXXXXX")
-                        if(user.position=="director" || user.position=="registrar/ce"){
-                            console.log("from d admin department", )
-                            Request.find({rejected:false, admin_director_verified:false})
+            }
+            else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
+                Request.find({rejected:false, dept_director_verified:false})
                             .populate("director")
                             .populate("requester")
                             .populate("product")
                             .exec(function(err, requests){
-
-                                console.log("from adm dept",requests)
-                                    
+                                console.log("from adm dept",requests)                                    
                                 Department.find({}, function(err, department){
                                     Category.find({}, function(err, category){                
                                         Subcategory.find({}, function(err, sub_category){ 
@@ -177,21 +294,14 @@ exports.home = function(req, res){
                                     })
                                 })
                             })
-                        }
-                    }
-
-                    else if(department_user.ref_name=="audit_department"){
-                        console.log("XXXXXXXXXXXXXXXXX")
-                        if(user.position=="director" || user.position=="registrar/ce"){
-                            console.log("from the department", )
-                            Request.find({rejected:false, audit_director_verified:false})
+            }
+            else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                Request.find({rejected:false, dept_director_verified:false})
                             .populate("director")
                             .populate("requester")
                             .populate("product")
                             .exec(function(err, requests){
-
-                                console.log("from adm dept",requests)
-                                    
+                                console.log("from adm dept",requests)                                    
                                 Department.find({}, function(err, department){
                                     Category.find({}, function(err, category){                
                                         Subcategory.find({}, function(err, sub_category){ 
@@ -224,189 +334,94 @@ exports.home = function(req, res){
                                     })
                                 })
                             })
-                        }
-                    }
-
-
-                    else if(department_user.ref_name=="store_department"){
-                        console.log("XXXXXXXXXXXXXXXXX")
-                        if(user.position=="director" || user.position=="registrar/ce"){
-                            console.log("from the department", )
-                            Request.find({rejected:false,store_director_verified:false})
+            }
+            else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                Request.find({rejected:false, dept_director_verified:false})
                             .populate("director")
                             .populate("requester")
                             .populate("product")
                             .exec(function(err, requests){
-
-                                console.log("from adm dept",requests)
-                                    
-                                Department.find({}, function(err, department){
-                                    Category.find({}, function(err, category){                
-                                        Subcategory.find({}, function(err, sub_category){ 
-                                            console.log(sub_category)
-                                            let categories = []                   
-                                            for(var i in category){
-                                                let sub_categories = [];
-                                                for(var k in sub_category){                               
-                                                    if(category[i]._id == sub_category[k].parent_id){
-                                                        console.log("true")                                    
-                                                        sub_categories.push({
-                                                            name:sub_category[k].name
-                                                        })
-                                                    }
-                                                    
-                                                }
-                                                categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                                                
-                                            }
-                                            User.find({}, function(err, users){
-                                                User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                                    let superAdmin = user.userType=="superAdmin"?true:false;  
-                                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                                        res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
-                                                    })
-                                                })
-                                            });
-                                        });
-                                    
-                                    })
-                                })
-                            })
-                        }
-                        
-                        else if(user.position=="registrar"){
-                            Request.find({admin_registrar:decrypted_user_id, signed:true, admin_director_verified:false, admin_registrar_verified:false})
-                            .populate("director")
-                            .populate("requester")
-                            .populate("product")
-                            .exec(function(err, requests){
-                                console.log("this are the requests",requests)                                    
-                                Department.find({}, function(err, department){
-                                    Category.find({}, function(err, category){                
-                                        // User.find({}, function(err, users){
-                                        //     User.findOne({_id:decrypted_user_id}, function(err, user){     
-                                        //         let superAdmin = user.userType=="superAdmin"?true:false;                 
-                                        //         Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                        //             res.render('inventory/home', {layout: "layout/inventory", superAdmin:superAdmin,requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
-                                        //         })
-                                        // })
-                                        // });
-                                        Subcategory.find({}, function(err, sub_category){ 
-                                            console.log(sub_category)
-                                            let categories = []                   
-                                            for(var i in category){
-                                                let sub_categories = [];
-                                                for(var k in sub_category){                               
-                                                    if(category[i]._id == sub_category[k].parent_id){
-                                                        console.log("true")                                    
-                                                        sub_categories.push({
-                                                            name:sub_category[k].name
-                                                        })
-                                                    }
-                                                    
-                                                }
-                                                categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                                                
-                                            }
-                                            User.find({}, function(err, users){
-                                                User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                                    let superAdmin = user.userType=="superAdmin"?true:false;  
-                                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                                        res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
-                                                    })
-                                                })
-                                            });
-                                        });
-                                        
-                                    })
-                                })
-                            })
-                        }
-                       
-                    }
-                    
-
-
-                })
-            })
-            })
-        }//end of director views
-        
-        
-        else {
-            // console.log("this is the normal user")
-            //let check 
-            User.findOne({position:'director', user_detail:decrypted_user_id},function(err, d_user){
-                // console.log("this is the user",d_user)
-                
-                
-                // console.log("this is an assigned user",d_user.user_detail[0].toString());
-                if(d_user!=null){
-                    let director_assigned = d_user.id
-                //lets get if his parent have signed it
-                Request.find({ rejected:false, store_registrar_verified:false, })
-                        .or([{ audit_director: director_assigned, audit_director_verified:false }, 
-                            { admin_director: director_assigned, admin_director_verified:false },
-                            { store_director: director_assigned, store_director_verified:false },
-                            { dept_director: director_assigned, dept_director_verified:false },
-                        
-                        ]).populate("director")
-                        .populate("requester")
-                        .populate("product")
-                        .exec(function(err, requests){
-                            console.log("this are the requests",requests)
-                                
+                                console.log("from adm dept",requests)                                    
                             Department.find({}, function(err, department){
                                 Category.find({}, function(err, category){                
-                                    User.find({}, function(err, users){
-                                        User.findOne({_id:decrypted_user_id}, function(err, user){ 
-                                            let superAdmin = user.userType=="superAdmin"?true:false;                                                 
-                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                                res.render('inventory/home', {layout: "layout/inventory",isDirector:isDirector, superAdmin:superAdmin, requests:requests, user:user, product:product, users:users, category:category, department:department, data:{category:category, department:department}})
-                                            })
-                                    })
-                                    });
-                                })
-                            })
-                        })
-            }
-            else {
-                Department.find({}, function(err, department){
-                    Category.find({}, function(err, category){ 
-                        Subcategory.find({}, function(err, sub_category){ 
-                            console.log(sub_category)
-                            let categories = []                   
-                            for(var i in category){
-                                let sub_categories = [];
-                                for(var k in sub_category){                               
-                                    if(category[i]._id == sub_category[k].parent_id){
-                                        console.log("true")                                    
-                                        sub_categories.push({
-                                            name:sub_category[k].name
+                                    Subcategory.find({}, function(err, sub_category){ 
+                                        console.log(sub_category)
+                                        let categories = []                   
+                                        for(var i in category){
+                                            let sub_categories = [];
+                                            for(var k in sub_category){                               
+                                                if(category[i]._id == sub_category[k].parent_id){
+                                                    console.log("true")                                    
+                                                    sub_categories.push({
+                                                        name:sub_category[k].name
+                                                    })
+                                                }
+                                                
+                                            }
+                                            categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                            
+                                        }
+                                User.find({}, function(err, users){
+                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
                                         })
-                                    }
-                                    
-                                }
-                                categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                            }
-                            console.log(categories)
-                            User.find({}, function(err, users){
-                                User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                    let superAdmin = user.userType=="superAdmin"?true:false;  
-                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                        res.render('inventory/home', {layout: "layout/inventory",isDirector:isDirector, superAdmin:superAdmin, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
                                     })
-                                })
+                                });
                             });
+                                    
                         })
                     })
                 })
             }
-         
-            })
-        }
+            else {
+                                          
+                            Department.find({}, function(err, department){
+                                Category.find({}, function(err, category){                
+                                    Subcategory.find({}, function(err, sub_category){ 
+                                        console.log(sub_category)
+                                        let categories = []                   
+                                        for(var i in category){
+                                            let sub_categories = [];
+                                            for(var k in sub_category){                               
+                                                if(category[i]._id == sub_category[k].parent_id){
+                                                    console.log("true")                                    
+                                                    sub_categories.push({
+                                                        name:sub_category[k].name
+                                                    })
+                                                }
+                                                
+                                            }
+                                            categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                            
+                                        }
+                                User.find({}, function(err, users){
+                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                        })
+                                    })
+                                });
+                            });
+                                    
+                        })
+                    })
+              
+            }
+
+        })
+    
+        })
+        })
         
-    }
+        })
+    })
+})
+})
+
+}
 }
 
 exports.default_config = function(req, res){
@@ -470,220 +485,31 @@ exports.verify_request = function(req, res){
         User.findOne({_id:decrypted_user_id, passcode:passcode})
         .exec(function(err, user){
             if(user!=null){
-                // console.log("this user is legit")
-                //lets get assigned users
-                console.log("this is the user id", decrypted_user_id);
-                console.log("this is the user department", )
+                let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
+                Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: assigned_user}] })
+                .exec(function(err, reqs){
+                    console.log("E dey work", reqs)              
+                    const isReq = reqs==null?false:true;
 
-                Department.findOne({_id: user.department})
-                .exec(function(err, department){
-                    let department_ref_name = department.ref_name;
-                    Request.findOne({_id:request_id}, function(err, single_request){
-                        //let get his assigned user too
-                        User.findOne({_id:decrypted_user_id}, function(err, single_user){
-                            console.log("thisi is the assigned user",single_user.user_detail[0])
-                            /*
-                            Request.find({ rejected:false, store_registrar_verified:false, })
-                        .or([{ audit_director: director_assigned, audit_director_verified:false }, 
-                            { admin_director: director_assigned, admin_director_verified:false },
-                            { store_director: director_assigned, store_director_verified:false },
-                            { dept_director: director_assigned, dept_director_verified:false },
-                        
-                        ]).populate("director")
+                    Verifier.findOne({}, function(err, verifier){
+                        const store_1_verifier = verifier.store_1_verifier;
+                        const store_2_verifier = verifier.store_2_verifier;
+                        const registrar_verifier = verifier.registrar_verifier;
+                        const admin_1_verifier = verifier.admin_1_verifier;
 
-                            */ 
-                        let single_user_detail = single_user.user_detail[0] == undefined ? single_user.user_detail[0]:single_user.user_detail[0].toString();
-                        Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: single_user_detail}] })
-                    
-                        .exec(function(err, reqs){
-                            console.log("E dey work", reqs)              
-                            const isReq = reqs==null?false:true;
-                            let request = single_request;
-                            let dept_director_id = request.dept_director[0]
-                            let store_registrar_id = request.store_registrar[0]
-                            let audit_director_id = request.audit_director[0]
-                            let store_director_id = request.store_director[0]
-                            let admin_director_id = request.admin_director[0]                        
-                            console.log("dept_director_id",dept_director_id)
-                            console.log("store_registrar_id",store_registrar_id)
-                            console.log("audit_director_id", audit_director_id)
-                            console.log("store_director_id", store_director_id)
-                            console.log("Admin director", admin_director_id)
-                        //this iis for the department head
-                        if(single_request.dept_director_verified == false && isReq==true){
-                            console.log("under store_director_id")
-                            if(acceptance=="accept"){
+                        User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
+                            const store_1_verifier_assigned_user = store_1_guy.user_detail;
+                        User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
+                            const store_2_verifier_assigned_user = store_2_guy.user_detail;
+                        User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
+                            const registrar_verifier_assigned_user = registrar_guy.user_detail;
+                        User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
+                            const admin_assigned_user = admin_1_guy.user_detail;
+
+                            if(isReq){
                                 Request.findByIdAndUpdate(request_id, {
                                     dept_director_verified:true,
                                     dept_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        if(single_request.store_director_verified==false && store_director_id.toString().trim() == user.id.toString().trim() ||
-                                        single_request.store_director_verified==false && store_director_id.toString().trim() == single_user_detail
-                                        ){
-                                            console.log("under store_director_id")
-                                            if(acceptance=="accept"){
-                                                Request.findByIdAndUpdate(request_id, {
-                                                    store_director_verified:true,
-                                                    store_unit: current_unit,
-                                                    unit:current_unit
-                                                })
-                                                .exec(function(err, updated_store){
-                                                    if(err){
-                                                        console.log(err)
-                                                    }else {
-                                                        res.redirect(`/`)
-                                                    }
-                                                })
-                                            }
-                                        }
-                                        else if(single_request.admin_director_verified==false && admin_director_id.toString().trim() == user.id.toString().trim() ||
-                                        single_request.admin_director_verified==false && admin_director_id.toString().trim() == single_user_detail
-                                        ){
-                                            console.log("under store_director_id")
-                                            if(acceptance=="accept"){
-                                                Request.findByIdAndUpdate(request_id, {
-                                                    admin_director_verified:true,
-                                                    admin_unit: current_unit,
-                                                    unit:current_unit
-                                                })
-                                                .exec(function(err, updated_store){
-                                                    if(err){
-                                                        console.log(err)
-                                                    }else {
-                                                        res.redirect(`/`)
-                                                    }
-                                                })
-                                            }
-                                        }
-                                        else if(single_request.audit_director_verified==false && audit_director_id.toString().trim() == user.id.toString().trim() ||
-                                        single_request.audit_director_verified==false && audit_director_id.toString().trim() == single_user_detail){
-                                            console.log("under audit_director_id")
-                                            if(acceptance=="accept"){
-                                                Request.findByIdAndUpdate(request_id, {
-                                                    audit_director_verified: true,
-                                                    audit_unit: current_unit,
-                                                    unit:current_unit
-                                                })
-                                                .exec(function(err, updated_store){
-                                                    if(err){
-                                                        console.log(err)
-                                                    }else {
-                                                        console.log(updated_store)
-                                                        res.redirect(`/`)
-                                                    }
-                                                })
-                                            }
-                                            else if(acceptance == "reject"){
-                                                Request.findByIdAndUpdate(request_id, {
-                                                    rejected:true,
-                                                    audit_unit: current_unit,
-                                                    unit:current_unit
-                                                })
-                                                .exec(function(err, updated_store){
-                                                    if(err){
-                                                        console.log(err)
-                                                    }else {
-                                                        res.redirect(`/`)
-                                                    }
-                                                })
-                                            }
-                                        }                                    
-
-                                    }
-                                })
-                            }
-                            else if(acceptance == "reject"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    rejected:true,
-                                    store_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        res.redirect(`/`)
-                                    }
-                                })
-                            }
-                        }
-
-                        else if(single_request.store_director_verified==false && store_director_id.toString().trim() == user.id.toString().trim()){
-                            console.log("under store_director_id")
-                            if(acceptance=="accept"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    store_director_verified:true,
-                                    store_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        res.redirect(`/`)
-                                    }
-                                })
-                            }
-                            else if(acceptance == "reject"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    rejected:true,
-                                    store_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        res.redirect(`/`)
-                                    }
-                                })
-                            }
-                        }
-
-                        else if(single_request.admin_director_verified==false && admin_director_id.toString().trim() == user.id.toString().trim()){
-                            console.log("under store_director_id")
-                            if(acceptance=="accept"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    admin_director_verified:true,
-                                    admin_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        res.redirect(`/`)
-                                    }
-                                })
-                            }
-                            else if(acceptance == "reject"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    rejected:true,
-                                    admin_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        res.redirect(`/`)
-                                    }
-                                })
-                            }
-                        }
-                    
-                  
-                        else if(single_request.audit_director_verified==false && audit_director_id.toString().trim() == user.id.toString().trim()){
-                            console.log("under audit_director_id")
-                            if(acceptance=="accept"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    audit_director_verified: true,
-                                    audit_unit: current_unit,
                                     unit:current_unit
                                 })
                                 .exec(function(err, updated_store){
@@ -695,27 +521,9 @@ exports.verify_request = function(req, res){
                                     }
                                 })
                             }
-                            else if(acceptance == "reject"){
+                            else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
                                 Request.findByIdAndUpdate(request_id, {
-                                    rejected:true,
-                                    audit_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        res.redirect(`/`)
-                                    }
-                                })
-                            }
-                        }
-
-                        else if(single_request.audit_director_verified==false && dept_director_id.toString().trim() == user.id.toString().trim()){
-                            console.log("under dept_director_id", dept_director_id.toString().trim(), user.id.toString().trim())
-                            if(acceptance=="accept"){
-                                Request.findByIdAndUpdate(request_id, {
-                                    dept_director_verified:true,
+                                    store_1_verified:true,
                                     dept_unit: current_unit,
                                     unit:current_unit
                                 })
@@ -723,13 +531,14 @@ exports.verify_request = function(req, res){
                                     if(err){
                                         console.log(err)
                                     }else {
+                                        console.log(updated_store)
                                         res.redirect(`/`)
                                     }
                                 })
                             }
-                            else if(acceptance == "reject"){
+                            else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
                                 Request.findByIdAndUpdate(request_id, {
-                                    rejected:true,
+                                    store_2_verified:true,
                                     dept_unit: current_unit,
                                     unit:current_unit
                                 })
@@ -737,65 +546,56 @@ exports.verify_request = function(req, res){
                                     if(err){
                                         console.log(err)
                                     }else {
+                                        console.log(updated_store)
                                         res.redirect(`/`)
                                     }
                                 })
                             }
-                        }
-                        else {
-                            console.log("they are not the same")
-                        }
+                            else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                                Request.findByIdAndUpdate(request_id, {
+                                    registrar_verified:true,
+                                    dept_unit: current_unit,
+                                    unit:current_unit
+                                })
+                                .exec(function(err, updated_store){
+                                    if(err){
+                                        console.log(err)
+                                    }else {
+                                        console.log(updated_store)
+                                        res.redirect(`/`)
+                                    }
+                                })
+                            }
+                            else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                                Request.findByIdAndUpdate(request_id, {
+                                    registrar_verified:true,
+                                    dept_unit: current_unit,
+                                    unit:current_unit
+                                })
+                                .exec(function(err, updated_store){
+                                    if(err){
+                                        console.log(err)
+                                    }else {
+                                        console.log(updated_store)
+                                        res.redirect(`/`)
+                                    }
+                                })
+                            }
+    
+                        })
+                    
+                        })
+                        })
+                        
+                        })
                     })
-                });
-            });
-
                 })
             }
             else{
                 console.log("the user is not legit")
             }
         });
-        //             if(department.ref_name!="admin_department"){
-        //                 Request.findByIdAndUpdate(request_id, {signed:true})
-        //                 .exec(function(err, updated_store){
-        //                     if(err){
-        //                         console.log(err)
-        //                     }else {
-        //                         res.redirect(`/`)
-        //                     }
-        //                 })
-        //             }
-        //             else {
-        //                 if(user.position=="registrar"){
-        //                     Request.findByIdAndUpdate(request_id, {admin_registrar_verified:true})
-        //                     .exec(function(err, updated_store){
-        //                         if(err){
-        //                             console.log(err)
-        //                         }else {
-
-        //                             res.redirect(`/`)
-        //                         }
-        //                     })
-        //                 }
-        //                 else if(user.position=="director" || user.position=="registrar/ce"){
-        //                     Request.findByIdAndUpdate(request_id, {admin_director_verified:true})
-        //                     .exec(function(err, updated_store){
-        //                         if(err){
-        //                             console.log(err)
-        //                         }else {
-        //                             res.redirect(`/`)
-        //                         }
-        //                     })
-        //                 }
-        //             }      
-                   
-        //         })
-
-        //     }
-        //     else{
-        //         console.log("the user is not legit")
-        //     }
-        // });
+        
 
     }
 }
@@ -966,8 +766,9 @@ exports.assign_position_post = function(req, res){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
         let decrypted_user_role = decrypt(req.session.role, req, res)
         console.log("this is thte incomnig,", req.body.user_id)
+        //a one to one relationship btwn the director and dthe user
         User.findByIdAndUpdate(decrypted_user_id, 
-            {director_assigned:true, user_detail:req.body.user_id})
+            {user_detail:req.body.user_id})
         .exec(function(err, updated_user){
             if(err){
                 console.log(err)
@@ -1451,168 +1252,157 @@ exports.request_product_post = function(req, res){
         let decrypted_department = decrypt(req.session.role, req, res)
         let store_id = req.body.store_id
         let product_id = req.body.product_id
-        // lets get the current user details
+        Verifier.findOne({}, function(err, verifier){
+            const store_1_verifier = verifier.store_1_verifier;
+            const store_2_verifier = verifier.store_2_verifier;
+            const registrar_verifier = verifier.registrar_verifier;
+            const admin_1_verifier = verifier.admin_1_verifier;
+
+            const store_1_verifier_email = verifier.store_1_verifier_email;
+            const store_2_verifier_email = verifier.store_2_verifier_email;
+            const registrar_verifier_email = verifier.registrar_verifier_email;
+            const admin_1_verifier_email = verifier.admin_1_verifier_email;
+
+            const store_1_verifier_full_name = verifier.store_1_verifier_full_name;
+            const store_2_verifier_full_name = verifier.store_2_verifier_full_name;
+            const registrar_verifier_full_name = verifier.registrar_verifier_full_name;
+            const admin_1_verifier_full_name = verifier.admin_1_verifier_full_name;
+                // lets get the current user details
 
         User.findOne({_id:decrypted_user_id}, function(err, requester){
             let requester_department_id = requester.department[0]
+            console.log("this is the requester",requester)
             //we notify the director of department
             // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
             User.findOne({ $or: [{position:"registrar/ce", department:requester_department_id.toString()},{position:"director", department:requester_department_id.toString()}]}, 
                 function(err, requester_director){
                 const requesters_director = requester_director._id; 
                 const user_fullname = requester_director.firstName + " " + requester_director.lastName
-                    
-            //we notify the store
-                Department.findOne({ref_name: "store_department"}, function(err, store){
-                    User.findOne({position:"registrar/ce", department:store._id}, function(err, store_department){
-                        console.log("this is the store department director", store_department)
-                        const store_director_id = store_department == null? "" : store_department._id;
-                        const store_director_email = store_department === null ? "" : store_department.email;
-                        const store_department_fullname = store_department.firstName +" "+store_department.lastName
-            // we now want to notify the audit department,
+                let unit = req.body.request_unit;
+        Store.findOne({_id:store_id}, function(err, store_item){
+            let previous_unit = store_item.unit;
+            let current_unit = req.body.request_unit;
+            
+            let final_unit = parseInt(previous_unit-current_unit)
+            Store.findByIdAndUpdate(store_id, {unit:final_unit})
+            .exec(function(err, updated_staff){
+                if(err){
+                    console.log(err)
+                }else {
+                    Product.findOne({_id:product_id}, function(err, prod){
+                        BinCard.find({}, function(err, cards){                                                              
+                        let binCard = new BinCard;
+                        binCard.product = prod._id;
+                        binCard.stock_balance = final_unit
+                        binCard.sv_number = parseInt(cards.length+1);
+                        binCard.quantity = current_unit;
+                        binCard.requester = user_fullname;
 
-                    Department.findOne({ref_name: "store_department"}, function(err, store){
-                        // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
-                        User.findOne({ $or: [{position:"registrar/ce", department:store._id},{position:"registrar/ce", department:store._id} ]}, function(err, store_registrar){
-                            const store_registrar_id = store_registrar == null? "" : store_registrar._id
-                            const store_registrar_email = store_registrar == null ? "" : store_registrar.email;
-                            Department.findOne({ref_name:"audit_department"}, function(err, audit){
-                                console.log("tthis is the audit", audit)
-                                console.log("this is the store department director", store_department)
-                                User.findOne({position:"director", department:audit._id}, function(err, audit_department){
-                                    
-                                    const audit_director_id = audit_department == null ? "" : audit_department._id
-                                    console.log("audit",audit_director_id)
-                                    const audit_director_email = audit_department == null ? "" : audit_department.email;
-                                    //we notify the director of admin
-                                    Department.findOne({ref_name:"admin_department"}, function(err, admin){
-                                        User.findOne({position:"director", department:admin._id}, function(err, admin_department){
-                                            const admin_director_id = admin_department === null ? "" : admin_department._id
-                                            const admin_director_email = admin_department === null ? "" : admin_department.email;
+                        binCard.save(function(err, card){
+                            if(err){
+                                console.log(err)
+                            }
+                            else {
+                                let request = new Request();
+                                request.store_1_verifier = store_1_verifier;
+                                request.store_2_verifier = store_2_verifier;
+                                request.registrar_verifier = registrar_verifier;
+                                request.admin_1_verifier = admin_1_verifier;                     
+                                request.dept_director = requesters_director==""?[]:requester_director
+                                request.requester = decrypted_user_id
+                                request.product = product_id;
+                                request.unit = unit;
+                                request.adjusted_unit = unit;
+                                request.srsiv_no = card.sv_number;
+                                request.save(function(err, request){
+                                    if(err){
+                                        console.log(err)
+                                    }
+                                    /*
+                                      const store_1_verifier_email = verifier.store_1_verifier_email;
+            const store_2_verifier_email = verifier.store_2_verifier_email;
+            const registrar_verifier_email = verifier.registrar_verifier_email;
+            const admin_1_verifier_email = verifier.admin_1_verifier_email;
 
-                                            
-                                            let unit = req.body.request_unit;
-                                            Store.findOne({_id:store_id}, function(err, store_item){
-                                                let previous_unit = store_item.unit;
-                                                let current_unit = req.body.request_unit;
-                                                
-                                                let final_unit = parseInt(previous_unit-current_unit)
-                                                Store.findByIdAndUpdate(store_id, {unit:final_unit})
-                                                .exec(function(err, updated_staff){
-                                                    if(err){
-                                                        console.log(err)
-                                                    }else {
-                                                        Product.findOne({_id:product_id}, function(err, prod){
-                                                            BinCard.find({}, function(err, cards){                                                              
-                                                            let binCard = new BinCard;
-                                                            binCard.product = prod._id;
-                                                            binCard.stock_balance = final_unit
-                                                            binCard.sv_number = parseInt(cards.length+1);
-                                                            binCard.quantity = current_unit;
-                                                            binCard.requester = user_fullname;
-
-                                                            binCard.save(function(err, card){
-                                                                if(err){
-                                                                    console.log(err)
-                                                                }
-                                                                else {
-                                                                    let request = new Request();
-                                                                    request.dept_director = requesters_director==""?[]:requester_director
-                                                                    request.store_registrar = store_registrar_id==""?[]:store_registrar_id;
-                                                                    request.store_director = store_director_id==""?[]:store_director_id;
-                                                                    request.audit_director = audit_director_id==""?[]:audit_director_id;
-                                                                    request.requester = decrypted_user_id
-                                                                    request.admin_director = admin_director_id==""?[]:admin_director_id;                                     
-                                                                    request.product = product_id;
-                                                                    request.unit = unit;
-                                                                    request.adjusted_unit = unit;
-                                                                    request.srsiv_no = card.sv_number;
-                                                                    request.save(function(err, request){
-                                                                        if(err){
-                                                                            console.log(err)
-                                                                        }
-                                                                        else {
-                                                                            //notification starts here
-                                                                            var storeOptions = {
-                                                                                from: 'onipetheoderic@gmail.com',
-                                                                                to: store_director_email,
-                                                                                subject: 'Requisition Request',
-                                                                                text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                                                            };
-                                                                            var auditOptions = {
-                                                                                from: 'onipetheoderic@gmail.com',
-                                                                                to: audit_director_email,
-                                                                                subject: 'Requisition Request',
-                                                                                text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                                                            };
-                                                                            var adminOptions = {
-                                                                                from: 'onipetheoderic@gmail.com',
-                                                                                to: admin_director_email,
-                                                                                subject: 'Requisition Request',
-                                                                                text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                                                            };
-                                                                            var registrarOptions = {
-                                                                                from: 'onipetheoderic@gmail.com',
-                                                                                to: store_registrar_email,
-                                                                                subject: 'Requisition Request',
-                                                                                text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                                                            };
-                                                                            transporter.sendMail(storeOptions, function(error, info){
-                                                                                if (error) {
-                                                                                    console.log(error);
-                                                                                } else {
-                                                                                    console.log('Email sent: ' + info.response);
-                                                                                }
-                                                                            });
-                                                                            transporter.sendMail(auditOptions, function(error, info){
-                                                                                if (error) {
-                                                                                    console.log(error);
-                                                                                } else {
-                                                                                    console.log('Email sent: ' + info.response);
-                                                                                }
-                                                                            });
-                                                                            transporter.sendMail(adminOptions, function(error, info){
-                                                                                if (error) {
-                                                                                    console.log(error);
-                                                                                } else {
-                                                                                    console.log('Email sent: ' + info.response);
-                                                                                }
-                                                                            });
-                                                                            transporter.sendMail(registrarOptions, function(error, info){
-                                                                                if (error) {
-                                                                                    console.log(error);
-                                                                                } else {
-                                                                                    console.log('Email sent: ' + info.response);
-                                                                                }
-                                                                            });
-                                                                            let msg = `Requisition form has been sent to ${store_department_fullname}`
-                                                                            home_redirector(req, res, msg)
-                                                                            
-                                                                        }
-                                                                    })
-                                                                    
-                                                                }
-                                                            })
-                                                        })
-                                                            
-                                                        })
-                                                    }
-                                                })
-                                            })
-                                            
-                                        })
-                                    })
+            const store_1_verifier_full_name = verifier.store_1_verifier_full_name;
+            const store_2_verifier_full_name = verifier.store_2_verifier_full_name;
+            const registrar_verifier_full_name = verifier.registrar_verifier_full_name;
+            const admin_1_verifier_full_name = verifier.admin_1_verifier_full_name;
+ 
+                                    */ 
+                                    else {
+                                        //notification starts here
+                                        var storeOptions = {
+                                            from: 'onipetheoderic@gmail.com',
+                                            to: store_1_verifier_email,
+                                            subject: 'Requisition Request',
+                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                        };
+                                        var auditOptions = {
+                                            from: 'onipetheoderic@gmail.com',
+                                            to: store_2_verifier_email,
+                                            subject: 'Requisition Request',
+                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                        };
+                                        var adminOptions = {
+                                            from: 'onipetheoderic@gmail.com',
+                                            to: registrar_verifier_email,
+                                            subject: 'Requisition Request',
+                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                        };
+                                        var registrarOptions = {
+                                            from: 'onipetheoderic@gmail.com',
+                                            to: admin_1_verifier_email,
+                                            subject: 'Requisition Request',
+                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                        };
+                                        transporter.sendMail(storeOptions, function(error, info){
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                                        transporter.sendMail(auditOptions, function(error, info){
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                                        transporter.sendMail(adminOptions, function(error, info){
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                                        transporter.sendMail(registrarOptions, function(error, info){
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                                        let msg = `Requisition form has been sent to ${store_1_verifier_full_name}`
+                                        home_redirector(req, res, msg)
+                                        
+                                    }
                                 })
-                            })
-                                })
-                            })
-                        });
+                                
+                            }
+                        })
                     })
-                })
+                        
+                    })
+                }
             })
-
+        })
         
-    }
+    })
+})
+})
+}
 }
 
 
