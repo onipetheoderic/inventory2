@@ -151,77 +151,199 @@ exports.home = function(req, res){
     const isDirector = decrypted_user_role =="director"?true:false;
 
     Verifier.findOne({}, function(err, verifier){
-        const store_1_verifier = verifier.store_1_verifier;
-        const store_2_verifier = verifier.store_2_verifier;
-        const registrar_verifier = verifier.registrar_verifier;
-        const admin_1_verifier = verifier.admin_1_verifier;
-
-        User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
-            const store_1_verifier_assigned_user = store_1_guy.user_detail;
-        User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
-            const store_2_verifier_assigned_user = store_2_guy.user_detail;
-        User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
-            const registrar_verifier_assigned_user = registrar_guy.user_detail;
-        User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
-            const admin_assigned_user = admin_1_guy.user_detail;
-        
-        User.findOne({_id:decrypted_user_id}, function(err, user){
-            let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
-       
-        Request.findOne({$or:[{dept_director:decrypted_user_id, dept_director_verified:false}, {dept_director:assigned_user, dept_director_verified:false}]})
-            .exec(function(err, reqs){
-                console.log("E dey work", reqs)              
-                const isReq = reqs==null?false:true;
-
-
-
-            if(isReq){
-                Request.find({rejected:false, dept_director_verified:false})
-                .populate("director")
-                .populate("requester")
-                .populate("product")
-                .exec(function(err, requests){
-                    console.log("from adm dept",requests)                                    
-                    Department.find({}, function(err, department){
-                        Category.find({}, function(err, category){                
-                            Subcategory.find({}, function(err, sub_category){ 
-                                console.log(sub_category)
-                                let categories = []                   
-                                for(var i in category){
-                                    let sub_categories = [];
-                                    for(var k in sub_category){                               
-                                        if(category[i]._id == sub_category[k].parent_id){
-                                            console.log("true")                                    
-                                            sub_categories.push({
-                                                name:sub_category[k].name
-                                            })
+        console.log("this is the verifier",verifier)
+        if(verifier!=null){
+            const store_1_verifier = verifier.store_1_verifier;
+            const store_2_verifier = verifier.store_2_verifier;
+            const registrar_verifier = verifier.registrar_verifier;
+            const admin_1_verifier = verifier.admin_1_verifier;
+    
+            User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
+                const store_1_verifier_assigned_user = store_1_guy.user_detail;
+            User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
+                const store_2_verifier_assigned_user = store_2_guy.user_detail;
+            User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
+                const registrar_verifier_assigned_user = registrar_guy.user_detail;
+            User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
+                const admin_assigned_user = admin_1_guy.user_detail;
+            
+            User.findOne({_id:decrypted_user_id}, function(err, user){
+                let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
+           
+            Request.findOne({$or:[{dept_director:decrypted_user_id, dept_director_verified:false}, {dept_director:assigned_user, dept_director_verified:false}]})
+                .exec(function(err, reqs){
+                    console.log("E dey work", reqs)              
+                    const isReq = reqs==null?false:true;
+    
+    
+    
+                if(isReq){
+                    Request.find({rejected:false, dept_director_verified:false})
+                    .populate("director")
+                    .populate("requester")
+                    .populate("product")
+                    .exec(function(err, requests){
+                        console.log("from adm dept",requests)                                    
+                        Department.find({}, function(err, department){
+                            Category.find({}, function(err, category){                
+                                Subcategory.find({}, function(err, sub_category){ 
+                                    console.log(sub_category)
+                                    let categories = []                   
+                                    for(var i in category){
+                                        let sub_categories = [];
+                                        for(var k in sub_category){                               
+                                            if(category[i]._id == sub_category[k].parent_id){
+                                                console.log("true")                                    
+                                                sub_categories.push({
+                                                    name:sub_category[k].name
+                                                })
+                                            }
+                                            
                                         }
+                                        categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
                                         
                                     }
-                                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                                    
-                                }
-                                User.find({}, function(err, users){
-                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                        let superAdmin = user.userType=="superAdmin"?true:false;  
-                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                    User.find({}, function(err, users){
+                                        User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                            let superAdmin = user.userType=="superAdmin"?true:false;  
+                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                            })
                                         })
-                                    })
+                                    });
                                 });
-                            });
-                        
+                            
+                            })
                         })
                     })
-                })
-            }
-            else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
-                Request.find({rejected:false, dept_director_verified:false})
-                            .populate("director")
-                            .populate("requester")
-                            .populate("product")
-                            .exec(function(err, requests){
-                                console.log("from adm dept",requests)                                    
+                }
+                else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
+                    Request.find({rejected:false, dept_director_verified:false})
+                                .populate("director")
+                                .populate("requester")
+                                .populate("product")
+                                .exec(function(err, requests){
+                                    console.log("from adm dept",requests)                                    
+                                    Department.find({}, function(err, department){
+                                        Category.find({}, function(err, category){                
+                                            Subcategory.find({}, function(err, sub_category){ 
+                                                console.log(sub_category)
+                                                let categories = []                   
+                                                for(var i in category){
+                                                    let sub_categories = [];
+                                                    for(var k in sub_category){                               
+                                                        if(category[i]._id == sub_category[k].parent_id){
+                                                            console.log("true")                                    
+                                                            sub_categories.push({
+                                                                name:sub_category[k].name
+                                                            })
+                                                        }
+                                                        
+                                                    }
+                                                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                                    
+                                                }
+                                                User.find({}, function(err, users){
+                                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                                        })
+                                                    })
+                                                });
+                                            });
+                                        
+                                        })
+                                    })
+                                })
+                }
+                else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
+                    Request.find({rejected:false, dept_director_verified:false})
+                                .populate("director")
+                                .populate("requester")
+                                .populate("product")
+                                .exec(function(err, requests){
+                                    console.log("from adm dept",requests)                                    
+                                    Department.find({}, function(err, department){
+                                        Category.find({}, function(err, category){                
+                                            Subcategory.find({}, function(err, sub_category){ 
+                                                console.log(sub_category)
+                                                let categories = []                   
+                                                for(var i in category){
+                                                    let sub_categories = [];
+                                                    for(var k in sub_category){                               
+                                                        if(category[i]._id == sub_category[k].parent_id){
+                                                            console.log("true")                                    
+                                                            sub_categories.push({
+                                                                name:sub_category[k].name
+                                                            })
+                                                        }
+                                                        
+                                                    }
+                                                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                                    
+                                                }
+                                                User.find({}, function(err, users){
+                                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                                        })
+                                                    })
+                                                });
+                                            });
+                                        
+                                        })
+                                    })
+                                })
+                }
+                else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                    Request.find({rejected:false, dept_director_verified:false})
+                                .populate("director")
+                                .populate("requester")
+                                .populate("product")
+                                .exec(function(err, requests){
+                                    console.log("from adm dept",requests)                                    
+                                    Department.find({}, function(err, department){
+                                        Category.find({}, function(err, category){                
+                                            Subcategory.find({}, function(err, sub_category){ 
+                                                console.log(sub_category)
+                                                let categories = []                   
+                                                for(var i in category){
+                                                    let sub_categories = [];
+                                                    for(var k in sub_category){                               
+                                                        if(category[i]._id == sub_category[k].parent_id){
+                                                            console.log("true")                                    
+                                                            sub_categories.push({
+                                                                name:sub_category[k].name
+                                                            })
+                                                        }
+                                                        
+                                                    }
+                                                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                                    
+                                                }
+                                                User.find({}, function(err, users){
+                                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                                        })
+                                                    })
+                                                });
+                                            });
+                                        
+                                        })
+                                    })
+                                })
+                }
+                else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                    Request.find({rejected:false, dept_director_verified:false})
+                                .populate("director")
+                                .populate("requester")
+                                .populate("product")
+                                .exec(function(err, requests){
+                                    console.log("from adm dept",requests)                                    
                                 Department.find({}, function(err, department){
                                     Category.find({}, function(err, category){                
                                         Subcategory.find({}, function(err, sub_category){ 
@@ -241,27 +363,22 @@ exports.home = function(req, res){
                                                 categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
                                                 
                                             }
-                                            User.find({}, function(err, users){
-                                                User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                                    let superAdmin = user.userType=="superAdmin"?true:false;  
-                                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                                        res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
-                                                    })
-                                                })
-                                            });
-                                        });
-                                    
-                                    })
-                                })
+                                    User.find({}, function(err, users){
+                                        User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                            let superAdmin = user.userType=="superAdmin"?true:false;  
+                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                            })
+                                        })
+                                    });
+                                });
+                                        
                             })
-            }
-            else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
-                Request.find({rejected:false, dept_director_verified:false})
-                            .populate("director")
-                            .populate("requester")
-                            .populate("product")
-                            .exec(function(err, requests){
-                                console.log("from adm dept",requests)                                    
+                        })
+                    })
+                }
+                else {
+                                              
                                 Department.find({}, function(err, department){
                                     Category.find({}, function(err, category){                
                                         Subcategory.find({}, function(err, sub_category){ 
@@ -281,148 +398,70 @@ exports.home = function(req, res){
                                                 categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
                                                 
                                             }
-                                            User.find({}, function(err, users){
-                                                User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                                    let superAdmin = user.userType=="superAdmin"?true:false;  
-                                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                                        res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
-                                                    })
-                                                })
-                                            });
-                                        });
-                                    
-                                    })
-                                })
-                            })
-            }
-            else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
-                Request.find({rejected:false, dept_director_verified:false})
-                            .populate("director")
-                            .populate("requester")
-                            .populate("product")
-                            .exec(function(err, requests){
-                                console.log("from adm dept",requests)                                    
-                                Department.find({}, function(err, department){
-                                    Category.find({}, function(err, category){                
-                                        Subcategory.find({}, function(err, sub_category){ 
-                                            console.log(sub_category)
-                                            let categories = []                   
-                                            for(var i in category){
-                                                let sub_categories = [];
-                                                for(var k in sub_category){                               
-                                                    if(category[i]._id == sub_category[k].parent_id){
-                                                        console.log("true")                                    
-                                                        sub_categories.push({
-                                                            name:sub_category[k].name
-                                                        })
-                                                    }
-                                                    
-                                                }
-                                                categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                                                
-                                            }
-                                            User.find({}, function(err, users){
-                                                User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                                    let superAdmin = user.userType=="superAdmin"?true:false;  
-                                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                                        res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
-                                                    })
-                                                })
-                                            });
-                                        });
-                                    
-                                    })
-                                })
-                            })
-            }
-            else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
-                Request.find({rejected:false, dept_director_verified:false})
-                            .populate("director")
-                            .populate("requester")
-                            .populate("product")
-                            .exec(function(err, requests){
-                                console.log("from adm dept",requests)                                    
-                            Department.find({}, function(err, department){
-                                Category.find({}, function(err, category){                
-                                    Subcategory.find({}, function(err, sub_category){ 
-                                        console.log(sub_category)
-                                        let categories = []                   
-                                        for(var i in category){
-                                            let sub_categories = [];
-                                            for(var k in sub_category){                               
-                                                if(category[i]._id == sub_category[k].parent_id){
-                                                    console.log("true")                                    
-                                                    sub_categories.push({
-                                                        name:sub_category[k].name
-                                                    })
-                                                }
-                                                
-                                            }
-                                            categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                                            
-                                        }
-                                User.find({}, function(err, users){
-                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                        let superAdmin = user.userType=="superAdmin"?true:false;  
-                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, requests:requests, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                    User.find({}, function(err, users){
+                                        User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                            let superAdmin = user.userType=="superAdmin"?true:false;  
+                                            Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                                res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                            })
                                         })
-                                    })
+                                    });
                                 });
-                            });
-                                    
+                                        
+                            })
                         })
-                    })
-                })
-            }
-            else {
-                                          
-                            Department.find({}, function(err, department){
-                                Category.find({}, function(err, category){                
-                                    Subcategory.find({}, function(err, sub_category){ 
-                                        console.log(sub_category)
-                                        let categories = []                   
-                                        for(var i in category){
-                                            let sub_categories = [];
-                                            for(var k in sub_category){                               
-                                                if(category[i]._id == sub_category[k].parent_id){
-                                                    console.log("true")                                    
-                                                    sub_categories.push({
-                                                        name:sub_category[k].name
-                                                    })
-                                                }
-                                                
-                                            }
-                                            categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
-                                            
-                                        }
-                                User.find({}, function(err, users){
-                                    User.findOne({_id:decrypted_user_id}, function(err, user){   
-                                        let superAdmin = user.userType=="superAdmin"?true:false;  
-                                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
-                                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
-                                        })
-                                    })
-                                });
-                            });
-                                    
-                        })
-                    })
-              
-            }
-
-        })
+                  
+                }
     
-        })
-        })
+            })
         
+            })
+            })
+            
+            })
         })
     })
+        }
+        else if(verifier==null) {
+            Department.find({}, function(err, department){
+                Category.find({}, function(err, category){                
+                    Subcategory.find({}, function(err, sub_category){ 
+                        console.log(sub_category)
+                        let categories = []                   
+                        for(var i in category){
+                            let sub_categories = [];
+                            for(var k in sub_category){                               
+                                if(category[i]._id == sub_category[k].parent_id){
+                                    console.log("true")                                    
+                                    sub_categories.push({
+                                        name:sub_category[k].name
+                                    })
+                                }
+                                
+                            }
+                            categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                            
+                        }
+                User.find({}, function(err, users){
+                    User.findOne({_id:decrypted_user_id}, function(err, user){   
+                        let superAdmin = user.userType=="superAdmin"?true:false;  
+                        Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                            res.render('inventory/home', {layout: "layout/inventory", isDirector:isDirector, superAdmin:superAdmin, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                        })
+                    })
+                });
+            });
+                    
+        })
+    })
+        }
+        
 })
-})
+}
+}
 
-}
-}
+
+
 
 exports.default_config = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
