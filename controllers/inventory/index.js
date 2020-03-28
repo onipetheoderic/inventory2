@@ -3,6 +3,7 @@ import User from '../../models/User/user';
 import Category from '../../models/Category/category';
 import {encrypt, decrypt, BASEURL} from '../../utility/encryptor'
 import Product from '../../models/Product/product';
+import AuditorLog from '../../models/AuditorLog/auditorLog';
 import Subcategory from '../../models/Subcategory/subcategory';
 import Store from '../../models/Store/store';
 import Request from '../../models/Request/request';
@@ -218,7 +219,7 @@ exports.home = function(req, res){
                     })
                 }
                 else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
-                    Request.find({rejected:false, dept_director_verified:false})
+                    Request.find({rejected:false, dept_director_verified:true, store_1_verified:false, store_2_verified:false })
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -258,7 +259,7 @@ exports.home = function(req, res){
                                 })
                 }
                 else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
-                    Request.find({rejected:false, dept_director_verified:false})
+                    Request.find({rejected:false, dept_director_verified:true, store_2_verified:false})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -298,7 +299,7 @@ exports.home = function(req, res){
                                 })
                 }
                 else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
-                    Request.find({rejected:false, dept_director_verified:false})
+                    Request.find({rejected:false, dept_director_verified:true, admin_1_verified:true, registrar_verified:false, registrar_confirm_must:true})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -338,7 +339,7 @@ exports.home = function(req, res){
                                 })
                 }
                 else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
-                    Request.find({rejected:false, dept_director_verified:false})
+                    Request.find({rejected:false, dept_director_verified:true, store_1_verified:true, store_2_verified:true, registrar_verified:false, admin_1_verified:false})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -546,79 +547,157 @@ exports.verify_request = function(req, res){
                             const admin_assigned_user = admin_1_guy.user_detail;
 
                             if(isReq){
-                                Request.findByIdAndUpdate(request_id, {
-                                    dept_director_verified:true,
-                                    dept_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        console.log(updated_store)
-                                        res.redirect(`/`)
-                                    }
-                                })
+                                if(acceptance=="accept"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        dept_director_verified:true,
+                                        dept_unit: current_unit,
+                                        unit:current_unit
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                else if(acceptance=="reject"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        rejected:true
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                
                             }
                             else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
-                                Request.findByIdAndUpdate(request_id, {
-                                    store_1_verified:true,
-                                    dept_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        console.log(updated_store)
-                                        res.redirect(`/`)
-                                    }
-                                })
+                                if(acceptance=="accept"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        store_1_verified:true,
+                                        dept_unit: current_unit,
+                                        unit:current_unit
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                else if(acceptance=="reject"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        rejected:true
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+
                             }
                             else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
-                                Request.findByIdAndUpdate(request_id, {
-                                    store_2_verified:true,
-                                    dept_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        console.log(updated_store)
-                                        res.redirect(`/`)
-                                    }
-                                })
+                                if(acceptance=="accept"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        store_2_verified:true,
+                                        dept_unit: current_unit,
+                                        unit:current_unit
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                else if(acceptance=="reject"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        rejected:true
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
                             }
                             else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
-                                Request.findByIdAndUpdate(request_id, {
-                                    registrar_verified:true,
-                                    dept_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        console.log(updated_store)
-                                        res.redirect(`/`)
-                                    }
-                                })
+                                if(acceptance=="accept"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        registrar_verified:true,
+                                        dept_unit: current_unit,
+                                        unit:current_unit
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                else if(acceptance=="reject"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        rejected:true
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                
                             }
                             else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
-                                Request.findByIdAndUpdate(request_id, {
-                                    registrar_verified:true,
-                                    dept_unit: current_unit,
-                                    unit:current_unit
-                                })
-                                .exec(function(err, updated_store){
-                                    if(err){
-                                        console.log(err)
-                                    }else {
-                                        console.log(updated_store)
-                                        res.redirect(`/`)
-                                    }
-                                })
+                                if(acceptance=="accept"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        admin_1_verified:true,
+                                        dept_unit: current_unit,
+                                        unit:current_unit
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
+                                else if(acceptance=="reject"){
+                                    Request.findByIdAndUpdate(request_id, {
+                                        rejected:true
+                                    })
+                                    .exec(function(err, updated_store){
+                                        if(err){
+                                            console.log(err)
+                                        }else {
+                                            console.log(updated_store)
+                                            res.redirect(`/`)
+                                        }
+                                    })
+                                }
                             }
     
                         })
@@ -835,7 +914,7 @@ exports.assign_position_post = function(req, res){
 exports.report_page = function(req, res){
     console.log("this is the report page", req.params.id)
     Store.findOne({product:req.params.id}, function(err, store){
-        Product.findOne({_id:req.params.id}, function(err, product){
+        Product.findOne({_id:req.params.id}).populate('category').exec(function(err, product){
             console.log(product.unit)
             BinCard.findOne({product:req.params.id}, function(err, binCard){
                 res.render('inventory/report_page', {          
@@ -872,6 +951,7 @@ exports.generate_report_form = function(req, res){
         // let unit = product.unit
     const product_id = product.parent_id == undefined || product.parent_id=="" ? req.params.id : product.parent_id
        console.log(product)
+        
         Store.findOne({product:product_id}, function(err, stores){
         if(stores==null){
             let store = new Store();
@@ -883,11 +963,22 @@ exports.generate_report_form = function(req, res){
                 }
                 else {
                     //ppppp
+                    let auditorlog = new AuditorLog();
+                    auditorlog.product = product._id;
+                    auditorlog.unit = product.unit;
+                    auditorlog.save(function(err, auditorlog){
+                        if(err){
+                            console.log(err)
+                        }
+                        else{
+                            
+                      
                     Product.findByIdAndUpdate(req.params.id, {stored:true})
                     .exec(function(err, updated_staff){
                         if(err){
                             console.log(err)
-                        }else {                            
+                        }else { 
+
                             BinCard.find({}, function(err, cards){ 
                                
                                 let binCard = new BinCard;
@@ -905,7 +996,10 @@ exports.generate_report_form = function(req, res){
                                 })
                             })                          
                         }
+
                     })
+                }
+            })
                 }
             })
         } 
@@ -1260,7 +1354,7 @@ exports.view_requests = function(req, res){
 
         let all_requests = [];
         for(var i in requests){
-            if(requests[i].dept_director_verified == true && requests[i].store_director_verified == true && requests[i].audit_director_verified == true){
+            if(requests[i].admin_1_verified == true && requests[i].store_2_verified == true && requests[i].store_1_verified == true){
                 all_requests.push(requests[i])
             }
         }
@@ -1307,6 +1401,8 @@ exports.request_product_post = function(req, res){
             const registrar_verifier_full_name = verifier.registrar_verifier_full_name;
             const admin_1_verifier_full_name = verifier.admin_1_verifier_full_name;
                 // lets get the current user details
+// "ref_name" : "Office_Equipment",
+// "ref_name" : "motor_vehicle",
 
         User.findOne({_id:decrypted_user_id}, function(err, requester){
             let requester_department_id = requester.department[0]
@@ -1328,7 +1424,12 @@ exports.request_product_post = function(req, res){
                 if(err){
                     console.log(err)
                 }else {
-                    Product.findOne({_id:product_id}, function(err, prod){
+                    Product.findOne({_id:product_id}).populate('category').exec(function(err, prod){
+                        let registrars_category1 = 22020301;
+                        let registrars_category2 = 22020401;
+                        let category_code = prod.category[0].category_code
+                        const product_registrar = category_code==registrars_category1?true:category_code==registrars_category2?true:false
+                        
                         BinCard.find({}, function(err, cards){                                                              
                         let binCard = new BinCard;
                         binCard.product = prod._id;
@@ -1336,7 +1437,6 @@ exports.request_product_post = function(req, res){
                         binCard.sv_number = parseInt(cards.length+1);
                         binCard.quantity = current_unit;
                         binCard.requester = user_fullname;
-
                         binCard.save(function(err, card){
                             if(err){
                                 console.log(err)
@@ -1346,6 +1446,7 @@ exports.request_product_post = function(req, res){
                                 request.store_1_verifier = store_1_verifier;
                                 request.store_2_verifier = store_2_verifier;
                                 request.registrar_verifier = registrar_verifier;
+                                request.registrar_confirm_must = product_registrar;
                                 request.admin_1_verifier = admin_1_verifier;                     
                                 request.dept_director = requesters_director==""?[]:requester_director
                                 request.requester = decrypted_user_id
@@ -1357,18 +1458,7 @@ exports.request_product_post = function(req, res){
                                     if(err){
                                         console.log(err)
                                     }
-                                    /*
-                                      const store_1_verifier_email = verifier.store_1_verifier_email;
-            const store_2_verifier_email = verifier.store_2_verifier_email;
-            const registrar_verifier_email = verifier.registrar_verifier_email;
-            const admin_1_verifier_email = verifier.admin_1_verifier_email;
-
-            const store_1_verifier_full_name = verifier.store_1_verifier_full_name;
-            const store_2_verifier_full_name = verifier.store_2_verifier_full_name;
-            const registrar_verifier_full_name = verifier.registrar_verifier_full_name;
-            const admin_1_verifier_full_name = verifier.admin_1_verifier_full_name;
- 
-                                    */ 
+                          
                                     else {
                                         //notification starts here
                                         var storeOptions = {
@@ -1383,13 +1473,13 @@ exports.request_product_post = function(req, res){
                                             subject: 'Requisition Request',
                                             text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
                                         };
-                                        var adminOptions = {
+                                        var registrarOptions = {
                                             from: 'onipetheoderic@gmail.com',
                                             to: registrar_verifier_email,
                                             subject: 'Requisition Request',
                                             text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
                                         };
-                                        var registrarOptions = {
+                                        var adminOptions = {
                                             from: 'onipetheoderic@gmail.com',
                                             to: admin_1_verifier_email,
                                             subject: 'Requisition Request',
@@ -1416,13 +1506,22 @@ exports.request_product_post = function(req, res){
                                                 console.log('Email sent: ' + info.response);
                                             }
                                         });
-                                        transporter.sendMail(registrarOptions, function(error, info){
-                                            if (error) {
-                                                console.log(error);
-                                            } else {
-                                                console.log('Email sent: ' + info.response);
-                                            }
-                                        });
+                                        if(product_registrar){
+                                            transporter.sendMail(registrarOptions, function(error, info){
+                                                if (error) {
+                                                    console.log(error);
+                                                } else {
+                                                    console.log('Email sent: ' + info.response);
+                                                }
+                                            });  transporter.sendMail(registrarOptions, function(error, info){
+                                                if (error) {
+                                                    console.log(error);
+                                                } else {
+                                                    console.log('Email sent: ' + info.response);
+                                                }
+                                            });
+                                        }
+                                      
                                         let msg = `Requisition form has been sent to ${store_1_verifier_full_name}`
                                         home_redirector(req, res, msg)
                                         

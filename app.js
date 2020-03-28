@@ -224,8 +224,8 @@ hbs.registerHelper('jsonp', function(cont){
 })
 hbs.registerHelper('category_code', function(str){
   let content = JSON.parse(JSON.stringify(str))
-  console.log("vvvvvv",content.product[0].category[0].category_code)
-  return product[0].category[0].category_code;
+  console.log("vvvvvv",content.category[0].category_code)
+  return content.category[0].category_code
 })
 
 hbs.registerHelper('uppercase', function (str) {

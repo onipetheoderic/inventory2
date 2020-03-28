@@ -6,7 +6,7 @@ var RequestSchema = new mongoose.Schema({
       }],
     dept_director_verified: {type:Boolean, default:false},
     dept_unit: Number,
-    
+    registrar_confirm_must:{type:Boolean, default:false},
     requester: [{//this is the user that created the Request
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
