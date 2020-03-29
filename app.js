@@ -160,6 +160,10 @@ hbs.registerHelper('product_title', function (cont){
   return content.product[0].name;
 })
 
+hbs.registerHelper('product_id', function (cont){
+  let content = JSON.parse(JSON.stringify(cont))
+  return content.product[0]._id;
+})
 
 hbs.registerHelper('srv', function (cont){
   if(cont!=undefined){

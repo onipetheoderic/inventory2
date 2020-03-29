@@ -109,6 +109,13 @@ router.route('/verifiers')
     .get(InventoryController.verifiers)
     .post(InventoryController.verifier_post)
 
+router.route('/auditlogs')
+    .get(InventoryController.auditlogs)
+
+router.route('/view_auditlog/:id')
+    .get(InventoryController.view_auditlog)
+
+
 router.route('/edit_department/:id')
     .get(InventoryController.edit_department)
     .post(InventoryController.edit_department_post)

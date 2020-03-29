@@ -5,6 +5,7 @@ var AuditorLogSchema = new mongoose.Schema({
         ref: 'Product'
       }],
     unit: Number,
+    seen: {type:Boolean, default:false}
 },{
     timestamps: true//this will automatically add the createdAt and the updatedAt field for us
 });

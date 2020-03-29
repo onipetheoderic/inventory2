@@ -77,7 +77,10 @@ function collectionInherit(){
 
 exports.verifiers = function(req, res){
     User.find({}).populate("department").exec(function(err, users){
-        res.render('inventory/verifiers', {layout: "layout/inventory", users:users})
+        Verifier.findOne({}).exec(function(err, verifier){
+            console.log("this is the verifier", verifier)
+            res.render('inventory/verifiers', {layout: "layout/inventory", verifier:verifier, users:users})
+        })
     })
 }
 
@@ -101,6 +104,7 @@ exports.verifier_post = function(req, res){
             verifier.store_2_verifier_full_name = store_2_verifier[2];
             verifier.registrar_verifier_full_name  = admin_1_verifier[2];
             verifier.admin_1_verifier_full_name = admin_1_verifier[2];
+            verifier.auditor_id = req.body.auditor_id;
             verifier.save(function(err,saved_verifier){
                 if(err){
                     console.log(err)
@@ -126,6 +130,7 @@ exports.verifier_post = function(req, res){
                     store_2_verifier_full_name: store_2_verifier[2],
                     registrar_verifier_full_name: admin_1_verifier[2],
                     admin_1_verifier_full_name:admin_1_verifier[2],
+                    auditor_id:req.body.auditor_id
                    
                 })
                 .exec(function(err, updated_store){
@@ -158,6 +163,7 @@ exports.home = function(req, res){
             const store_2_verifier = verifier.store_2_verifier;
             const registrar_verifier = verifier.registrar_verifier;
             const admin_1_verifier = verifier.admin_1_verifier;
+            const auditor_id = verifier.auditor_id;
     
             User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
                 const store_1_verifier_assigned_user = store_1_guy.user_detail;
@@ -177,7 +183,7 @@ exports.home = function(req, res){
                     const isReq = reqs==null?false:true;
     
     
-    
+                
                 if(isReq){
                     Request.find({rejected:false, dept_director_verified:false})
                     .populate("director")
@@ -378,6 +384,44 @@ exports.home = function(req, res){
                         })
                     })
                 }
+                else if(auditor_id==decrypted_user_id){
+                                                   
+                    Department.find({}, function(err, department){
+                        Category.find({}, function(err, category){                
+                            Subcategory.find({}, function(err, sub_category){ 
+                                console.log(sub_category)
+                                let categories = []                   
+                                for(var i in category){
+                                    let sub_categories = [];
+                                    for(var k in sub_category){                               
+                                        if(category[i]._id == sub_category[k].parent_id){
+                                            console.log("true")                                    
+                                            sub_categories.push({
+                                                name:sub_category[k].name
+                                            })
+                                        }
+                                        
+                                    }
+                                    categories.push({name:category[i].name, ref_name:category[i].ref_name,  _id:category[i]._id, sub_category:sub_categories})
+                                    
+                                }
+                        User.find({}, function(err, users){
+                            User.findOne({_id:decrypted_user_id}, function(err, user){   
+                                let superAdmin = user.userType=="superAdmin"?true:false;  
+                                let isAudit = true
+                                AuditorLog.find({seen:false}, function(err, auditor_log){
+                                    Product.findOne().sort({ field: 'asc', _id: -1 }).limit(1).exec(function(err, product) { 
+                                        res.render('inventory/home', {layout: "layout/inventory", auditor_log_count:auditor_log.length, auditor_log:auditor_log, isAudit:isAudit, superAdmin:superAdmin, product:product, users:users, category:categories, department:department, data:{category:category, department:department}})
+                                    })
+                                })
+                            })
+                        });
+                    });
+                            
+                })
+            })
+               
+                }
                 else {
                                               
                                 Department.find({}, function(err, department){
@@ -461,8 +505,27 @@ exports.home = function(req, res){
 }
 }
 
+exports.auditlogs = function(req, res){
+    AuditorLog.find({}).populate('product')
+    .exec(function(err, auditor_logs){
+        res.render('inventory/auditlogs', {layout: "layout/inventory", auditor_logs:auditor_logs})
+    })
+}
 
-
+exports.view_auditlog = function(req, res){
+    console.log("this is the report page", req.params.id)
+    AuditorLog.findOne({product:req.params.id}, function(err, store){
+        Product.findOne({_id:req.params.id}).populate('category').exec(function(err, product){
+            console.log(product.unit)
+            BinCard.findOne({product:req.params.id}, function(err, binCard){
+                res.render('inventory/report_page', {          
+                    layout: "layout/table", binCard:binCard, product:product, value:product.price*product.unit
+                    }
+                )
+            })
+        })           
+    })
+}
 
 exports.default_config = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){

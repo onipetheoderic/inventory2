@@ -98,8 +98,25 @@
 
                      
                 </div>
+                 <hr class="border-dashed my-8">
+                  <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Auditor</label>
+                    <div class="col-md-10 col-sm-9">
+                        <select class="form-control" required name="auditor_id" id="simple-select" required>
+                                    <option></option>
+                            {{#each users}}
+                                    <option value="{{this._id}}">{{this.firstName}} {{this.lastName}} ({{{dept this}}}), ({{this.position}})</option>
+                                    {{/each}}
+                                         
+                                    
+                        </select>
+                    </div>
+
+                     
+                </div>
                 <!-- Form Row -->
-               
+               {{!-- auditor_id --}}
                 <!-- /form row -->
                 <div class="row" style="padding-top:50px">
                     <div class="col-md-3 col-sm-3"></div>

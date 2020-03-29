@@ -12,6 +12,7 @@ var VerifierSchema = new mongoose.Schema({
     store_2_verifier_full_name: String,
     registrar_verifier_full_name: String,
     admin_1_verifier_full_name: String,
+    auditor_id:String,
     	
 },{
     timestamps: true//this will automatically add the createdAt and the updatedAt field for us
