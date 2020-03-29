@@ -148,16 +148,16 @@ exports.verifier_post = function(req, res){
 
 exports.home = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
-        console.log("its working", req.session.user_id)
+       
         res.redirect('/login')
     }
     else if(req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
     let decrypted_user_id = decrypt(req.session.user_id, req, res)
     let decrypted_user_role = decrypt(req.session.role, req, res)
     const isDirector = decrypted_user_role =="director"?true:false;
 
     Verifier.findOne({}, function(err, verifier){
-        console.log("this is the verifier",verifier)
         if(verifier!=null){
             const store_1_verifier = verifier.store_1_verifier;
             const store_2_verifier = verifier.store_2_verifier;
@@ -225,6 +225,7 @@ exports.home = function(req, res){
                     })
                 }
                 else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
+                    console.log("XXXXXXXXXXXXX")
                     Request.find({rejected:false, dept_director_verified:true, store_1_verified:false, store_2_verified:false })
                                 .populate("director")
                                 .populate("requester")
@@ -1482,6 +1483,7 @@ exports.request_product_post = function(req, res){
 
         User.findOne({_id:decrypted_user_id}, function(err, requester){
             let requester_department_id = requester.department[0]
+            let requesters_full_name = requester.firstName + " " + requester.lastName
             console.log("this is the requester",requester)
             //we notify the director of department
             // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
@@ -1512,7 +1514,7 @@ exports.request_product_post = function(req, res){
                         binCard.stock_balance = final_unit
                         binCard.sv_number = parseInt(cards.length+1);
                         binCard.quantity = current_unit;
-                        binCard.requester = user_fullname;
+                        binCard.requester = requesters_full_name;
                         binCard.save(function(err, card){
                             if(err){
                                 console.log(err)
@@ -1598,7 +1600,7 @@ exports.request_product_post = function(req, res){
                                             });
                                         }
                                       
-                                        let msg = `Requisition form has been sent to ${store_1_verifier_full_name}`
+                                        let msg = `Requisition form has been sent to ${user_fullname}`
                                         home_redirector(req, res, msg)
                                         
                                     }
