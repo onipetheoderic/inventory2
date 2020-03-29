@@ -515,13 +515,26 @@ exports.auditlogs = function(req, res){
 exports.view_auditlog = function(req, res){
     console.log("this is the report page", req.params.id)
     AuditorLog.findOne({product:req.params.id}, function(err, store){
+        
         Product.findOne({_id:req.params.id}).populate('category').exec(function(err, product){
             console.log(product.unit)
+            
             BinCard.findOne({product:req.params.id}, function(err, binCard){
-                res.render('inventory/report_page', {          
-                    layout: "layout/table", binCard:binCard, product:product, value:product.price*product.unit
+                AuditorLog.findByIdAndUpdate(store._id, {
+                    seen:true
+                })
+                .exec(function(err, updated_store){
+                    if(err){
+                        console.log(err)
+                    }else {
+                        console.log(updated_store)
+                        res.render('inventory/report_page', {          
+                            layout: "layout/table", binCard:binCard, product:product, value:product.price*product.unit
+                            }
+                        )
                     }
-                )
+                })
+                
             })
         })           
     })
