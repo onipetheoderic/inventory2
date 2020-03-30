@@ -613,7 +613,7 @@ exports.verify_request = function(req, res){
                         const store_2_verifier = verifier.store_2_verifier;
                         const registrar_verifier = verifier.registrar_verifier;
                         const admin_1_verifier = verifier.admin_1_verifier;
-                        console.log("YYYYYYYYYYY", registrar_verifier, decrypted_user_id)
+                       
                         User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
                             const store_1_verifier_assigned_user = store_1_guy.user_detail;
                         User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
@@ -624,6 +624,7 @@ exports.verify_request = function(req, res){
                             const admin_assigned_user = admin_1_guy.user_detail;
 
                             if(isReq){
+                                console.log("YYYY dept director")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         dept_director_verified:true,
@@ -655,6 +656,7 @@ exports.verify_request = function(req, res){
                                 
                             }
                             else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
+                                console.log("store 1 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         store_1_verified:true,
@@ -686,6 +688,7 @@ exports.verify_request = function(req, res){
 
                             }
                             else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
+                                console.log("store 2 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         store_2_verified:true,
@@ -716,7 +719,7 @@ exports.verify_request = function(req, res){
                                 }
                             }
                             else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
-                               console.log("XXXXXXXXXXXXX, right")
+                               console.log("registrar guy, right")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         registrar_verified:true,
@@ -748,6 +751,7 @@ exports.verify_request = function(req, res){
                                 
                             }
                             else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                                console.log("admin guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         admin_1_verified:true,
