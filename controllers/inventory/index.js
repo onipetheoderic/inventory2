@@ -623,7 +623,7 @@ exports.verify_request = function(req, res){
                         User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
                             const admin_assigned_user = admin_1_guy.user_detail;
 
-                            if(reqs.dept_director[0].toString() == decrypted_user_id || reqs.dept_director[0].toString()==assigned_user && assigned_user!=null){
+                            if(reqs!=null && reqs.dept_director[0].toString() == decrypted_user_id || reqs!=null && reqs.dept_director[0].toString()==assigned_user && assigned_user!=null){
                                 console.log("YYYY dept director")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
