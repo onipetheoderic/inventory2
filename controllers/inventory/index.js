@@ -752,7 +752,7 @@ exports.verify_request = function(req, res){
                                 }
                                 
                             }
-                            else if(admin_1_verifier==decrypted_user_id = || admin_assigned_user==decrypted_user_id && admin_1_verified==false){
+                            else if(admin_1_verifier==decrypted_user_id && admin_1_verified==false || admin_assigned_user==decrypted_user_id && admin_1_verified==false){
                                 console.log("admin guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
