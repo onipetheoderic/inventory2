@@ -102,7 +102,7 @@ exports.verifier_post = function(req, res){
             verifier.admin_1_verifier_email = admin_1_verifier[1];
             verifier.store_1_verifier_full_name = store_1_verifier[2];
             verifier.store_2_verifier_full_name = store_2_verifier[2];
-            verifier.registrar_verifier_full_name  = admin_1_verifier[2];
+            verifier.registrar_verifier_full_name  = registrar_verifier[2];
             verifier.admin_1_verifier_full_name = admin_1_verifier[2];
             verifier.auditor_id = req.body.auditor_id;
             verifier.save(function(err,saved_verifier){
@@ -128,7 +128,7 @@ exports.verifier_post = function(req, res){
                     admin_1_verifier_email: admin_1_verifier[1],
                     store_1_verifier_full_name: store_1_verifier[2],
                     store_2_verifier_full_name: store_2_verifier[2],
-                    registrar_verifier_full_name: admin_1_verifier[2],
+                    registrar_verifier_full_name: registrar_verifier[2],
                     admin_1_verifier_full_name:admin_1_verifier[2],
                     auditor_id:req.body.auditor_id
                    
@@ -716,6 +716,7 @@ exports.verify_request = function(req, res){
                                 }
                             }
                             else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                               console.log("XXXXXXXXXXXXX, right")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         registrar_verified:true,
