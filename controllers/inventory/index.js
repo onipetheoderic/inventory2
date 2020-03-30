@@ -606,7 +606,7 @@ exports.verify_request = function(req, res){
                 Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: assigned_user}] })
                 .exec(function(err, reqs){
                     console.log(reqs)
-                    console.log("directors Request", reqs)              
+                    console.log("directors Request", reqs, decrypted_user_id)              
                     const isReq = reqs==null?false:true;
                     console.log("IS req", isReq)
 
