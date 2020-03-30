@@ -605,8 +605,10 @@ exports.verify_request = function(req, res){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
                 Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: assigned_user}] })
                 .exec(function(err, reqs){
-                    console.log("E dey work", reqs)              
+                    console.log(reqs)
+                    console.log("directors Request", reqs)              
                     const isReq = reqs==null?false:true;
+                    console.log("IS req", isReq)
 
                     Verifier.findOne({}, function(err, verifier){
                         const store_1_verifier = verifier.store_1_verifier;
@@ -623,7 +625,8 @@ exports.verify_request = function(req, res){
                         User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
                             const admin_assigned_user = admin_1_guy.user_detail;
 
-                            if(reqs!=null && reqs.dept_director[0].toString() == decrypted_user_id || reqs!=null && reqs.dept_director[0].toString()==assigned_user && assigned_user!=null){
+                            if(reqs!=null && reqs.dept_director[0].toString() == decrypted_user_id || 
+                            reqs!=null && reqs.dept_director[0].toString()==assigned_user){
                                 console.log("YYYY dept director")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
