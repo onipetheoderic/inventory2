@@ -657,7 +657,7 @@ exports.verify_request = function(req, res){
                                 }
                                 
                             }
-                            else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
+                            else if(store_1_verifier==decrypted_user_id && reqs.store_1_verified==false || store_1_verifier_assigned_user==decrypted_user_id && reqs.store_1_verified==false){
                                 console.log("store 1 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -689,7 +689,7 @@ exports.verify_request = function(req, res){
                                 }
 
                             }
-                            else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
+                            else if(store_2_verifier==decrypted_user_id && reqs.store_2_verified==false || store_2_verifier_assigned_user==decrypted_user_id && reqs.store_2_verified==false){
                                 console.log("store 2 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -720,7 +720,7 @@ exports.verify_request = function(req, res){
                                     })
                                 }
                             }
-                            else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                            else if(registrar_verifier==decrypted_user_id && reqs.registrar_verified==false || registrar_verifier_assigned_user==decrypted_user_id && reqs.registrar_verified==false){
                                console.log("registrar guy, right")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -752,7 +752,7 @@ exports.verify_request = function(req, res){
                                 }
                                 
                             }
-                            else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                            else if(admin_1_verifier==decrypted_user_id = || admin_assigned_user==decrypted_user_id && admin_1_verified==false){
                                 console.log("admin guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
