@@ -613,7 +613,7 @@ exports.verify_request = function(req, res){
                         const store_2_verifier = verifier.store_2_verifier;
                         const registrar_verifier = verifier.registrar_verifier;
                         const admin_1_verifier = verifier.admin_1_verifier;
-
+                        console.log("YYYYYYYYYYY", registrar_verifier, decrypted_user_id)
                         User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
                             const store_1_verifier_assigned_user = store_1_guy.user_detail;
                         User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
