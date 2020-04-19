@@ -269,19 +269,25 @@ hbs.registerHelper('truncator', function (str) {
 });
 
 hbs.registerHelper('mini-truncator', function (str) {
-  if(str.length>=25) {
-    var maxLength = 25 // maximum number of characters to extract
-
-//trim the string to the maximum length
-    var trimmedString = str.substr(0, maxLength);
-
-//re-trim if we are in the middle of a word
-    trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf("")))
-    return trimmedString+"...";
+  if(str!=undefined){
+    if(str.length>=25) {
+      var maxLength = 25 // maximum number of characters to extract
+  
+  //trim the string to the maximum length
+      var trimmedString = str.substr(0, maxLength);
+  
+  //re-trim if we are in the middle of a word
+      trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf("")))
+      return trimmedString+"...";
+    }
+    else{
+      return str;
+    }
   }
-  else{
-    return str;
+  else {
+    return str
   }
+  
 });
 
 hbs.registerHelper('medium-truncator', function (str) {
