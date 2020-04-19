@@ -1,0 +1,152 @@
+<div class="col-12">
+
+    <!-- Card -->
+    <div class="dt-card">
+{{!-- store_1_verifier_full_name: 'Aline Dunn',
+  store_2_verifier_full_name: 'Alec Pacheco',
+  registrar_verifier_full_name: 'Umaruden Whitehead',
+  admin_1_verifier_full_name: 'Umaruden Whitehead', --}}
+                     
+
+        <!-- Card Header -->
+        <div class="dt-card__header">
+
+            <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Edit Verifiers Information</h3>
+            </div>
+            <!-- /card heading -->
+ <div class="dt-card__header">
+
+        
+            <!-- /card heading -->
+
+        </div>
+        </div>
+        <!-- /card header -->
+    <!-- Card Heading -->
+            <div class="dt-card__heading">
+                <h3 class="dt-card__title">Existing Configuration</h3>
+                <h5> Store 1 verifier: <strong>{{verifier.store_1_verifier_full_name}}</strong></h5>
+                 <h5> Store 2 verifier: <strong>{{verifier.store_2_verifier_full_name}}</strong></h5>
+                 <h5> Registrar verifier: <strong>{{verifier.registrar_verifier_full_name}}</strong></h5>
+                 <h5> Admin Verifier: <strong>{{verifier.admin_1_verifier_full_name}}</strong></h5>
+            </div>
+        <!-- Card Body -->
+        <div class="dt-card__body">
+
+            <!-- Form -->
+            <form action="/verifiers" method="POST" enctype="multipart/form-data" >
+                <!-- Form Row -->
+                <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Store 1 Verifier</label>
+
+                    <div class="col-md-10 col-sm-9">
+                         <select class="form-control" required name="store_1_verifier" id="simple-select" required>
+                                    <option></option>
+                                 {{#each users}}
+                                    <option value="{{this._id}}|{{this.email}}|{{this.firstName}} {{this.lastName}}">{{this.firstName}} {{this.lastName}} ({{{dept this}}}), ({{this.position}})</option>
+                                    {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <!-- /form row -->
+
+                
+
+                
+                <!-- Separator -->
+                <hr class="border-dashed my-8">
+                <!-- /separator -->
+
+
+                <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Store 2 Verifier</label>
+
+                    <div class="col-md-10 col-sm-9">
+                         <select class="form-control" required name="store_2_verifier" id="simple-select" required>
+                                   <option></option>
+                                {{#each users}}
+                                    <option value="{{this._id}}|{{this.email}}|{{this.firstName}} {{this.lastName}}">{{this.firstName}} {{this.lastName}} ({{{dept this}}}), ({{this.position}})</option>
+                                    {{/each}}
+                                         
+                                
+                        </select>
+                    </div>
+
+                     
+                </div>
+                    <!-- Separator -->
+                <hr class="border-dashed my-8">
+                <!-- /separator -->
+
+                <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Registrar Verifier</label>
+
+                    <div class="col-md-10 col-sm-9">
+                         <select class="form-control" required name="registrar_verifier" id="simple-select" required>
+                                   <option></option>
+                                 {{#each users}}
+                                    <option value="{{this._id}}|{{this.email}}|{{this.firstName}} {{this.lastName}}">{{this.firstName}} {{this.lastName}} ({{{dept this}}}), ({{this.position}})</option>
+                                    {{/each}}
+                                         
+                        </select>
+                    </div>
+
+                </div>
+ <hr class="border-dashed my-8">
+                <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Human Resource Verifier</label>
+                    <div class="col-md-10 col-sm-9">
+                        <select class="form-control" required name="admin_1_verifier" id="simple-select" required>
+                                    <option></option>
+                            {{#each users}}
+                                    <option value="{{this._id}}|{{this.email}}|{{this.firstName}} {{this.lastName}}">{{this.firstName}} {{this.lastName}} ({{{dept this}}}), ({{this.position}})</option>
+                                    {{/each}}
+                                         
+                                    
+                        </select>
+                    </div>
+
+                     
+                </div>
+                 <hr class="border-dashed my-8">
+                  <div class="form-row">
+                    <label class="col-md-2 col-sm-3 col-form-label text-sm-right"
+                            for="normal-input-1">Auditor</label>
+                    <div class="col-md-10 col-sm-9">
+                        <select class="form-control" required name="auditor_id" id="simple-select" required>
+                                    <option></option>
+                            {{#each users}}
+                                    <option value="{{this._id}}">{{this.firstName}} {{this.lastName}} ({{{dept this}}}), ({{this.position}})</option>
+                                    {{/each}}
+                                         
+                                    
+                        </select>
+                    </div>
+
+                     
+                </div>
+                <!-- Form Row -->
+               {{!-- auditor_id --}}
+                <!-- /form row -->
+                <div class="row" style="padding-top:50px">
+                    <div class="col-md-3 col-sm-3"></div>
+                        <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-primary btn-block">Create/Edit Verifier</button>
+                        </div>
+                </div>
+            </form>
+            <!-- /form -->
+
+        </div>
+        <!-- /card body -->
+
+    </div>
+    <!-- /card -->
+
+</div>

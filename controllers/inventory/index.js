@@ -76,11 +76,19 @@ function collectionInherit(){
 }
 
 exports.verifiers = function(req, res){
-    User.find({}).populate("department").exec(function(err, users){
-        Verifier.findOne({}).exec(function(err, verifier){
-            console.log("this is the verifier", verifier)
-            res.render('inventory/verifiers', {layout: "layout/inventory", verifier:verifier, users:users})
-        })
+    
+    Verifier.findOne({}).exec(function(err, verifier){
+        console.log("this is the verifier", verifier)
+        if(verifier==null){
+            User.find({}).populate("department").exec(function(err, users){      
+                res.render('inventory/verifiers', {layout: "layout/inventory", verifier:verifier, users:users})
+            })
+        }
+        else if(verifier!=null){
+            User.find({}).populate("department").exec(function(err, users){      
+                res.render('inventory/edit_verifier', {layout: "layout/inventory", verifier:verifier, users:users})
+            })
+        }        
     })
 }
 
@@ -226,7 +234,7 @@ exports.home = function(req, res){
                 }
                 else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
                     console.log("XXXXXXXXXXXXX")
-                    Request.find({rejected:false, dept_director_verified:true, store_1_verified:false, store_2_verified:false })
+                    Request.find({rejected:false, dept_director_verified:true, store_1_verified:false})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -306,6 +314,7 @@ exports.home = function(req, res){
                                 })
                 }
                 else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                    console.log("TTTTTTTTTT Registrar")
                     Request.find({rejected:false, dept_director_verified:true, admin_1_verified:true, registrar_verified:false, registrar_confirm_must:true})
                                 .populate("director")
                                 .populate("requester")
@@ -346,6 +355,7 @@ exports.home = function(req, res){
                                 })
                 }
                 else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                    console.log("TTTTTTTTTT Admin User")
                     Request.find({rejected:false, dept_director_verified:true, store_1_verified:true, store_2_verified:true, registrar_verified:false, admin_1_verified:false})
                                 .populate("director")
                                 .populate("requester")
@@ -598,11 +608,14 @@ exports.verify_request = function(req, res){
         let acceptance = req.body.acceptance;
         let passcode= req.body.passcode;
         //lets get the users department_user
+      
        
         User.findOne({_id:decrypted_user_id, passcode:passcode})
         .exec(function(err, user){
+            
             if(user!=null){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
+                
                 Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: assigned_user}] })
                 .exec(function(err, reqs){
                     console.log(reqs)
@@ -615,7 +628,7 @@ exports.verify_request = function(req, res){
                         const store_2_verifier = verifier.store_2_verifier;
                         const registrar_verifier = verifier.registrar_verifier;
                         const admin_1_verifier = verifier.admin_1_verifier;
-                       
+                      console.log(store_1_verifier, store_2_verifier)
                         User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
                             const store_1_verifier_assigned_user = store_1_guy.user_detail;
                         User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
@@ -624,8 +637,10 @@ exports.verify_request = function(req, res){
                             const registrar_verifier_assigned_user = registrar_guy.user_detail;
                         User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
                             const admin_assigned_user = admin_1_guy.user_detail;
-
-                            if(isReq && req.dept_director_verified == false){
+                            
+                            
+                            
+                            if(isReq && reqs.dept_director_verified==false){
                                 console.log("YYYY dept director")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -657,7 +672,7 @@ exports.verify_request = function(req, res){
                                 }
                                 
                             }
-                            else if(store_1_verifier==decrypted_user_id && reqs.store_1_verified==false || store_1_verifier_assigned_user==decrypted_user_id && reqs.store_1_verified==false){
+                            else if(store_1_verifier==decrypted_user_id|| store_1_verifier_assigned_user==decrypted_user_id){
                                 console.log("store 1 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -689,7 +704,7 @@ exports.verify_request = function(req, res){
                                 }
 
                             }
-                            else if(store_2_verifier==decrypted_user_id && reqs.store_2_verified==false || store_2_verifier_assigned_user==decrypted_user_id && reqs.store_2_verified==false){
+                            else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
                                 console.log("store 2 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -720,7 +735,7 @@ exports.verify_request = function(req, res){
                                     })
                                 }
                             }
-                            else if(registrar_verifier==decrypted_user_id && reqs.registrar_verified==false || registrar_verifier_assigned_user==decrypted_user_id && reqs.registrar_verified==false){
+                            else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
                                console.log("registrar guy, right")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -752,7 +767,7 @@ exports.verify_request = function(req, res){
                                 }
                                 
                             }
-                            else if(admin_1_verifier==decrypted_user_id && admin_1_verified==false || admin_assigned_user==decrypted_user_id && admin_1_verified==false){
+                            else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
                                 console.log("admin guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -801,9 +816,6 @@ exports.verify_request = function(req, res){
 
     }
 }
-
-
-
 
 
 
@@ -1491,140 +1503,144 @@ exports.request_product_post = function(req, res){
         User.findOne({_id:decrypted_user_id}, function(err, requester){
             let requester_department_id = requester.department[0]
             let requesters_full_name = requester.firstName + " " + requester.lastName
-            console.log("this is the requester",requester)
-            //we notify the director of department
-            // Request.findOne({$or:[{t_director:decrypted_user_id},{dept_director: single_user.user_detail[0].toString()}] })
-            User.findOne({ $or: [{position:"registrar/ce", department:requester_department_id.toString()},{position:"director", department:requester_department_id.toString()}]}, 
+            console.log("this is the requester", requester_department_id)
+
+            if(requester_department_id!=undefined){
+                User.findOne({ $or: [{position:"registrar/ce", department:requester_department_id.toString()},{position:"director", department:requester_department_id.toString()}]}, 
                 function(err, requester_director){
                 const requesters_director = requester_director._id; 
                 const user_fullname = requester_director.firstName + " " + requester_director.lastName
                 let unit = req.body.request_unit;
-        Store.findOne({_id:store_id}, function(err, store_item){
-            let previous_unit = store_item.unit;
-            let current_unit = req.body.request_unit;
-            
-            let final_unit = parseInt(previous_unit-current_unit)
-            Store.findByIdAndUpdate(store_id, {unit:final_unit})
-            .exec(function(err, updated_staff){
-                if(err){
-                    console.log(err)
-                }else {
-                    Product.findOne({_id:product_id}).populate('category').exec(function(err, prod){
-                        let registrars_category1 = 22020301;
-                        let registrars_category2 = 22020401;
-                        let category_code = prod.category[0].category_code
-                        const product_registrar = category_code==registrars_category1?true:category_code==registrars_category2?true:false
-                        
-                        BinCard.find({}, function(err, cards){                                                              
-                        let binCard = new BinCard;
-                        binCard.product = prod._id;
-                        binCard.stock_balance = final_unit
-                        binCard.sv_number = parseInt(cards.length+1);
-                        binCard.quantity = current_unit;
-                        binCard.requester = requesters_full_name;
-                        binCard.save(function(err, card){
-                            if(err){
-                                console.log(err)
-                            }
-                            else {
-                                let request = new Request();
-                                request.store_1_verifier = store_1_verifier;
-                                request.store_2_verifier = store_2_verifier;
-                                request.registrar_verifier = registrar_verifier;
-                                request.registrar_confirm_must = product_registrar;
-                                request.admin_1_verifier = admin_1_verifier;                     
-                                request.dept_director = requesters_director==""?[]:requester_director
-                                request.requester = decrypted_user_id
-                                request.product = product_id;
-                                request.unit = unit;
-                                request.adjusted_unit = unit;
-                                request.srsiv_no = card.sv_number;
-                                request.save(function(err, request){
+                Store.findOne({_id:store_id}, function(err, store_item){
+                    let previous_unit = store_item.unit;
+                    let current_unit = req.body.request_unit;
+                    
+                    let final_unit = parseInt(previous_unit-current_unit)
+                    Store.findByIdAndUpdate(store_id, {unit:final_unit})
+                    .exec(function(err, updated_staff){
+                        if(err){
+                            console.log(err)
+                        }else {
+                            Product.findOne({_id:product_id}).populate('category').exec(function(err, prod){
+                                let registrars_category1 = 22020301;
+                                let registrars_category2 = 22020401;
+                                let category_code = prod.category[0].category_code
+                                const product_registrar = category_code==registrars_category1?true:category_code==registrars_category2?true:false
+                                
+                                BinCard.find({}, function(err, cards){                                                              
+                                let binCard = new BinCard;
+                                binCard.product = prod._id;
+                                binCard.stock_balance = final_unit
+                                binCard.sv_number = parseInt(cards.length+1);
+                                binCard.quantity = current_unit;
+                                binCard.requester = requesters_full_name;
+                                binCard.save(function(err, card){
                                     if(err){
                                         console.log(err)
                                     }
-                          
                                     else {
-                                        //notification starts here
-                                        var storeOptions = {
-                                            from: 'onipetheoderic@gmail.com',
-                                            to: store_1_verifier_email,
-                                            subject: 'Requisition Request',
-                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                        };
-                                        var auditOptions = {
-                                            from: 'onipetheoderic@gmail.com',
-                                            to: store_2_verifier_email,
-                                            subject: 'Requisition Request',
-                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                        };
-                                        var registrarOptions = {
-                                            from: 'onipetheoderic@gmail.com',
-                                            to: registrar_verifier_email,
-                                            subject: 'Requisition Request',
-                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                        };
-                                        var adminOptions = {
-                                            from: 'onipetheoderic@gmail.com',
-                                            to: admin_1_verifier_email,
-                                            subject: 'Requisition Request',
-                                            text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
-                                        };
-                                        transporter.sendMail(storeOptions, function(error, info){
-                                            if (error) {
-                                                console.log(error);
-                                            } else {
-                                                console.log('Email sent: ' + info.response);
-                                            }
-                                        });
-                                        transporter.sendMail(auditOptions, function(error, info){
-                                            if (error) {
-                                                console.log(error);
-                                            } else {
-                                                console.log('Email sent: ' + info.response);
-                                            }
-                                        });
-                                        transporter.sendMail(adminOptions, function(error, info){
-                                            if (error) {
-                                                console.log(error);
-                                            } else {
-                                                console.log('Email sent: ' + info.response);
-                                            }
-                                        });
-                                        if(product_registrar){
-                                            transporter.sendMail(registrarOptions, function(error, info){
-                                                if (error) {
-                                                    console.log(error);
-                                                } else {
-                                                    console.log('Email sent: ' + info.response);
+                                        let request = new Request();
+                                        request.store_1_verifier = store_1_verifier;
+                                        request.store_2_verifier = store_2_verifier;
+                                        request.registrar_verifier = registrar_verifier;
+                                        request.registrar_confirm_must = product_registrar;
+                                        request.admin_1_verifier = admin_1_verifier;                     
+                                        request.dept_director = requesters_director==""?[]:requester_director
+                                        request.requester = decrypted_user_id
+                                        request.product = product_id;
+                                        request.unit = unit;
+                                        request.adjusted_unit = unit;
+                                        request.srsiv_no = card.sv_number;
+                                        request.save(function(err, request){
+                                            if(err){
+                                                console.log(err)
+                                            }                          
+                                            else {
+                                                //notification starts here
+                                                var storeOptions = {
+                                                    from: 'onipetheoderic@gmail.com',
+                                                    to: store_1_verifier_email,
+                                                    subject: 'Requisition Request',
+                                                    text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                                };
+                                                var auditOptions = {
+                                                    from: 'onipetheoderic@gmail.com',
+                                                    to: store_2_verifier_email,
+                                                    subject: 'Requisition Request',
+                                                    text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                                };
+                                                var registrarOptions = {
+                                                    from: 'onipetheoderic@gmail.com',
+                                                    to: registrar_verifier_email,
+                                                    subject: 'Requisition Request',
+                                                    text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                                };
+                                                var adminOptions = {
+                                                    from: 'onipetheoderic@gmail.com',
+                                                    to: admin_1_verifier_email,
+                                                    subject: 'Requisition Request',
+                                                    text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                                };
+                                                transporter.sendMail(storeOptions, function(error, info){
+                                                    if (error) {
+                                                        console.log(error);
+                                                    } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                    }
+                                                });
+                                                transporter.sendMail(auditOptions, function(error, info){
+                                                    if (error) {
+                                                        console.log(error);
+                                                    } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                    }
+                                                });
+                                                transporter.sendMail(adminOptions, function(error, info){
+                                                    if (error) {
+                                                        console.log(error);
+                                                    } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                    }
+                                                });
+                                                if(product_registrar){
+                                                    transporter.sendMail(registrarOptions, function(error, info){
+                                                        if (error) {
+                                                            console.log(error);
+                                                        } else {
+                                                            console.log('Email sent: ' + info.response);
+                                                        }
+                                                    });  transporter.sendMail(registrarOptions, function(error, info){
+                                                        if (error) {
+                                                            console.log(error);
+                                                        } else {
+                                                            console.log('Email sent: ' + info.response);
+                                                        }
+                                                    });
                                                 }
-                                            });  transporter.sendMail(registrarOptions, function(error, info){
-                                                if (error) {
-                                                    console.log(error);
-                                                } else {
-                                                    console.log('Email sent: ' + info.response);
-                                                }
-                                            });
-                                        }
-                                      
-                                        let msg = `Requisition form has been sent to ${user_fullname}`
-                                        home_redirector(req, res, msg)
-                                        
+                                            
+                                                let msg = `Requisition form has been sent to ${user_fullname}`
+                                                home_redirector(req, res, msg)
+                                                
+                                            }
+                                        })                                
                                     }
                                 })
-                                
-                            }
-                        })
+                            })                                
+                            })
+                        }
                     })
-                        
-                    })
-                }
+                })                
             })
+        }
+        else{
+            Store.find({}).populate('product')
+                .exec(function(err, products){
+                    console.log("this are the products",products)
+                    res.render('inventory/request_a_product', {layout:"layout/inventory", products:products, message:{error:"You dont belong to any Department, so you cannot request for a Product"}})
+                })
+            }            
         })
-        
     })
-})
-})
 }
 }
 
@@ -1770,18 +1786,15 @@ exports.edit_product = function(req, res){
         res.redirect('/login')
     }
     else if(req.session.hasOwnProperty("user_id")){
-        let decrypted_user_id = decrypt(req.session.user_id, req, res)
-    if(!req.session.hasOwnProperty("user_id")){
-        res.redirect('/login')
-    }
-    else if(req.session.hasOwnProperty("user_id")){
+       
+   
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
     Product.findOne({_id:req.params.id}).exec(function(err, product){
         res.render('inventory/edit_product', {layout:"layout/inventory", product:product})
     })
 }
 }
-}
+
 
 
 exports.view_all_users = function(req, res) {
