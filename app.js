@@ -269,8 +269,8 @@ hbs.registerHelper('truncator', function (str) {
 });
 
 hbs.registerHelper('mini-truncator', function (str) {
-  if(str.length>=10) {
-    var maxLength = 10 // maximum number of characters to extract
+  if(str.length>=25) {
+    var maxLength = 25 // maximum number of characters to extract
 
 //trim the string to the maximum length
     var trimmedString = str.substr(0, maxLength);
