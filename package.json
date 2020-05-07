@@ -4,7 +4,7 @@
   "description": "A simple boilerplate template to kickstart your project, with a sweet admin template",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app --exec babel-node",
+    "start": "nodemon start --exec babel-node",
     "start:prod": "mv *.js lib/*.js && nodemon lib/index.js --exec babel-node",
     "build": "babel lib -d dist",
     "serve": "node dist/index.js",
@@ -54,9 +54,9 @@
     "unirest": "^0.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/register": "^7.6.2",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/register": "^7.9.0",
     "autoprefixer": "^7.2.5",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
