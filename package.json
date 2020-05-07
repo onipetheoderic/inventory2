@@ -45,6 +45,7 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "pretty-error": "^2.1.1",
     "randomstring": "^1.1.5",
+    "random-number": "0.0.9",
     "ravepay": "^1.2.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
