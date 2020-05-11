@@ -626,12 +626,15 @@ exports.verify_request = function(req, res){
                 .exec(function(err, reqs){
                     Store.findOne({product:reqs.product}).exec(function(err, store){
                         console.log("The storre Valueee",store)
-                   
+                    const store_id = store._id;
                     console.log("directors Request", reqs, decrypted_user_id)              
                     const isReq = reqs==null?false:true;
                     console.log("IS req", isReq, reqs)
-                    const requested_units = reqs.unit
-                    console.log("reeeeequessted units", reqs.unit)
+                    const requested_units = reqs.unit;
+                    const final_unit_request = parseInt(requested_units)-parseInt(current_unit)
+                    const store_current_unit = parseInt(store.unit) + final_unit_request
+                    const store_rejected_unit = parseInt(store.unit)+parseInt(requested_units)
+                    console.log("reeeeequessted units", reqs.unit);
 
                     Verifier.findOne({}, function(err, verifier){
                         const store_1_verifier = verifier.store_1_verifier;
@@ -661,8 +664,18 @@ exports.verify_request = function(req, res){
                                         if(err){
                                             console.log(err)
                                         }else {
-                                            console.log(updated_store)
-                                            res.redirect(`/`)
+                                            console.log(updated_store)                                            
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_current_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -675,7 +688,26 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log(updated_store)
-                                            res.redirect(`/`)
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_rejected_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    Store.findByIdAndUpdate(store_id, {
+                                                        unit:store_current_unit
+                                                    })
+                                                    .exec(function(err, updated_unit){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            console.log(updated_unit)
+                                                            res.redirect(`/`)
+                                                        }
+                                                    })
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -694,8 +726,18 @@ exports.verify_request = function(req, res){
                                         if(err){
                                             console.log(err)
                                         }else {
-                                            console.log(updated_store)
-                                            res.redirect(`/`)
+                                            console.log(updated_store)                                            
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_current_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -708,7 +750,27 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log(updated_store)
-                                            res.redirect(`/`)
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_rejected_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    Store.findByIdAndUpdate(store_id, {
+                                                        unit:store_current_unit
+                                                    })
+                                                    .exec(function(err, updated_unit){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            console.log(updated_unit)
+                                                            res.redirect(`/`)
+                                                        }
+                                                    })
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -727,8 +789,18 @@ exports.verify_request = function(req, res){
                                         if(err){
                                             console.log(err)
                                         }else {
-                                            console.log(updated_store)
-                                            res.redirect(`/`)
+                                            console.log(updated_store)                                            
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_current_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -741,7 +813,17 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log(updated_store)
-                                            res.redirect(`/`)
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_rejected_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -762,8 +844,18 @@ exports.verify_request = function(req, res){
                                         if(err){
                                             console.log(err)
                                         }else {
-                                            console.log("updated request",updated_store)
-                                            res.redirect(`/`)
+                                            console.log(updated_store)                                            
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_current_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -776,7 +868,17 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log(updated_store)
-                                            res.redirect(`/`)
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_rejected_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -794,8 +896,18 @@ exports.verify_request = function(req, res){
                                         if(err){
                                             console.log(err)
                                         }else {
-                                            console.log(updated_store)
-                                            res.redirect(`/`)
+                                            console.log(updated_store)                                            
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_current_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
@@ -808,7 +920,17 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log(updated_store)
-                                            res.redirect(`/`)
+                                            Store.findByIdAndUpdate(store_id, {
+                                                unit:store_rejected_unit
+                                            })
+                                            .exec(function(err, updated_unit){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_unit)
+                                                    res.redirect(`/`)
+                                                }
+                                            })
                                         }
                                     })
                                 }
