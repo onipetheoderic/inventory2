@@ -614,27 +614,34 @@ exports.verify_request = function(req, res){
         let passcode= req.body.passcode;
         //lets get the users department_user
       
+       Request.findOne({_id:request_id}).exec(function(err, reqy){
+        Store.findOne({product:reqy.product}).exec(function(err, store){
+            console.log("The storre Valueee",store)
+        const store_id = store._id;
+        console.log("directors Request", reqy, decrypted_user_id)              
+     
        
+        const requested_units = reqy.unit;
+        const final_unit_request = parseInt(requested_units)-parseInt(current_unit)
+        const store_current_unit = parseInt(store.unit) + final_unit_request
+        const store_rejected_unit = parseInt(store.unit)+parseInt(requested_units)
+        console.log("reeeeequessted units", reqy.unit);
+      
+      
         User.findOne({_id:decrypted_user_id, passcode:passcode})
         .exec(function(err, user){
-            
+           
             if(user!=null){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
                
                 Request.findOne({$or:[{dept_director:decrypted_user_id,_id:request_id},
                     {dept_director: assigned_user, _id:request_id}] })
                 .exec(function(err, reqs){
-                    Store.findOne({product:reqs.product}).exec(function(err, store){
-                        console.log("The storre Valueee",store)
-                    const store_id = store._id;
-                    console.log("directors Request", reqs, decrypted_user_id)              
+                    console.log("this is the project id", reqs.product)
                     const isReq = reqs==null?false:true;
-                    console.log("IS req", isReq, reqs)
-                    const requested_units = reqs.unit;
-                    const final_unit_request = parseInt(requested_units)-parseInt(current_unit)
-                    const store_current_unit = parseInt(store.unit) + final_unit_request
-                    const store_rejected_unit = parseInt(store.unit)+parseInt(requested_units)
-                    console.log("reeeeequessted units", reqs.unit);
+                    console.log("IS req", isReq, reqy)
+                  
+                    
 
                     Verifier.findOne({}, function(err, verifier){
                         const store_1_verifier = verifier.store_1_verifier;
@@ -944,15 +951,15 @@ exports.verify_request = function(req, res){
                         })
                     })
                 })
-            })
+            }
+        })
+    })
+})
             }
             else{
                 console.log("the user is not legit")
             }
-        });
-        
 
-    }
 }
 
 
