@@ -627,7 +627,7 @@ exports.verify_request = function(req, res){
                   
                     console.log("directors Request", reqs, decrypted_user_id)              
                     const isReq = reqs==null?false:true;
-                    console.log("IS req", isReq, reqs.dept_director_verified)
+                    console.log("IS req", isReq, reqs)
 
                     Verifier.findOne({}, function(err, verifier){
                         const store_1_verifier = verifier.store_1_verifier;
