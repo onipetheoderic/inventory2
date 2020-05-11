@@ -744,11 +744,13 @@ exports.verify_request = function(req, res){
                             }
                             else if(registrar_verifier==decrypted_user_id || 
                                 registrar_verifier_assigned_user==decrypted_user_id){
-                               console.log("registrar guy, right",reqs)
+                               console.log("registrar guy, right",reqs, "the current Unit", current_unit)
+                               Request.findOne({_id:request_id}).exec(function(err, reque){
+                                   console.log("single request",reque)
+                               })
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         registrar_verified:true,
-                                        store_registrar_verified:true,
                                         dept_unit: current_unit,
                                         unit:current_unit
                                     })
@@ -756,7 +758,7 @@ exports.verify_request = function(req, res){
                                         if(err){
                                             console.log(err)
                                         }else {
-                                            console.log(updated_store)
+                                            console.log("updated request",updated_store)
                                             // res.redirect(`/`)
                                         }
                                     })
