@@ -620,14 +620,18 @@ exports.verify_request = function(req, res){
             
             if(user!=null){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
-                
+               
                 Request.findOne({$or:[{dept_director:decrypted_user_id,_id:request_id},
                     {dept_director: assigned_user, _id:request_id}] })
                 .exec(function(err, reqs){
-                  
+                    Store.findOne({product:reqs.product}).exec(function(err, store){
+                        console.log("The storre Valueee",store)
+                   
                     console.log("directors Request", reqs, decrypted_user_id)              
                     const isReq = reqs==null?false:true;
                     console.log("IS req", isReq, reqs)
+                    const requested_units = reqs.unit
+                    console.log("reeeeequessted units", reqs.unit)
 
                     Verifier.findOne({}, function(err, verifier){
                         const store_1_verifier = verifier.store_1_verifier;
@@ -818,6 +822,7 @@ exports.verify_request = function(req, res){
                         })
                     })
                 })
+            })
             }
             else{
                 console.log("the user is not legit")
