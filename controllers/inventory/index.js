@@ -185,7 +185,9 @@ exports.home = function(req, res){
             User.findOne({_id:decrypted_user_id}, function(err, user){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
            
-            Request.findOne({$or:[{dept_director:decrypted_user_id, dept_director_verified:false}, {dept_director:assigned_user, dept_director_verified:false}]})
+            Request.findOne({$or:[{dept_director:decrypted_user_id, 
+                dept_director_verified:false}, 
+                {dept_director:assigned_user, dept_director_verified:false}]})
                 .exec(function(err, reqs){
                     console.log("E dey work", reqs)              
                     const isReq = reqs==null?false:true;
@@ -198,17 +200,17 @@ exports.home = function(req, res){
                     .populate("requester")
                     .populate("product")
                     .exec(function(err, requests){
-                        console.log("from adm dept",requests)                                    
+                        console.log("FFFFFFRRRROOM dept_director",requests)                                    
                         Department.find({}, function(err, department){
                             Category.find({}, function(err, category){                
                                 Subcategory.find({}, function(err, sub_category){ 
-                                    console.log(sub_category)
+                                   
                                     let categories = []                   
                                     for(var i in category){
                                         let sub_categories = [];
                                         for(var k in sub_category){                               
                                             if(category[i]._id == sub_category[k].parent_id){
-                                                console.log("true")                                    
+                                                                                    
                                                 sub_categories.push({
                                                     name:sub_category[k].name
                                                 })
@@ -279,17 +281,17 @@ exports.home = function(req, res){
                                 .populate("requester")
                                 .populate("product")
                                 .exec(function(err, requests){
-                                    console.log("from adm dept",requests)                                    
+                                    console.log("from store2 guy",requests)                                    
                                     Department.find({}, function(err, department){
                                         Category.find({}, function(err, category){                
                                             Subcategory.find({}, function(err, sub_category){ 
-                                                console.log(sub_category)
+                                               
                                                 let categories = []                   
                                                 for(var i in category){
                                                     let sub_categories = [];
                                                     for(var k in sub_category){                               
                                                         if(category[i]._id == sub_category[k].parent_id){
-                                                            console.log("true")                                    
+                                                                                                
                                                             sub_categories.push({
                                                                 name:sub_category[k].name
                                                             })
@@ -313,14 +315,17 @@ exports.home = function(req, res){
                                     })
                                 })
                 }
-                else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                else if(registrar_verifier==decrypted_user_id || 
+                    registrar_verifier_assigned_user==decrypted_user_id){
                     console.log("TTTTTTTTTT Registrar")
-                    Request.find({rejected:false, dept_director_verified:true, admin_1_verified:true, registrar_verified:false, registrar_confirm_must:true})
+                    Request.find({rejected:false, dept_director_verified:true, 
+                        admin_1_verified:true, registrar_verified:false, 
+                        registrar_confirm_must:true})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
                                 .exec(function(err, requests){
-                                    console.log("from adm dept",requests)                                    
+                                    console.log("Registrar",requests)                                    
                                     Department.find({}, function(err, department){
                                         Category.find({}, function(err, category){                
                                             Subcategory.find({}, function(err, sub_category){ 
@@ -330,7 +335,7 @@ exports.home = function(req, res){
                                                     let sub_categories = [];
                                                     for(var k in sub_category){                               
                                                         if(category[i]._id == sub_category[k].parent_id){
-                                                            console.log("true")                                    
+                                                                                             
                                                             sub_categories.push({
                                                                 name:sub_category[k].name
                                                             })
@@ -365,13 +370,13 @@ exports.home = function(req, res){
                                 Department.find({}, function(err, department){
                                     Category.find({}, function(err, category){                
                                         Subcategory.find({}, function(err, sub_category){ 
-                                            console.log(sub_category)
+                                            
                                             let categories = []                   
                                             for(var i in category){
                                                 let sub_categories = [];
                                                 for(var k in sub_category){                               
                                                     if(category[i]._id == sub_category[k].parent_id){
-                                                        console.log("true")                                    
+                                                                                  
                                                         sub_categories.push({
                                                             name:sub_category[k].name
                                                         })
@@ -637,8 +642,7 @@ exports.verify_request = function(req, res){
                         User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
                             const registrar_verifier_assigned_user = registrar_guy.user_detail;
                         User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
-                            const admin_assigned_user = admin_1_guy.user_detail;
-                            
+                            const admin_assigned_user = admin_1_guy.user_detail;                           
                             
                             
                             if(isReq && reqs.dept_director_verified==false){
