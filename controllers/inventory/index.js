@@ -744,7 +744,7 @@ exports.verify_request = function(req, res){
                             }
                             else if(registrar_verifier==decrypted_user_id || 
                                 registrar_verifier_assigned_user==decrypted_user_id){
-                               console.log("registrar guy, right")
+                               console.log("registrar guy, right",reqs)
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         registrar_verified:true,
