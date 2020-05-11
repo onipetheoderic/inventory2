@@ -637,7 +637,7 @@ exports.verify_request = function(req, res){
                 Request.findOne({$or:[{dept_director:decrypted_user_id,_id:request_id},
                     {dept_director: assigned_user, _id:request_id}] })
                 .exec(function(err, reqs){
-                    console.log("this is the project id", reqs.product)
+                    
                     const isReq = reqs==null?false:true;
                     console.log("IS req", isReq, reqy)
                   
