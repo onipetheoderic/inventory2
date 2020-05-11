@@ -759,7 +759,7 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log("updated request",updated_store)
-                                            // res.redirect(`/`)
+                                            res.redirect(`/`)
                                         }
                                     })
                                 }
