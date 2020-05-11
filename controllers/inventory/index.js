@@ -748,6 +748,7 @@ exports.verify_request = function(req, res){
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
                                         registrar_verified:true,
+                                        store_registrar_verified:true,
                                         dept_unit: current_unit,
                                         unit:current_unit
                                     })
@@ -756,7 +757,7 @@ exports.verify_request = function(req, res){
                                             console.log(err)
                                         }else {
                                             console.log(updated_store)
-                                            res.redirect(`/`)
+                                            // res.redirect(`/`)
                                         }
                                     })
                                 }
