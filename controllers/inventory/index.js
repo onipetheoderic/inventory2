@@ -616,9 +616,10 @@ exports.verify_request = function(req, res){
             if(user!=null){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
                 
-                Request.findOne({$or:[{dept_director:decrypted_user_id},{dept_director: assigned_user}] })
+                Request.findOne({$or:[{dept_director:decrypted_user_id},
+                    {dept_director: assigned_user}] })
                 .exec(function(err, reqs){
-                    console.log(reqs)
+                  
                     console.log("directors Request", reqs, decrypted_user_id)              
                     const isReq = reqs==null?false:true;
                     console.log("IS req", isReq)
@@ -672,7 +673,8 @@ exports.verify_request = function(req, res){
                                 }
                                 
                             }
-                            else if(store_1_verifier==decrypted_user_id|| store_1_verifier_assigned_user==decrypted_user_id){
+                            else if(store_1_verifier==decrypted_user_id|| 
+                                store_1_verifier_assigned_user==decrypted_user_id){
                                 console.log("store 1 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -704,7 +706,8 @@ exports.verify_request = function(req, res){
                                 }
 
                             }
-                            else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
+                            else if(store_2_verifier==decrypted_user_id || 
+                                store_2_verifier_assigned_user==decrypted_user_id){
                                 console.log("store 2 guy")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -735,7 +738,8 @@ exports.verify_request = function(req, res){
                                     })
                                 }
                             }
-                            else if(registrar_verifier==decrypted_user_id || registrar_verifier_assigned_user==decrypted_user_id){
+                            else if(registrar_verifier==decrypted_user_id || 
+                                registrar_verifier_assigned_user==decrypted_user_id){
                                console.log("registrar guy, right")
                                 if(acceptance=="accept"){
                                     Request.findByIdAndUpdate(request_id, {
@@ -1770,6 +1774,18 @@ exports.view_all_department = function(req, res){
 }
 
 exports.view_all_product = function(req, res){
+    // if(!req.session.hasOwnProperty("user_id")){
+    //     console.log("its working", req.session.user_id)
+    //     res.redirect('/login')
+    // }
+    // else if(req.session.hasOwnProperty("user_id")){
+    // let decrypted_user_id = decrypt(req.session.user_id, req, res)
+    //     Store.find({}).populate('product')
+    //     .exec(function(err, products){
+    //         console.log("this are the products",products)
+    //         res.render('inventory/view_all_product', {layout:"layout/inventory", product:product})
+    //     })
+    // }
     if(!req.session.hasOwnProperty("user_id")){
         res.redirect('/login')
     }
@@ -1779,6 +1795,7 @@ exports.view_all_product = function(req, res){
         res.render('inventory/view_all_product', {layout:"layout/inventory", product:product})
     });
 }
+
 }
 
 exports.edit_product = function(req, res){
