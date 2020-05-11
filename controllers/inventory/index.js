@@ -621,8 +621,8 @@ exports.verify_request = function(req, res){
             if(user!=null){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
                 
-                Request.findOne({$or:[{dept_director:decrypted_user_id},
-                    {dept_director: assigned_user}] })
+                Request.findOne({$or:[{dept_director:decrypted_user_id,_id:request_id},
+                    {dept_director: assigned_user, _id:request_id}] })
                 .exec(function(err, reqs){
                   
                     console.log("directors Request", reqs, decrypted_user_id)              
