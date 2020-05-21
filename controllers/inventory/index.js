@@ -866,7 +866,7 @@ function binCardEditor(item_position, bincard_id, stock_balance){
                     console.log("BIn card not saved")
                 }
                 else {
-                    console.logg("Bin Card saved")
+                    console.log("Bin Card saved")
                 }
             })
         }
