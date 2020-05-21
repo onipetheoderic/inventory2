@@ -1154,7 +1154,7 @@ exports.verify_request = function(req, res){
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
                                                             for(var i in updated_requisition.requisitions){
-                                                                all_updated_reqs.push(updated_requisition.requisitions[i].store_1_verified) 
+                                                                all_updated_reqs.push(updated_requisition.requisitions[i].store_2_verified) 
                                                             }
                                                             const falsifier = all_updated_reqs.includes(false)
                                                                 console.log("falsifier",falsifier)
