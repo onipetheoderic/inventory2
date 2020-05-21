@@ -138,6 +138,13 @@ hbs.registerHelper('jb', function (cont){
   return (content.product[0].name)
 })
 
+hbs.registerHelper('user_department', function (cont){
+  console.log("debugging user_departmn",cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return (JSON.stringify(content.requester[0].department[0].name))
+})
+
+
 hbs.registerHelper('jbjson', function (cont){
   console.log("debugging",cont)
   let content = JSON.parse(JSON.stringify(cont))

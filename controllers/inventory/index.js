@@ -2642,7 +2642,10 @@ exports.generate_bin_card_range = function(req, res){
     let start_date = req.params.start_date;
     let end_date = req.params.end_date;
     MultipleBinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
-      sort({ createdAt: 1 }).populate('requester').exec(function(err, cards){
+      sort({ createdAt: 1 }).populate({
+        path:'requester',			
+        populate: { path: 'department', model: 'Department' }
+    }).exec(function(err, cards){
         console.log(cards)
         res.render('inventory/generate_bin_card_range', {layout:"layout/table", cards:cards})
     })    
@@ -2652,7 +2655,10 @@ exports.generate_ledger_range = function(req, res){
     let start_date = req.params.start_date;
     let end_date = req.params.end_date;
     MultipleBinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
-      sort({ createdAt: 1 }).populate('requester').exec(function(err, cards){
+      sort({ createdAt: 1 }).populate({
+        path:'requester',			
+        populate: { path: 'department', model: 'Department' }
+    }).exec(function(err, cards){
         console.log(cards)
         res.render('inventory/generate_ledger_range', {layout:"layout/table", cards:cards})
     })    
