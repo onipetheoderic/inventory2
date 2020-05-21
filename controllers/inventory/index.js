@@ -899,7 +899,8 @@ exports.verify_request = function(req, res){
                     Store.findOne({_id:selectedReq.store_id}).exec(function(err, store){
                         let store_unit = store.unit
                         const final_unit_request = parseInt(previous_qty)-parseInt(quantity)
-                        const store_current_unit = parseInt(store_unit) + final_unit_request;
+                        const store_current_unit_d = parseInt(store_unit) + final_unit_request;         
+                        const store_current_unit = store_current_unit_d<0?0:store_current_unit_d;
                         const store_rejected_unit = parseInt(store_unit)+parseInt(previous_qty)
                         //now we have gotten the details we need for the store
                         //now lets allow the dept director to verify the rpoduct
