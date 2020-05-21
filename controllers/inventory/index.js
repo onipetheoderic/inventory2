@@ -595,6 +595,7 @@ exports.request_many_products_post = function(req, res){
                 for(var i in cartItems){
                     if(cartItems[i].category_code==22020301 || cartItems[i].category_code==22020401 )
                     {
+                        console.log("it beloongs to the registra")
                         let obj = {
                             rejected:false,
                             dept_director_verified:false,
@@ -605,7 +606,6 @@ exports.request_many_products_post = function(req, res){
                             product_id:cartItems[i].product_id,
                             store_id: cartItems[i].store_id,
                             quantity: cartItems[i].qty,
-                            registrar_needed:true,
                             category_code: cartItems[i].category_code,
                             description: cartItems[i].description,
                             product_name: cartItems[i].name,
@@ -616,6 +616,7 @@ exports.request_many_products_post = function(req, res){
                         formattedItems.push(obj)
                     }
                     else {
+                        console.log("it doesnt beloongs to the registra")
                         let obj = {
                             rejected:false,
                             dept_director_verified:false,
@@ -632,7 +633,7 @@ exports.request_many_products_post = function(req, res){
                             product_name: cartItems[i].name,
                             requester_name: requesters_full_name,
                             requester_position:requesters_position,
-                            registrar_needed:false
+                            
                         }
                         formattedItems.push(obj)
                     }
@@ -643,7 +644,7 @@ exports.request_many_products_post = function(req, res){
                     registra_needed_data.push(formattedItems[i].registrar_needed) 
                     deductifier(formattedItems[i].store_id, formattedItems[i].quantity)
                 }
-                let product_registrar = registra_needed_data.length<1?false:true
+                let product_registrar = registra_needed_data.includes(true)
                 console.log("this is the registra", product_registrar)
                 MultipleBinCard.find({}, function(err, cards){   
                     
