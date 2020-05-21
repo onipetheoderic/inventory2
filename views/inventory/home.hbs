@@ -47,13 +47,11 @@ requester_logo --}}
                                 <p><input type="number" name="quantity" value="{{this.quantity}}" class="form-control"></p>
                                 <p style="font-size:10px; margin-bottom:1px;">Enter Comment</p>
                                 <p><input type="text" name="comment" placeholder="Enter Comment" class="form-control"></p>
-                                <p style="font-size:10px; margin-bottom:1px;">Enter Password To Verify</p>
-                                <p><input type="password" name="passcode" required class="form-control"></p>
                                 <p><select name="acceptance" class="form-control">
                                     <option value="accept">Accept</option>
                                     <option value="reject">Reject</option>
                                 </select></p>
-                                <button type="submit" class="btn btn-primary">Modify</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
             
                             </div>
                             <div class="modal-footer">
@@ -70,11 +68,10 @@ requester_logo --}}
 
     <tfoot>
     <tr>
-        <th>Name</th>
-        <th>Requester Department</th>
-        <th>Product Name</th>
-        <th>Category Code</th>
-        <th>Units Requested For</th>
+
+        <th><a href="/request_overall_truthifier/{{this._id}}" class="btn btn-primary btn-block">Verify All Requests</a></th>
+ 
+           
     </tr>
     </tfoot>
 </table>

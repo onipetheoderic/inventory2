@@ -90,6 +90,9 @@ router.route('/create_user_normal')
 router.route('/request_many_products')
     .get(InventoryController.request_many_products)
     .post(InventoryController.request_many_products_post)
+    
+router.route('/request_overall_truthifier/:id')
+    .get(InventoryController.request_overall_truthifier)
 
 router.route('/edit_category/:id')
     .get(InventoryController.edit_category)

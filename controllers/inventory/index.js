@@ -875,6 +875,158 @@ function binCardEditor(item_position, bincard_id, stock_balance){
    
 }
 
+exports.request_overall_truthifier = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+    let requisition_id = req.params.id;
+    User.findOne({_id:decrypted_user_id})
+        .exec(function(err, user){
+                console.log("the user is legit")
+                let user_full_name = user.firstName + " " + user.lastName
+                let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
+                
+    MultiRequisition.findOne({_id:requisition_id}).exec(function(err, multi_reqs){
+        
+        MultiRequisition.findOne({$or:[{dept_director:decrypted_user_id, 
+            _id:requisition_id},
+            {dept_director: assigned_user, _id:requisition_id}] })
+            .exec(function(err, reqs){                            
+                const isReq = reqs==null?false:true;
+                console.log("IS req", isReq)
+                Verifier.findOne({}, function(err, verifier){
+                    const store_1_verifier = verifier.store_1_verifier;
+                    const store_2_verifier = verifier.store_2_verifier;
+                    const registrar_verifier = verifier.registrar_verifier;
+                    const admin_1_verifier = verifier.admin_1_verifier;
+                    console.log(store_1_verifier, store_2_verifier)
+                    User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
+                        const store_1_verifier_assigned_user = store_1_guy.user_detail;
+                    User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
+                        const store_2_verifier_assigned_user = store_2_guy.user_detail;
+                    User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
+                        const registrar_verifier_assigned_user = registrar_guy.user_detail;
+                    User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
+                        const admin_assigned_user = admin_1_guy.user_detail;    
+                    
+                        if(isReq){
+                            let truthifiedRequisitions = []
+                            for(var i in multi_reqs.requisitions){
+                                console.log("multi-requs", multi_reqs.requisitions[i])
+                                
+                                multi_reqs.requisitions[i].dept_director_verified = true;
+                                truthifiedRequisitions.push(multi_reqs.requisitions[i])
+                                
+                                
+                            }
+                            console.log("YYYY is the dept director", truthifiedRequisitions)
+                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                dept_director_verified:true
+                            }).exec(function(err, updated){
+                                if(err){
+                                    console.log(err)
+                                }
+                                else {
+                                     res.redirect(`/`)
+                                }
+                            })
+                        }
+                        else if(store_1_verifier==decrypted_user_id||store_1_verifier_assigned_user==decrypted_user_id){
+                            let truthifiedRequisitions = []
+                            for(var i in multi_reqs.requisitions){
+                                console.log("multi-requs", multi_reqs.requisitions[i])
+                                
+                                multi_reqs.requisitions[i].store_1_verified = true;
+                                truthifiedRequisitions.push(multi_reqs.requisitions[i])
+                            }
+                            console.log("YYYY is the dept director", truthifiedRequisitions)
+                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                store_1_verified:true
+                            }).exec(function(err, updated){
+                                if(err){
+                                    console.log(err)
+                                }
+                                else {
+                                     res.redirect(`/`)
+                                }
+                            })
+                        }
+                        else if(store_2_verifier==decrypted_user_id|| 
+                            store_2_verifier_assigned_user==decrypted_user_id){
+                            let truthifiedRequisitions = []
+                            for(var i in multi_reqs.requisitions){
+                                console.log("multi-requs", multi_reqs.requisitions[i])
+                                
+                                multi_reqs.requisitions[i].store_2_verified = true;
+                                truthifiedRequisitions.push(multi_reqs.requisitions[i])
+                            }
+                            console.log("YYYY is the dept director", truthifiedRequisitions)
+                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                store_2_verified:true
+                            }).exec(function(err, updated){
+                                if(err){
+                                    console.log(err)
+                                }
+                                else {
+                                     res.redirect(`/`)
+                                }
+                            })
+                        }
+                        else if(registrar_verifier==decrypted_user_id || 
+                            registrar_verifier_assigned_user==decrypted_user_id){
+                            let truthifiedRequisitions = []
+                            for(var i in multi_reqs.requisitions){
+                                console.log("multi-requs", multi_reqs.requisitions[i])
+                                
+                                multi_reqs.requisitions[i].registrar_verified = true;
+                                truthifiedRequisitions.push(multi_reqs.requisitions[i])
+                            }
+                            console.log("YYYY is the dept director", truthifiedRequisitions)
+                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                registrar_verified:true
+                            }).exec(function(err, updated){
+                                if(err){
+                                    console.log(err)
+                                }
+                                else {
+                                     res.redirect(`/`)
+                                }
+                            })
+                        }
+                        else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                            let truthifiedRequisitions = []
+                            for(var i in multi_reqs.requisitions){
+                                console.log("multi-requs", multi_reqs.requisitions[i])
+                                
+                                multi_reqs.requisitions[i].admin_verified = true;
+                                truthifiedRequisitions.push(multi_reqs.requisitions[i])
+                            }
+                            console.log("YYYY is the dept director", truthifiedRequisitions)
+                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                admin_verified:true
+                            }).exec(function(err, updated){
+                                if(err){
+                                    console.log(err)
+                                }
+                                else {
+                                     res.redirect(`/`)
+                                }
+                            })
+                        }
+                    
+                    })
+                    })
+                })
+            })
+        })
+    })
+})
+    })
+}
+}
+               
 
 exports.verify_request = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
@@ -883,9 +1035,8 @@ exports.verify_request = function(req, res){
     else if(req.session.hasOwnProperty("user_id")){
         let decrypted_user_id = decrypt(req.session.user_id, req, res)
         console.log("XXXXXXXX",req.body)
-        let {requisition_id, obj_index, quantity, comment, acceptance, passcode, previous_qty} = req.body;
-        console.log("the passcode",passcode)
-        User.findOne({_id:decrypted_user_id, passcode:passcode})
+        let {requisition_id, obj_index, quantity, comment, acceptance, previous_qty} = req.body;
+        User.findOne({_id:decrypted_user_id})
         .exec(function(err, user){
             if(user!=null){
                 console.log("the user is legit")
