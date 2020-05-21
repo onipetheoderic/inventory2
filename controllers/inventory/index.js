@@ -912,7 +912,7 @@ exports.request_overall_truthifier = function(req, res){
                     User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
                         const admin_assigned_user = admin_1_guy.user_detail;    
                     
-                        if(isReq && dept_director_verified==false){
+                        if(isReq && reqs.dept_director_verified==false){
                             let truthifiedRequisitions = []
                             for(var i in multi_reqs.requisitions){
                                 console.log("multi-requs", multi_reqs.requisitions[i])
