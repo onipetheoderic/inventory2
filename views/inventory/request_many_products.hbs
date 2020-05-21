@@ -1,0 +1,230 @@
+<!-- Site Content -->
+<div class="dt-content">
+
+    <!-- Page Header -->
+    <div class="dt-page__header">
+        <h1 class="dt-page__title">Items In Store</h1>
+    </div>
+    <!-- /page header -->
+
+    <!-- Grid -->
+    <div class="row">
+
+        <!-- Grid Item -->
+        <div class="col-xl-12">
+
+            <!-- Entry Header -->
+            <div class="dt-entry__header">
+
+                <!-- Entry Heading -->
+                <div class="dt-entry__heading">
+                    <h3 class="dt-entry__title">Search Items In Store</h3>
+                </div>
+                <!-- /entry heading -->
+
+            </div>
+            <!-- /entry header -->
+
+            <!-- Card -->
+            <div class="dt-card">
+
+                <!-- Card Body -->
+                <div class="dt-card__body">
+
+                    <!-- Tables -->
+                    <div class="table-responsive">
+
+                        <table id="data-table" class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>description</th>
+                                <th>category</th>
+                                <th>Units Available</th>
+                                <th>Request for this product</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#each products}}
+                            <tr class="gradeX">
+                                <td>{{{jb this}}}</td>
+                                <td>{{{jbd this}}}</td>
+                                <td>{{{jbcc this}}}</td>
+                                <td>{{this.unit}}</td>                               
+                                <td data-toggle="modal" data-target="#{{{jbiid this}}}" style="cursor:pointer; font-weight:600; text-decoration: underline;">Request for this product</td>
+                                 <div class="modal" id="{{{jbiid this}}}" role="dialog" style="z-index: 100000;">
+                                    <div class="modal-dialog modals-default">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <form onsubmit="event.preventDefault();">
+                                              <div class="modal-body">                                                  
+                                                  <h2>Enter quantity Needed for {{jb this}}</h2>
+                                                  <p><input type="number" onkeypress="maxLengthCheck(this);" onchange="maxLengthCheck(this);" onkeydown="maxLengthCheck(this);" oninput="maxLengthCheck(this);" name="request_unit" id="{{jbiJson this}}" placeholder="{{this.unit}}" min="1" max="{{this.unit}}" class="form-control"></p>
+                                                 
+                                <input type="hidden" id="product_id{{{jbiid this}}}" name="product_id" value="{{{jbi this}}}">
+                                    <input type="hidden" id="store_id{{{jbiid this}}}" name="store_id" value="{{this._id}}">
+                                                                                 </div>
+                                              <div class="modal-footer">
+                                                  <button id="add_to_cart" onclick="addToCart({{json this._id}},{{jbiJsonp this}}, {{jbjson this}}, {{jbdjson this}}, {{jbccjson this}})" class="btn btn-primary" data-dismiss="modal">Add To Cart</button>
+                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                              </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+                            {{/each}}
+                            
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>Name</th>
+                                <th>description</th>
+                                <th>category</th>
+                                <th>Units Available</th>
+                                <th>Request for this product</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                    <!-- /tables -->
+
+                </div>
+                <!-- /card body -->
+
+            </div>
+            <!-- /card -->
+
+        </div>
+        <!-- /grid item -->
+    </div>
+    <!-- /grid -->
+<div data-toggle="modal" data-target="#cartCont" style="position:sticky;
+ bottom:0;right:0; z-index:10">
+<img src="/eventory/assets/images/cart.png" 
+style="width:70px;">
+<span id="total" style="color:red; font-size:15px; left:60px; position:absolute">0</span>
+ </div>
+
+
+<div class="modal" id="cartCont" role="dialog" style="z-index: 100000;">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form onsubmit="event.preventDefault();">
+                <div class="modal-body">                                                  
+                    <h2>Items In Cart</h2>
+                 <ul id="all_cart_items">
+                    
+                 </ul>
+                </div>
+                <div class="modal-footer">
+                    <button id="sendItems" onclick="submitCart()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+  
+<script>
+function maxLengthCheck(object)
+  {
+    if (parseInt(object.value)> parseInt(object.max))
+      object.value = object.max
+  }
+var cart = [];
+    var reducer = (accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue);
+function addToCart(store_id, product_id, name, description, category_code){
+    
+    console.log(store_id, product_id)
+    var fname = document.getElementById(product_id).value;
+    console.log("QQQQQQQQQQQQQQ",fname)
+
+    let product = {
+        id:product_id,
+        category_code:category_code,
+        product_id:product_id.substring(3),
+        store_id:store_id,
+        qty: parseInt(fname),
+        name:name,
+        description:description
+    }
+    let id = product.id
+    var objIndex = cart.map(function(x) {return x.id; }).indexOf(id);
+    if(objIndex==-1){
+        console.log("this si tthe indexOf",objIndex)
+        cart.push(product);
+        console.log(cart)
+    }
+    else {
+        console.log("this si tthe indexOf",objIndex)
+        cart[objIndex].qty=parseInt(cart[objIndex].qty) + parseInt(fname)
+        console.log(cart)
+    }
+   // let allQty = []
+    //for(var k in cart){
+     //   allQty.push(cart[k].qty)
+   // }
+    //let reducedVal = allQty.reduce(reducer)
+    document.getElementById("total").innerHTML = cart.length;
+    var productContainer = document.getElementById('all_cart_items');
+    productContainer.innerHTML = ""
+    for(var h in cart){
+        productContainer.innerHTML+="<li>"+ cart[h].name.toUpperCase() + "," + "<span> Quantity: " +cart[h].qty +"</span>" +"</li>"
+    }
+
+    
+}
+function submitCart(){
+    console.log(cart)
+    var xhttp = new XMLHttpRequest();
+     xhttp.open("POST", "/request_many_products", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.onreadystatechange = function() {
+      const responsemsg =  xhttp.response;
+        if (this.readyState == 4 && this.status == 200) {
+            var myArr = JSON.parse(this.responseText);
+            console.log("jfjf", myArr)
+            let msg = myArr.msg
+            alert(msg)
+            window.location.href = '/'
+        }
+    }
+    
+   
+    xhttp.send(JSON.stringify(cart))
+
+}
+</script>
+
+{{!-- 
+  if (checkbox.checked){
+            let form_content = {
+                status: "checked",
+                id: checkbox.id
+            }
+            console.log("checked", form_content)
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                 if(this.status == 200) {
+                       let parsedJson = JSON.parse(this.response)
+                        var toastHTML = `<span>${parsedJson.data.resource_name} successfully Changed</span>`;
+                   
+                  //  document.getElementById("msg_alert").innerHTML = `${parsedJson.data.resource_name} successfully Changed`;
+                }
+            };
+            xhttp.open("POST", `/edit_permission/${checkbox.id}/${inputVal}`, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify(form_content))
+        }
+        
+         --}}

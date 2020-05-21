@@ -122,17 +122,38 @@ app.get('*', function(req, res, next){
 hbs.registerHelper('json', function (content) {
     return JSON.stringify(content);
 });
-
+hbs.registerHelper('jbcc', function (cont){
+  console.log("debugging",cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return (content.product[0].category[0].category_code)
+})
+hbs.registerHelper('jbccjson', function (cont){
+  console.log("debugging",cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return (JSON.stringify(content.product[0].category[0].category_code))
+})
 hbs.registerHelper('jb', function (cont){
   console.log("debugging",cont)
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].name)
 })
 
+hbs.registerHelper('jbjson', function (cont){
+  console.log("debugging",cont)
+  let content = JSON.parse(JSON.stringify(cont))
+  return (JSON.stringify(content.product[0].name))
+})
+
 hbs.registerHelper('jbd', function (cont){
   let content = JSON.parse(JSON.stringify(cont))
   return (content.product[0].description)
 })
+
+hbs.registerHelper('jbdjson', function (cont){
+  let content = JSON.parse(JSON.stringify(cont))
+  return (JSON.stringify(content.product[0].description))
+})
+
 
 hbs.registerHelper('jbid', function (cont){
   let content = JSON.parse(JSON.stringify(cont))
@@ -144,6 +165,8 @@ hbs.registerHelper('jbiid', function(cont){
   console.log(content.product[0].createdAt.replace(/\s/g, ""))
   return ("theo"+content.product[0]._id.replace(/\s/g, ""))
 })
+
+
 
 hbs.registerHelper('dept', function(cont){
   // console.log("from dept",cont)
@@ -218,6 +241,19 @@ hbs.registerHelper('jbi', function (cont){
   return (content.product[0]._id)
 })
 
+hbs.registerHelper('jbiJson', function (cont){
+  let content = JSON.parse(JSON.stringify(cont))
+  return ("qty"+content.product[0]._id.replace(/\s/g, ""))
+})
+
+hbs.registerHelper('jbiJsonp', function (cont){
+  let content = JSON.parse(JSON.stringify(cont))
+  let js = "qty"+content.product[0]._id.replace(/\s/g, "")
+  return JSON.stringify(js)
+})
+
+
+
 hbs.registerHelper('jsonp', function(cont){
   let content = JSON.parse(JSON.stringify(cont))
   if(content[0]!==undefined){
@@ -232,6 +268,19 @@ hbs.registerHelper('category_code', function(str){
   console.log("vvvvvv",content.category[0].category_code)
   return content.category[0].category_code
 })
+
+hbs.registerHelper('category_code1', function(str){
+  let content = JSON.parse(JSON.stringify(str))
+  console.log("vvvvvv",content.product[0])
+  return content.product[0].category[0]
+})
+
+hbs.registerHelper('category_code2', function(str){
+  let content = JSON.parse(JSON.stringify(str))
+  console.log("vvvvvv",content.product[0])
+  return JSON.stringify(content.product[0])
+})
+
 
 hbs.registerHelper('uppercase', function (str) {
   if(str && typeof str === "string") {
@@ -404,7 +453,7 @@ hbs.registerHelper('odds_verifier', function(val, homeGS, homeGC){
 });
 hbs.registerHelper('formatDate', function(dateString) {
     if(dateString!=undefined){
-      return moment(dateString).format("MMM Do YY"); 
+      return moment(dateString).format("MMM Do YYYY"); 
     }
     
 });

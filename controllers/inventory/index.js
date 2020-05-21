@@ -10,6 +10,8 @@ import Request from '../../models/Request/request';
 import Installation from '../../models/Installation/installation';
 import BinCard from '../../models/BinCard/binCard';
 import Verifier from '../../models/Verifier/verifier';
+import MultipleBinCard from '../../models/MultipleBinCard/mulitplebincard';
+import MultiRequisition from '../../models/MultiRequisition/multirequisition';
 import overall_config from '../../config/overall_config.json'
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
@@ -185,7 +187,7 @@ exports.home = function(req, res){
             User.findOne({_id:decrypted_user_id}, function(err, user){
                 let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
            
-            Request.findOne({$or:[{dept_director:decrypted_user_id, 
+            MultiRequisition.findOne({$or:[{dept_director:decrypted_user_id, 
                 dept_director_verified:false}, 
                 {dept_director:assigned_user, dept_director_verified:false}]})
                 .exec(function(err, reqs){
@@ -195,7 +197,7 @@ exports.home = function(req, res){
     
                 
                 if(isReq){
-                    Request.find({rejected:false, dept_director_verified:false})
+                    MultiRequisition.find({dept_director_verified:false})
                     .populate("director")
                     .populate("requester")
                     .populate("product")
@@ -236,7 +238,7 @@ exports.home = function(req, res){
                 }
                 else if(store_1_verifier==decrypted_user_id || store_1_verifier_assigned_user==decrypted_user_id){
                     console.log("XXXXXXXXXXXXX")
-                    Request.find({rejected:false, dept_director_verified:true, store_1_verified:false})
+                    MultiRequisition.find({dept_director_verified:true, store_1_verified:false})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -276,7 +278,7 @@ exports.home = function(req, res){
                                 })
                 }
                 else if(store_2_verifier==decrypted_user_id || store_2_verifier_assigned_user==decrypted_user_id){
-                    Request.find({rejected:false, dept_director_verified:true, store_2_verified:false})
+                    MultiRequisition.find({dept_director_verified:true, store_2_verified:false})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -318,7 +320,7 @@ exports.home = function(req, res){
                 else if(registrar_verifier==decrypted_user_id || 
                     registrar_verifier_assigned_user==decrypted_user_id){
                     console.log("TTTTTTTTTT Registrar")
-                    Request.find({rejected:false, dept_director_verified:true, 
+                    MultiRequisition.find({dept_director_verified:true, 
                         admin_1_verified:true, registrar_verified:false, 
                         registrar_confirm_must:true})
                                 .populate("director")
@@ -361,7 +363,7 @@ exports.home = function(req, res){
                 }
                 else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
                     console.log("TTTTTTTTTT Admin User")
-                    Request.find({rejected:false, dept_director_verified:true, store_1_verified:true, store_2_verified:true, registrar_verified:false, admin_1_verified:false})
+                    MultiRequisition.find({dept_director_verified:true, store_1_verified:true, store_2_verified:true, registrar_verified:false, admin_1_verified:false})
                                 .populate("director")
                                 .populate("requester")
                                 .populate("product")
@@ -521,6 +523,253 @@ exports.home = function(req, res){
 }
 }
 
+function registrar_notifier(product_id){
+    Product.findOne({_id:product_id}).populate('category').exec(function(err, prod){
+        let registrars_category1 = 22020301;
+        let registrars_category2 = 22020401;
+        let category_code = prod.category[0].category_code
+        const product_registrar = category_code==registrars_category1?true:category_code==registrars_category2?true:false
+    })
+}
+
+function deductifier(store_id, qty){
+    Store.findOne({_id:store_id}, function(err, store_item){
+        let previous_unit = store_item.unit;
+        let current_unit = qty
+        
+        let final_unit = parseInt(previous_unit-current_unit)
+        Store.findByIdAndUpdate(store_id, {unit:final_unit})
+        .exec(function(err, updated_store){
+            if(err){
+                console.log(err)
+            }else {
+                console.log("success", updated_store)
+            }               
+        })
+    })
+}
+
+
+exports.request_many_products_post = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+    let decrypted_user_id = decrypt(req.session.user_id, req, res)
+   let cartItems = req.body
+   console.log("cart items",cartItems)
+
+   Verifier.findOne({}, function(err, verifier){
+    const store_1_verifier = verifier.store_1_verifier;
+    const store_2_verifier = verifier.store_2_verifier;
+    const registrar_verifier = verifier.registrar_verifier;
+    const admin_1_verifier = verifier.admin_1_verifier;
+
+    const store_1_verifier_email = verifier.store_1_verifier_email;
+    const store_2_verifier_email = verifier.store_2_verifier_email;
+    const registrar_verifier_email = verifier.registrar_verifier_email;
+    const admin_1_verifier_email = verifier.admin_1_verifier_email;
+
+    const store_1_verifier_full_name = verifier.store_1_verifier_full_name;
+    const store_2_verifier_full_name = verifier.store_2_verifier_full_name;
+    const registrar_verifier_full_name = verifier.registrar_verifier_full_name;
+    const admin_1_verifier_full_name = verifier.admin_1_verifier_full_name;
+
+
+    User.findOne({_id:decrypted_user_id}, function(err, requester){
+        let requester_department_id = requester.department[0]
+        let requesters_full_name = requester.firstName + " " + requester.lastName
+        let requesters_position = requester.position;
+
+        console.log("this is the requester", requester_department_id)
+
+        if(requester_department_id!=undefined){
+            User.findOne({ $or: [{position:"registrar/ce", 
+            department:requester_department_id.toString()},
+            {position:"director", department:requester_department_id.toString()}]}, 
+                function(err, requester_director){
+                    console.log("the requester Director", requester_director._id)
+                const requesters_director = requester_director._id; 
+                const user_fullname = requester_director.firstName + " " + requester_director.lastName
+                let formattedItems = []
+                for(var i in cartItems){
+                    if(cartItems[i].category_code==22020301 || cartItems[i].category_code==22020401 )
+                    {
+                        let obj = {
+                            rejected:false,
+                            dept_director_verified:false,
+                            admin_verified:false,
+                            store_1_verified:false,
+                            store_2_verified:false,
+                            registrar_verified:false,
+                            product_id:cartItems[i].product_id,
+                            store_id: cartItems[i].store_id,
+                            quantity: cartItems[i].qty,
+                            registrar_needed:true,
+                            category_code: cartItems[i].category_code,
+                            description: cartItems[i].description,
+                            product_name: cartItems[i].name,
+                            requester_name: requesters_full_name,
+                            requester_position:requesters_position,
+                            registrar_needed:true
+                        }
+                        formattedItems.push(obj)
+                    }
+                    else {
+                        let obj = {
+                            rejected:false,
+                            dept_director_verified:false,
+                            admin_verified:false,
+                            store_1_verified:false,
+                            store_2_verified:false,
+                            registrar_verified:false,
+                            product_id:cartItems[i].product_id,
+                            store_id: cartItems[i].store_id,
+                            quantity: cartItems[i].qty,
+                            registrar_needed:false,
+                            category_code: cartItems[i].category_code,
+                            description: cartItems[i].description,
+                            product_name: cartItems[i].name,
+                            requester_name: requesters_full_name,
+                            requester_position:requesters_position,
+                            registrar_needed:false
+                        }
+                        formattedItems.push(obj)
+                    }
+                    
+                }
+                let registra_needed_data = []
+                for(var i in formattedItems){
+                    registra_needed_data.push(formattedItems[i].registrar_needed) 
+                    deductifier(formattedItems[i].store_id, formattedItems[i].quantity)
+                }
+                let product_registrar = registra_needed_data.length<1?false:true
+                console.log("this is the registra", product_registrar)
+                MultipleBinCard.find({}, function(err, cards){   
+                    
+                    let binCard = new MultipleBinCard;
+                    binCard.items = formattedItems;
+                    binCard.requester_name = requesters_full_name;
+                    binCard.sv_number = parseInt(cards.length+1);
+                    binCard.requester = decrypted_user_id
+                    binCard.save(function(err, card){
+                        if(err){
+                            console.log(err)
+                        }
+                        else {
+                            let request = new MultiRequisition();
+                            request.registrar_confirm_must = product_registrar;
+                            request.store_1_verifier = store_1_verifier;
+                            request.store_2_verifier = store_2_verifier;
+                            request.registrar_verifier = registrar_verifier;
+                            request.admin_1_verifier = admin_1_verifier;                     
+                            request.dept_director = requesters_director;
+                            request.requester = decrypted_user_id;
+                            request.requester_position = requesters_position
+                            request.requester_fullname = requesters_full_name
+                            request.requester_department = requester_department_id
+                            request.requisitions = formattedItems;
+                            request.srsiv_no = card.sv_number;
+                            request.bincard_id = card._id;
+                            
+                            request.save(function(err, request){
+                                if(err){
+                                    console.log(err)
+                                }
+                                else {
+                                    var storeOptions = {
+                                        from: 'onipetheoderic@gmail.com',
+                                        to: store_1_verifier_email,
+                                        subject: 'Requisition Request',
+                                        text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                    };
+                                    var auditOptions = {
+                                        from: 'onipetheoderic@gmail.com',
+                                        to: store_2_verifier_email,
+                                        subject: 'Requisition Request',
+                                        text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                    };
+                                    var registrarOptions = {
+                                        from: 'onipetheoderic@gmail.com',
+                                        to: registrar_verifier_email,
+                                        subject: 'Requisition Request',
+                                        text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                    };
+                                    var adminOptions = {
+                                        from: 'onipetheoderic@gmail.com',
+                                        to: admin_1_verifier_email,
+                                        subject: 'Requisition Request',
+                                        text: 'You have a Requisition request that needs your authentication!!, Login to Authenticate it'
+                                    };
+                                    transporter.sendMail(storeOptions, function(error, info){
+                                        if (error) {
+                                            console.log(error);
+                                        } else {
+                                            console.log('Email sent: ' + info.response);
+                                        }
+                                    });
+                                    transporter.sendMail(auditOptions, function(error, info){
+                                        if (error) {
+                                            console.log(error);
+                                        } else {
+                                            console.log('Email sent: ' + info.response);
+                                        }
+                                    });
+                                    transporter.sendMail(adminOptions, function(error, info){
+                                        if (error) {
+                                            console.log(error);
+                                        } else {
+                                            console.log('Email sent: ' + info.response);
+                                        }
+                                    });
+                                    if(product_registrar){
+                                        transporter.sendMail(registrarOptions, function(error, info){
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });  transporter.sendMail(registrarOptions, function(error, info){
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                                    }
+                                    res.json({success:true, msg:`requesition has been sent to ${user_fullname}`})                                
+                                }
+                            })     
+                        }
+
+                    })
+                })
+            })
+        }
+    })
+})
+}
+}
+
+exports.request_many_products = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        Store.find({})
+        .populate({
+            path:'product',			
+            populate: { path: 'category', model: 'Category' }
+        })
+        .exec(function(err, products){
+            console.log("this are the products",products)
+            res.render('inventory/request_many_products', {layout:"layout/inventory", products:products})
+        })
+    }
+}
+
+
 exports.auditlogs = function(req, res){
     AuditorLog.find({}).populate('product')
     .exec(function(err, auditor_logs){
@@ -601,6 +850,586 @@ exports.default_config = function(req, res){
     }
 }
 
+function binCardEditor(item_position, bincard_id, stock_balance){
+    MultipleBinCard.findOne({_id:bincard_id})
+    .exec(function(err, binCard){
+        if(err){
+
+        }
+        else{
+            let itemArray = binCard.items
+            itemArray[parseInt(item_position)].stock_balance = stock_balance;
+            MultipleBinCard.findByIdAndUpdate(bincard_id, {
+                items:itemArray,
+            }).exec(function(err, updated_bin){
+                if(err){
+                    console.log("BIn card not saved")
+                }
+                else {
+                    console.logg("Bin Card saved")
+                }
+            })
+        }
+        
+    })
+   
+}
+
+
+exports.verify_request = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        console.log("XXXXXXXX",req.body)
+        let {requisition_id, obj_index, quantity, comment, acceptance, passcode, previous_qty} = req.body;
+        console.log("the passcode",passcode)
+        User.findOne({_id:decrypted_user_id, passcode:passcode})
+        .exec(function(err, user){
+            if(user!=null){
+                console.log("the user is legit")
+                let user_full_name = user.firstName + " " + user.lastName
+                let assigned_user = user.user_detail[0] == undefined ? null: user.user_detail[0].toString();
+                MultiRequisition.findOne({_id:requisition_id}).exec(function(err, multi_reqs){
+                    console.log("the multiReq", multi_reqs);
+                    let selectedReq = multi_reqs.requisitions[parseInt(obj_index)]
+                    let bincard_id = multi_reqs.bincard_id
+
+                    Store.findOne({_id:selectedReq.store_id}).exec(function(err, store){
+                        let store_unit = store.unit
+                        const final_unit_request = parseInt(previous_qty)-parseInt(quantity)
+                        const store_current_unit = parseInt(store_unit) + final_unit_request;
+                        const store_rejected_unit = parseInt(store_unit)+parseInt(previous_qty)
+                        //now we have gotten the details we need for the store
+                        //now lets allow the dept director to verify the rpoduct
+                        MultiRequisition.findOne({$or:[{dept_director:decrypted_user_id, 
+                            _id:requisition_id},
+                            {dept_director: assigned_user, _id:requisition_id}] })
+                            .exec(function(err, reqs){                            
+                                const isReq = reqs==null?false:true;
+                                console.log("IS req", isReq)
+                                Verifier.findOne({}, function(err, verifier){
+                                    const store_1_verifier = verifier.store_1_verifier;
+                                    const store_2_verifier = verifier.store_2_verifier;
+                                    const registrar_verifier = verifier.registrar_verifier;
+                                    const admin_1_verifier = verifier.admin_1_verifier;
+                                    console.log(store_1_verifier, store_2_verifier)
+                                    User.findOne({_id:store_1_verifier}, function(err, store_1_guy){
+                                        const store_1_verifier_assigned_user = store_1_guy.user_detail;
+                                    User.findOne({_id:store_2_verifier}, function(err, store_2_guy){
+                                        const store_2_verifier_assigned_user = store_2_guy.user_detail;
+                                    User.findOne({_id:registrar_verifier}, function(err, registrar_guy){
+                                        const registrar_verifier_assigned_user = registrar_guy.user_detail;
+                                    User.findOne({_id:admin_1_verifier}, function(err, admin_1_guy){
+                                        const admin_assigned_user = admin_1_guy.user_detail;    
+                                    //selected
+                                    console.log("point reached before checking isReq")
+                                    // selectedReq.dept_director_verified = true;
+                                    //&& selectedReq.dept_director_verified==false
+                                    if(isReq && selectedReq.dept_director_verified==false){
+                                        console.log("YYYY is the dept director")
+                                            if(acceptance=="accept"){
+                                                let previousReqs = multi_reqs.requisitions;
+                                                let previousComment = multi_reqs.comment_array
+                                                previousReqs[parseInt(obj_index)].dept_director_verified = true;
+                                                let commentObj = {
+                                                    name:user_full_name,
+                                                    comment:comment
+                                                }
+                                                let newCommentArray = previousComment.concat(commentObj)
+                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                    requisitions:previousReqs,
+                                                    comment_array:newCommentArray
+                                                })
+                                                .exec(function(err, updated_store){
+                                                    if(err){
+                                                        console.log(err)
+                                                    }else {
+                                                        console.log(updated_store)                                            
+                                                        Store.findByIdAndUpdate(selectedReq.store_id, {
+                                                            unit:store_current_unit
+                                                        })
+                                                        .exec(function(err, updated_unit){
+                                                            if(err){
+                                                                console.log(err)
+                                                            }else {
+                                                                binCardEditor(obj_index, bincard_id, store_current_unit)
+                                                                console.log("the updated Store unit after accept",updated_unit)
+                                                                MultiRequisition.findOne({_id:requisition_id})
+                                                                .exec(function(err, updated_requisition){
+                                                                    let all_updated_reqs = []
+                                                                    for(var i in updated_requisition.requisitions){
+                                                                       all_updated_reqs.push(updated_requisition.requisitions[i].dept_director_verified) 
+                                                                    }
+                                                                    const falsifier = all_updated_reqs.includes(false)
+                                                                     console.log("falsifier",falsifier)
+                                                                    if(falsifier!=true){
+
+                                                                        MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                            dept_director_verified:true
+                                                                        }).exec(function(err, updated){
+                                                                            if(err){
+                                                                                console.log(err)
+                                                                            }
+                                                                            else {
+                                                                                 res.redirect(`/`)
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                    else {
+                                                                        MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                            dept_director_verified:false
+                                                                        }).exec(function(err, updated){
+                                                                            if(err){
+                                                                                console.log(err)
+                                                                            }
+                                                                            else {
+                                                                                res.redirect(`/`)
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                })
+                                                               
+                                                            }
+                                                        })
+                                                    }
+                                                })
+                                            }
+                                            else if(acceptance=="reject"){
+                                                let previousReqs = multi_reqs.requisitions;
+                                                let previousComment = multi_reqs.comment_array
+                                                previousReqs[parseInt(obj_index)].dept_director_verified = true;
+                                                previousReqs.splice(parseInt(obj_index),1)
+                                                let commentObj = {
+                                                    name:user_full_name,
+                                                    comment:comment
+                                                }
+                                                let newCommentArray = previousComment.concat(commentObj)
+                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                    requisitions:previousReqs,
+                                                    comment_array:newCommentArray
+                                                })
+                                                .exec(function(err, updated_store){
+                                                    if(err){
+                                                        console.log(err)
+                                                    }else {
+                                                        console.log(updated_store)                                            
+                                                        Store.findByIdAndUpdate(selectedReq.store_id, {
+                                                            unit:store_rejected_unit
+                                                        })
+                                                        .exec(function(err, updated_unit){
+                                                            if(err){
+                                                                console.log(err)
+                                                            }else {
+                                                                console.log(updated_unit)
+                                                                res.redirect(`/`)
+                                                            }
+                                                        })
+                                                    }
+                                                })
+                                            }
+
+                                    }
+                                    else if(store_1_verifier==decrypted_user_id|| 
+                                        store_1_verifier_assigned_user==decrypted_user_id){
+                                        console.log("store 1 guy")
+                                        if(acceptance=="accept"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].store_1_verified = true;
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    MultiRequisition.findOne({_id:requisition_id})
+                                                        .exec(function(err, updated_requisition){
+                                                            let all_updated_reqs = []
+                                                            for(var i in updated_requisition.requisitions){
+                                                                all_updated_reqs.push(updated_requisition.requisitions[i].store_1_verified) 
+                                                            }
+                                                            const falsifier = all_updated_reqs.includes(false)
+                                                                console.log("falsifier store",falsifier)
+                                                            if(falsifier!=true){
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    store_1_verified:true
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                            else {
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    store_1_verified:false
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                }
+                                            })
+                                        }
+                                        else if(acceptance=="reject"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].store_1_verified = true;
+                                            previousReqs.splice(parseInt(obj_index),1)
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    Store.findByIdAndUpdate(selectedReq.store_id, {
+                                                        unit:store_rejected_unit
+                                                    })
+                                                    .exec(function(err, updated_unit){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            console.log(updated_unit)
+                                                            res.redirect(`/`)
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+        
+                                    }
+                                    else if(store_2_verifier==decrypted_user_id|| 
+                                        store_2_verifier_assigned_user==decrypted_user_id){
+                                        console.log("store 2 guy")
+                                        if(acceptance=="accept"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].store_2_verified = true;
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    MultiRequisition.findOne({_id:requisition_id})
+                                                        .exec(function(err, updated_requisition){
+                                                            let all_updated_reqs = []
+                                                            for(var i in updated_requisition.requisitions){
+                                                                all_updated_reqs.push(updated_requisition.requisitions[i].store_1_verified) 
+                                                            }
+                                                            const falsifier = all_updated_reqs.includes(false)
+                                                                console.log("falsifier",falsifier)
+                                                            if(falsifier!=true){
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    store_2_verified:true
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                            else {
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    store_2_verified:false
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                }
+                                            })
+                                        }
+                                        else if(acceptance=="reject"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].store_2_verified = true;
+                                            previousReqs.splice(parseInt(obj_index),1)
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    Store.findByIdAndUpdate(selectedReq.store_id, {
+                                                        unit:store_rejected_unit
+                                                    })
+                                                    .exec(function(err, updated_unit){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            console.log(updated_unit)
+                                                            res.redirect(`/`)
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+        
+                                    }
+                                    else if(registrar_verifier==decrypted_user_id || 
+                                        registrar_verifier_assigned_user==decrypted_user_id){
+                                        console.log("registrar guy")
+                                        if(acceptance=="accept"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].registrar_verified = true;
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    MultiRequisition.findOne({_id:requisition_id})
+                                                        .exec(function(err, updated_requisition){
+                                                            let all_updated_reqs = []
+                                                            for(var i in updated_requisition.requisitions){
+                                                                all_updated_reqs.push(updated_requisition.requisitions[i].registrar_verified) 
+                                                            }
+                                                            const falsifier = all_updated_reqs.includes(false)
+                                                                console.log("falsifier",falsifier)
+                                                            if(falsifier!=true){
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    registrar_verified:true
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                            else {
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    registrar_verified:false
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                }
+                                            })
+                                        }
+                                        else if(acceptance=="reject"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].registrar_verified = true;
+                                            previousReqs.splice(parseInt(obj_index),1)
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    Store.findByIdAndUpdate(selectedReq.store_id, {
+                                                        unit:store_rejected_unit
+                                                    })
+                                                    .exec(function(err, updated_unit){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            console.log(updated_unit)
+                                                            res.redirect(`/`)
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+        
+                                    }
+
+                                    else if(admin_1_verifier==decrypted_user_id || admin_assigned_user==decrypted_user_id){
+                                        console.log("admin guy guy")
+                                        if(acceptance=="accept"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].admin_verified = true;
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                         
+                                            let newCommentArray = previousComment.concat(commentObj)
+                                                                                     
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    MultiRequisition.findOne({_id:requisition_id})
+                                                        .exec(function(err, updated_requisition){
+                                                            let all_updated_reqs = []
+                                                            for(var i in updated_requisition.requisitions){
+                                                                all_updated_reqs.push(updated_requisition.requisitions[i].admin_verified) 
+                                                            }
+                                                            const falsifier = all_updated_reqs.includes(false)
+                                                                console.log("falsifier",falsifier)
+                                                            if(falsifier!=true){
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    admin_1_verified:true
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })
+                                                            }
+                                                            else {                                                                
+                                                                MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                                    admin_1_verified:false
+                                                                }).exec(function(err, updated){
+                                                                    if(err){
+                                                                        console.log(err)
+                                                                    }
+                                                                    else {
+                                                                        res.redirect(`/`)
+                                                                    }
+                                                                })                                                                
+                                                            }
+                                                        })
+                                                }
+                                            })
+                                        }
+                                        else if(acceptance=="reject"){
+                                            let previousReqs = multi_reqs.requisitions;
+                                            let previousComment = multi_reqs.comment_array
+                                            previousReqs[parseInt(obj_index)].admin_1_verifier = true;
+                                            previousReqs.splice(parseInt(obj_index),1)
+                                            let commentObj = {
+                                                name:user_full_name,
+                                                comment:comment
+                                            }
+                                           
+                                                let newCommentArray = previousComment.concat(commentObj)
+                                        
+                                            MultiRequisition.findByIdAndUpdate(requisition_id, {
+                                                requisitions:previousReqs,
+                                                comment_array:newCommentArray
+                                            })
+                                            .exec(function(err, updated_store){
+                                                if(err){
+                                                    console.log(err)
+                                                }else {
+                                                    console.log(updated_store)                                            
+                                                    Store.findByIdAndUpdate(selectedReq.store_id, {
+                                                        unit:store_rejected_unit
+                                                    })
+                                                    .exec(function(err, updated_unit){
+                                                        if(err){
+                                                            console.log(err)
+                                                        }else {
+                                                            console.log(updated_unit)
+                                                            res.redirect(`/`)
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+        
+                                    }
+
+                                    
+
+
+
+
+                                    })
+                                    })
+                                    })
+                                })
+                            })
+                        })
+
+                    })
+                })
+            }
+            else {
+                console.log("the user is not legit")
+            }
+        
+        })
+           
+    }
+   
+}
+/*
+
 exports.verify_request = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
         res.redirect('/login')
@@ -640,8 +1469,6 @@ exports.verify_request = function(req, res){
                     
                     const isReq = reqs==null?false:true;
                     console.log("IS req", isReq, reqy)
-                  
-                    
 
                     Verifier.findOne({}, function(err, verifier){
                         const store_1_verifier = verifier.store_1_verifier;
@@ -961,7 +1788,7 @@ exports.verify_request = function(req, res){
             }
 
 }
-
+*/
 
 
 //incomplete_authentication.hbs
@@ -1589,7 +2416,9 @@ exports.request_product = function(req, res){
 
 
 exports.view_requests = function(req, res){
-    Request.find({}).populate('requester').populate('product')
+    MultiRequisition.find({})
+    .populate('requester_department')
+    .populate('requester')
     .exec(function(err, requests){
         console.log("bf", requests)
 
@@ -1604,16 +2433,11 @@ exports.view_requests = function(req, res){
     })
 }
 exports.single_requisition = function(req, res){
-    Request.findOne({_id:req.params.id})
-    .populate({
-        path:'product',			
-        populate: { path: 'category', model: 'Category' }
-      })
+    MultiRequisition.findOne({_id:req.params.id})
+    .populate('requester_department')
     .populate('requester')
-    .populate('director')
-    .exec(function(err, requests){        
-        console.log("this is the request", requests)
-        res.render('inventory/single_requisition', {layout: "layout/table", data:{requests:requests}})
+    .exec(function(err, all_requisitions){
+        res.render('inventory/single_requisition', {layout: "layout/table", all_requisitions:all_requisitions})
     })
 }
 

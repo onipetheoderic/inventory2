@@ -7,32 +7,77 @@
                     <!-- /page header -->
 {{!-- product_title, product_description, requester_name, requester_position, 
 requester_logo --}}
-{{#each requests}}
-<div class="row">
-    <div class="alert alert-danger" role="alert">
-        <h4 class="alert-heading">Product Requisition Alert!</h4>
-        <p>You need to enter Your Email and Passcode to Verify the Requisition for:</p>
-        <p>Product Name: <span style="color:black; text-transform:uppercase">{{{product_title this}}}</span></p>
-        <p>Product Description: <span style="color:black; text-transform:uppercase">{{{product_description this}}}</span></p>
-        <p>from: <span style="color:black; text-transform:uppercase">{{{requester_name this}}}</span></p>
-        <p>positon: <span style="color:black; text-transform:uppercase">{{{requester_position this}}}</span></p>
+ {{#each requests}}
+<table  class="table table-striped table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>Requester Name</th>
+        <th>Requester Department</th>
+        <th>Product Name</th>
+        <th>Category Code</th>
+        <th>Units Requested For</th>
+    </tr>
+    </thead>
+    {{#each requisitions}}
+    <tbody>
+    <tr class="gradeX">
        
-        <form action="/verify_request" method="POST">
-         <p>Unit Requested For: <input type="number" name="unit" value="{{this.unit}}"></p>
-            <input type="hidden" name="request_id" value="{{this.id}}"/>
-              <input type="hidden" name="initial_unit" value="{{this.unit}}"/>
-            <input type="text" required name="passcode" placeholder="Enter Passcode to Verify" />
-             <select name="acceptance" id="simple-select" required>
-                <option value="accept">Accept</option>
-                <option value="reject">Reject</option>
-                
-            </select>
-            <button type="submit">Submit</button>
+        <td>{{this.requester_name}}</td>
+        <td>{{this.requester_position}}</td>
+        <td>{{this.product_name}}</td>
+        <td>{{this.category_code}}</td>
+        <td>{{this.quantity}}</td>
+        <td><button data-toggle="modal" data-target="#mode{{@index}}">Modify</button></td>
+            <div class="modal" id="mode{{@index}}" role="dialog" style="z-index: 100000;">
+                <div class="modal-dialog modals-default">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <form method="POST" action="/verify_request">
+                            <div class="modal-body">     
+                                <h2>Previous Comment on Products</h2>
+                                {{#each ../this.comment_array}} 
+                                    <p>name:{{this.name}}, comment:{{this.comment}}</p>
+                                {{/each}}                                        
+                                <h2>Modify Quantities for: {{this.product_name}} </h2>
+                                <p><input type="hidden" name="requisition_id" value="{{../this._id}}" class="form-control"></p>
+                                <input type="hidden" name="obj_index" value="{{@index}}" />
+                                <input type="hidden" name="previous_qty" value="{{this.quantity}}" />
+                                <p><input type="number" name="quantity" value="{{this.quantity}}" class="form-control"></p>
+                                <p><input type="text" name="comment" placeholder="Enter Comment" class="form-control"></p>
+                                <p><input type="password" name="passcode" required class="form-control"></p>
+                                <p><select name="acceptance" class="form-control">
+                                    <option value="accept">Accept</option>
+                                    <option value="reject">Reject</option>
+                                </select></p>
+                                <button type="submit" class="btn btn-primary">Modify</button>
             
-        </form>
-    </div>
-</div>
+                            </div>
+                            <div class="modal-footer">
+                                
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </tr>
+    </tbody>
+    {{/each}}
+
+    <tfoot>
+    <tr>
+        <th>Name</th>
+        <th>Requester Department</th>
+        <th>Product Name</th>
+        <th>Category Code</th>
+        <th>Units Requested For</th>
+    </tr>
+    </tfoot>
+</table>
 {{/each}}
+
 
                     <!-- Grid -->
                     <div class="row">
@@ -217,6 +262,24 @@ requester_logo --}}
                                 <div class="dt-card__body px-5 py-4">
                                    <a href="/request_product">
                                    <h6 class="text-body text-uppercase mb-2">Request for a Product</h6></a>  
+                                    <div class="d-flex align-items-baseline mb-4">
+                                          <i class="icon icon-news" style="font-size:40px;"></i>
+                                    </div>
+                                </div>
+                                <!-- /bard body -->
+                            </div>
+                            <!-- /card -->
+                        </div>
+                        
+                          <div class="col-xl-3 col-sm-6 col-12">
+
+                            <!-- Card -->
+                            <div class="dt-card">
+
+                                <!-- Card Body -->
+                                <div class="dt-card__body px-5 py-4">
+                                   <a href="/request_many_products">
+                                   <h6 class="text-body text-uppercase mb-2">Request for Many Products</h6></a>  
                                     <div class="d-flex align-items-baseline mb-4">
                                           <i class="icon icon-news" style="font-size:40px;"></i>
                                     </div>
