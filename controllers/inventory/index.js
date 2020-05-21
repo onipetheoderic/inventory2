@@ -647,11 +647,11 @@ exports.request_many_products_post = function(req, res){
                 let product_registrar = registra_needed_data.includes(true)
                 console.log("this is the registra", product_registrar)
                 MultipleBinCard.find({}, function(err, cards){   
-                    
+                    let currentCardNumber = cards.length+1
                     let binCard = new MultipleBinCard;
                     binCard.items = formattedItems;
                     binCard.requester_name = requesters_full_name;
-                    binCard.sv_number = parseInt(cards.length+1);
+                    binCard.sv_number = currentCardNumber;
                     binCard.requester = decrypted_user_id
                     binCard.save(function(err, card){
                         if(err){
@@ -670,7 +670,7 @@ exports.request_many_products_post = function(req, res){
                             request.requester_fullname = requesters_full_name
                             request.requester_department = requester_department_id
                             request.requisitions = formattedItems;
-                            request.srsiv_no = card.sv_number;
+                            request.srsiv_no = currentCardNumber;
                             request.bincard_id = card._id;
                             
                             request.save(function(err, request){
@@ -851,7 +851,7 @@ exports.default_config = function(req, res){
     }
 }
 
-function binCardEditor(item_position, bincard_id, stock_balance){
+function binCardEditor(item_position, bincard_id, stock_balance, quantity){
     MultipleBinCard.findOne({_id:bincard_id})
     .exec(function(err, binCard){
         if(err){
@@ -860,6 +860,7 @@ function binCardEditor(item_position, bincard_id, stock_balance){
         else{
             let itemArray = binCard.items
             itemArray[parseInt(item_position)].stock_balance = stock_balance;
+            itemArray[parseInt(item_position)].quantity = quantity;
             MultipleBinCard.findByIdAndUpdate(bincard_id, {
                 items:itemArray,
             }).exec(function(err, updated_bin){
@@ -1108,7 +1109,7 @@ exports.verify_request = function(req, res){
                                                             if(err){
                                                                 console.log(err)
                                                             }else {
-                                                                binCardEditor(obj_index, bincard_id, store_current_unit)
+                                                                binCardEditor(obj_index, bincard_id, store_current_unit, quantity)
                                                                 console.log("the updated Store unit after accept",updated_unit)
                                                                 MultiRequisition.findOne({_id:requisition_id})
                                                                 .exec(function(err, updated_requisition){
@@ -1207,7 +1208,7 @@ exports.verify_request = function(req, res){
                                                     console.log(err)
                                                 }else {
                                                     console.log(updated_store)    
-                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                        
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit, quantity)                                        
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -1302,7 +1303,7 @@ exports.verify_request = function(req, res){
                                                     console.log(err)
                                                 }else {
                                                     console.log(updated_store)    
-                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                        
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit, quantity)                                        
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -1397,7 +1398,7 @@ exports.verify_request = function(req, res){
                                                     console.log(err)
                                                 }else {
                                                     console.log(updated_store)        
-                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                    
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit, quantity)                                    
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -1493,7 +1494,7 @@ exports.verify_request = function(req, res){
                                                     console.log(err)
                                                 }else {
                                                     console.log(updated_store)   
-                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                         
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit, quantity)                                         
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
