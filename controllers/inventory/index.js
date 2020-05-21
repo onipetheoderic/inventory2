@@ -1051,7 +1051,8 @@ exports.verify_request = function(req, res){
                                                 if(err){
                                                     console.log(err)
                                                 }else {
-                                                    console.log(updated_store)                                            
+                                                    console.log(updated_store)    
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                        
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -1143,7 +1144,8 @@ exports.verify_request = function(req, res){
                                                 if(err){
                                                     console.log(err)
                                                 }else {
-                                                    console.log(updated_store)                                            
+                                                    console.log(updated_store)    
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                        
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -1199,6 +1201,7 @@ exports.verify_request = function(req, res){
                                                     console.log(err)
                                                 }else {
                                                     console.log(updated_store)                                            
+                                                    
                                                     Store.findByIdAndUpdate(selectedReq.store_id, {
                                                         unit:store_rejected_unit
                                                     })
@@ -1235,7 +1238,8 @@ exports.verify_request = function(req, res){
                                                 if(err){
                                                     console.log(err)
                                                 }else {
-                                                    console.log(updated_store)                                            
+                                                    console.log(updated_store)        
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                    
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -1329,7 +1333,8 @@ exports.verify_request = function(req, res){
                                                 if(err){
                                                     console.log(err)
                                                 }else {
-                                                    console.log(updated_store)                                            
+                                                    console.log(updated_store)   
+                                                    binCardEditor(obj_index, bincard_id, store_current_unit)                                         
                                                     MultiRequisition.findOne({_id:requisition_id})
                                                         .exec(function(err, updated_requisition){
                                                             let all_updated_reqs = []
@@ -2630,8 +2635,8 @@ exports.generate_ledger_post = function(req, res){
 exports.generate_bin_card_range = function(req, res){
     let start_date = req.params.start_date;
     let end_date = req.params.end_date;
-    BinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
-      sort({ createdAt: 1 }).populate('product').exec(function(err, cards){
+    MultipleBinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
+      sort({ createdAt: 1 }).populate('requester').exec(function(err, cards){
         console.log(cards)
         res.render('inventory/generate_bin_card_range', {layout:"layout/table", cards:cards})
     })    
@@ -2640,8 +2645,8 @@ exports.generate_bin_card_range = function(req, res){
 exports.generate_ledger_range = function(req, res){
     let start_date = req.params.start_date;
     let end_date = req.params.end_date;
-    BinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
-      sort({ createdAt: 1 }).populate('product').exec(function(err, cards){
+    MultipleBinCard.find({ createdAt: { $gte: start_date, $lte: end_date} }).
+      sort({ createdAt: 1 }).populate('requester').exec(function(err, cards){
         console.log(cards)
         res.render('inventory/generate_ledger_range', {layout:"layout/table", cards:cards})
     })    
