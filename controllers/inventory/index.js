@@ -1000,12 +1000,12 @@ exports.request_overall_truthifier = function(req, res){
                             for(var i in multi_reqs.requisitions){
                                 console.log("multi-requs", multi_reqs.requisitions[i])
                                 
-                                multi_reqs.requisitions[i].admin_verified = true;
+                                multi_reqs.requisitions[i].admin_1_verified = true;
                                 truthifiedRequisitions.push(multi_reqs.requisitions[i])
                             }
                             console.log("YYYY is the dept director", truthifiedRequisitions)
                             MultiRequisition.findByIdAndUpdate(requisition_id, {
-                                admin_verified:true
+                                admin_1_verified:true
                             }).exec(function(err, updated){
                                 if(err){
                                     console.log(err)
