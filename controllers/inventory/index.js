@@ -933,6 +933,7 @@ exports.verify_request = function(req, res){
                                                 let previousReqs = multi_reqs.requisitions;
                                                 let previousComment = multi_reqs.comment_array
                                                 previousReqs[parseInt(obj_index)].dept_director_verified = true;
+                                                previousReqs[parseInt(obj_index)].quantity = quantity;
                                                 let commentObj = {
                                                     name:user_full_name,
                                                     comment:comment
@@ -1038,6 +1039,7 @@ exports.verify_request = function(req, res){
                                             let previousReqs = multi_reqs.requisitions;
                                             let previousComment = multi_reqs.comment_array
                                             previousReqs[parseInt(obj_index)].store_1_verified = true;
+                                            previousReqs[parseInt(obj_index)].quantity = quantity;
                                             let commentObj = {
                                                 name:user_full_name,
                                                 comment:comment
@@ -1129,8 +1131,10 @@ exports.verify_request = function(req, res){
                                         console.log("store 2 guy")
                                         if(acceptance=="accept"){
                                             let previousReqs = multi_reqs.requisitions;
+                                            
                                             let previousComment = multi_reqs.comment_array
                                             previousReqs[parseInt(obj_index)].store_2_verified = true;
+                                            previousReqs[parseInt(obj_index)].quantity = quantity;
                                             let commentObj = {
                                                 name:user_full_name,
                                                 comment:comment
@@ -1225,6 +1229,7 @@ exports.verify_request = function(req, res){
                                             let previousReqs = multi_reqs.requisitions;
                                             let previousComment = multi_reqs.comment_array
                                             previousReqs[parseInt(obj_index)].registrar_verified = true;
+                                            previousReqs[parseInt(obj_index)].quantity = quantity;
                                             let commentObj = {
                                                 name:user_full_name,
                                                 comment:comment
@@ -1318,6 +1323,7 @@ exports.verify_request = function(req, res){
                                             let previousReqs = multi_reqs.requisitions;
                                             let previousComment = multi_reqs.comment_array
                                             previousReqs[parseInt(obj_index)].admin_verified = true;
+                                            previousReqs[parseInt(obj_index)].quantity = quantity;
                                             let commentObj = {
                                                 name:user_full_name,
                                                 comment:comment
