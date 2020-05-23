@@ -94,6 +94,11 @@ router.route('/request_many_products')
 router.route('/request_overall_truthifier/:id')
     .get(InventoryController.request_overall_truthifier)
 
+router.route('/change_password')
+    .get(InventoryController.changePassword_get)
+    .post(InventoryController.changePassword_post)
+
+
 router.route('/edit_category/:id')
     .get(InventoryController.edit_category)
     .post(InventoryController.edit_category_post)

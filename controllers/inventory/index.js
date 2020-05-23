@@ -21,7 +21,7 @@ var transporter = nodemailer.createTransport(smtpTransport({
   host: 'smtp.gmail.com',
   auth: {
     user: 'onipetheoderic@gmail.com',
-    pass: 't1t2t3t4'
+    pass: 'aerokinesis1.'
   }
 }));
 
@@ -154,7 +154,6 @@ exports.verifier_post = function(req, res){
         }
     })
 }
-
 
 exports.home = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
@@ -806,6 +805,50 @@ exports.view_auditlog = function(req, res){
     })
 }
 
+exports.changePassword_get = function(req, res){
+    if(!req.session.hasOwnProperty("user_id")){
+        console.log("its working", req.session.user_id)
+        res.redirect('/login')
+    }
+    else if(req.session.hasOwnProperty("user_id")){
+        let decrypted_user_id = decrypt(req.session.user_id, req, res)
+        res.render('inventory/change_password', {layout: false})
+        
+    }
+}
+
+
+
+exports.changePassword_post = function(req, res){
+    const previousPassword = req.body.previous_password;
+    const newPassword = req.body.new_password;
+ 
+     if(!req.session.hasOwnProperty("user_id")){
+         console.log("its working", req.session.user_id)
+         res.redirect('/login')
+     }
+     else if(req.session.hasOwnProperty("user_id")){
+         let decrypted_user_id = decrypt(req.session.user_id, req, res)
+         User.findOne({_id:decrypted_user_id}, function(err, user){           
+             if(user.passcode === previousPassword){
+                 User.findByIdAndUpdate(decrypted_user_id, {passcode:newPassword})
+                 .exec(function(err, updated_staff){
+                     if(err){
+                         console.log(err)
+                     }else {
+                         res.redirect('/login')
+                     }
+                 })
+                 
+             }
+             else {
+                 res.render('inventory/change_password', {layout: false, message:{error:'The Previous Password you entered is Wrong'}})
+             }
+         })
+     }
+ 
+ }
+ 
 exports.default_config = function(req, res){
     if(!req.session.hasOwnProperty("user_id")){
         console.log("its working", req.session.user_id)
